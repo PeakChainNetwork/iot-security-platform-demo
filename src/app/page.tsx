@@ -33,7 +33,7 @@ import type {
   SystemHealthRead,
   VulnerabilitySummaryResponse,
 } from "@/lib/backend-types"
-import { useDashboardWs } from "@/lib/ws-dashboard"
+import { useDashboardWs } from "@/lib/ws"
 
 function sevBadge(sev: string) {
   if (sev === "critical") return "destructive"

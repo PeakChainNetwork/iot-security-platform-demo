@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator"
 import * as Recharts from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { parseBackendDate } from "@/lib/dates"
-import { getBackendBaseUrl, toWsUrl } from "@/lib/ws-dashboard"
+import { startTelemetryWs } from "@/lib/ws"
 
 type TelemetryMessage = {
   device_id: string
@@ -93,8 +93,6 @@ export function DeviceTelemetryPanel({
   hint?: { label: string; variant?: "default" | "secondary" | "outline" | "destructive" }
   allowRetry?: boolean
 }) {
-  const backendBase = getBackendBaseUrl()
-
   const [state, setState] = React.useState<ConnectionState>("connecting")
   const [lastMessage, setLastMessage] = React.useState<TelemetryMessage | null>(null)
   const [lastError, setLastError] = React.useState<string | null>(null)
@@ -113,86 +111,31 @@ export function DeviceTelemetryPanel({
       setState("closed")
       return
     }
-    let socket: WebSocket | null = null
-    let didClose = false
-    let retryTimer: number | null = null
+    setState("connecting")
+    setLastError(null)
 
-    const connect = (attempt: number) => {
-      setState("connecting")
-      setLastError(null)
-
-      const wsBase = toWsUrl(backendBase)
-      console.log("wsBase", wsBase)
-      const url = `${wsBase}/api/v1/ws/telemetry?device_id=${encodeURIComponent(deviceId)}`
-
-      try {
-        socket = new WebSocket(url)
-      } catch (e) {
-        setState("error")
-        setLastError(e instanceof Error ? e.message : "Failed to open WebSocket")
-        scheduleReconnect(attempt + 1)
-        return
-      }
-
-      socket.onopen = () => {
-        setState("open")
+    return startTelemetryWs({
+      deviceId,
+      onStatus: (s) => setState(s),
+      onErrorMessage: (msg) => setLastError(msg),
+      onMessage: (raw) => {
+        const msg = raw as TelemetryMessage
+        setLastMessage(msg)
         setLastError(null)
-      }
-
-      socket.onmessage = (evt) => {
-        try {
-          const msg = JSON.parse(String(evt.data)) as TelemetryMessage
-          setLastMessage(msg)
-          setLastError(null)
-          const ts = parseTs(msg.timestamp)?.getTime()
-          const metrics = msg.metrics ?? {}
-          const temperature = typeof metrics.temperature === "number" ? metrics.temperature : undefined
-          const pressure = typeof metrics.pressure === "number" ? metrics.pressure : undefined
-          const vibration = typeof metrics.vibration === "number" ? metrics.vibration : undefined
-          if (ts) {
-            setSeries((prev) => {
-              const next = [...prev, { t: ts, temperature, pressure, vibration }]
-              return next.slice(-120)
-            })
-          }
-        } catch (e) {
-          setLastError(
-            e instanceof Error ? `Bad message JSON: ${e.message}` : "Bad message JSON"
-          )
+        const ts = parseTs(msg.timestamp)?.getTime()
+        const metrics = msg.metrics ?? {}
+        const temperature = typeof metrics.temperature === "number" ? metrics.temperature : undefined
+        const pressure = typeof metrics.pressure === "number" ? metrics.pressure : undefined
+        const vibration = typeof metrics.vibration === "number" ? metrics.vibration : undefined
+        if (ts) {
+          setSeries((prev) => {
+            const next = [...prev, { t: ts, temperature, pressure, vibration }]
+            return next.slice(-120)
+          })
         }
-      }
-
-      socket.onerror = () => {
-        // Some browsers fire onerror even when the connection is still usable.
-        setLastError((prev) => prev ?? "WebSocket error")
-        setState((prev) => (prev === "open" ? prev : "error"))
-      }
-
-      socket.onclose = () => {
-        setState("closed")
-        if (!didClose) scheduleReconnect(attempt + 1)
-      }
-    }
-
-    const scheduleReconnect = (attempt: number) => {
-      if (retryTimer) window.clearTimeout(retryTimer)
-      const delayMs = Math.min(30_000, 500 * Math.pow(2, Math.min(attempt, 6)))
-      retryTimer = window.setTimeout(() => connect(attempt), delayMs)
-    }
-
-    connect(0)
-
-    return () => {
-      didClose = true
-      if (retryTimer) window.clearTimeout(retryTimer)
-      try {
-        socket?.close()
-      } catch {
-        // ignore
-      }
-      socket = null
-    }
-  }, [armed, backendBase, deviceId])
+      },
+    })
+  }, [armed, deviceId])
 
   const ts = parseTs(lastMessage?.timestamp ?? undefined)
   const status = lastMessage?.status
