@@ -11,7 +11,11 @@ type Envelope =
   | { type: "vulnerabilities_summary"; data: unknown }
   | { type: string; data: unknown }
 
-function toWsUrl(httpBaseUrl: string) {
+export function getBackendBaseUrl() {
+  return process.env.NEXT_PUBLIC_BACKEND_URL?.trim() || "http://localhost:8000"
+}
+
+export function toWsUrl(httpBaseUrl: string) {
   const trimmed = httpBaseUrl.replace(/\/+$/, "")
   if (trimmed.startsWith("https://")) return trimmed.replace(/^https:\/\//, "wss://")
   if (trimmed.startsWith("http://")) return trimmed.replace(/^http:\/\//, "ws://")
@@ -19,8 +23,12 @@ function toWsUrl(httpBaseUrl: string) {
 }
 
 export function useDashboardWs(onEnvelope: (env: Envelope) => void) {
-  const backendBase =
-    process.env.NEXT_PUBLIC_BACKEND_URL?.trim() || "http://localhost:8000"
+  const backendBase = getBackendBaseUrl()
+  const onEnvelopeRef = React.useRef(onEnvelope)
+
+  React.useEffect(() => {
+    onEnvelopeRef.current = onEnvelope
+  }, [onEnvelope])
 
   React.useEffect(() => {
     let socket: WebSocket | null = null
@@ -30,7 +38,6 @@ export function useDashboardWs(onEnvelope: (env: Envelope) => void) {
     const connect = (attempt: number) => {
       const wsBase = toWsUrl(backendBase)
       const url = `${wsBase}/api/v1/ws/dashboard`
-
       try {
         socket = new WebSocket(url)
       } catch {
@@ -41,7 +48,7 @@ export function useDashboardWs(onEnvelope: (env: Envelope) => void) {
       socket.onmessage = (evt) => {
         try {
           const env = JSON.parse(String(evt.data)) as Envelope
-          onEnvelope(env)
+          onEnvelopeRef.current(env)
         } catch {
           // ignore
         }
@@ -70,6 +77,6 @@ export function useDashboardWs(onEnvelope: (env: Envelope) => void) {
       }
       socket = null
     }
-  }, [backendBase, onEnvelope])
+  }, [backendBase])
 }
 

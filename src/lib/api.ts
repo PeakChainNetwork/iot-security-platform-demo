@@ -9,7 +9,6 @@ import {
   VulnerabilitySummaryResponse,
 } from "@/lib/backend-types"
 
-const DEFAULT_BACKEND_URL = "http://localhost:8000"
 
 export class ApiError extends Error {
   status: number
@@ -20,7 +19,12 @@ export class ApiError extends Error {
 }
 
 function backendBaseUrl() {
-  return (process.env.NEXT_PUBLIC_BACKEND_URL ?? DEFAULT_BACKEND_URL).replace(
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL
+  if (!baseUrl) {
+    throw new Error("Missing env var: NEXT_PUBLIC_BACKEND_URL")
+  }
+
+  return baseUrl.replace(
     /\/+$/,
     ""
   )
@@ -32,7 +36,12 @@ function urlFor(pathname: string) {
 }
 
 async function fetchJson<T>(pathname: string): Promise<T> {
-  const res = await fetch(urlFor(pathname), { cache: "no-store" })
+  const res = await fetch(urlFor(pathname), {
+    cache: "no-store",
+    headers: {
+      "ngrok-skip-browser-warning": "true",
+    },
+  })
 
   if (!res.ok) {
     let detail = ""

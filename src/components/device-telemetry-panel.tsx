@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator"
 import * as Recharts from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { parseBackendDate } from "@/lib/dates"
+import { getBackendBaseUrl, toWsUrl } from "@/lib/ws-dashboard"
 
 type TelemetryMessage = {
   device_id: string
@@ -19,14 +20,6 @@ type TelemetryMessage = {
 }
 
 type ConnectionState = "connecting" | "open" | "closed" | "error"
-
-function toWsUrl(httpBaseUrl: string) {
-  const trimmed = httpBaseUrl.replace(/\/+$/, "")
-  if (trimmed.startsWith("https://")) return trimmed.replace(/^https:\/\//, "wss://")
-  if (trimmed.startsWith("http://")) return trimmed.replace(/^http:\/\//, "ws://")
-  // Fallback: assume ws:// already (or a hostname)
-  return trimmed
-}
 
 function parseTs(ts?: string) {
   if (!ts) return null
@@ -100,8 +93,7 @@ export function DeviceTelemetryPanel({
   hint?: { label: string; variant?: "default" | "secondary" | "outline" | "destructive" }
   allowRetry?: boolean
 }) {
-  const backendBase =
-    process.env.NEXT_PUBLIC_BACKEND_URL?.trim() || "http://localhost:8000"
+  const backendBase = getBackendBaseUrl()
 
   const [state, setState] = React.useState<ConnectionState>("connecting")
   const [lastMessage, setLastMessage] = React.useState<TelemetryMessage | null>(null)
@@ -130,6 +122,7 @@ export function DeviceTelemetryPanel({
       setLastError(null)
 
       const wsBase = toWsUrl(backendBase)
+      console.log("wsBase", wsBase)
       const url = `${wsBase}/api/v1/ws/telemetry?device_id=${encodeURIComponent(deviceId)}`
 
       try {
