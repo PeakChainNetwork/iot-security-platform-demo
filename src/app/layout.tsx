@@ -1,24 +1,25 @@
 import type { Metadata } from "next"
-import { Bricolage_Grotesque, Merriweather, JetBrains_Mono } from "next/font/google";
+import { Geist, Instrument_Serif, Geist_Mono } from "next/font/google";
 import "./globals.css"
 
 import { AppShell } from "@/components/app-shell"
 import { ThemeProvider } from "@/components/theme-provider"
 
-const fontSans = Bricolage_Grotesque({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
+  const fontSans = Geist({
+    subsets: ["latin"],
+    variable: "--font-sans",
+  });
 
-const fontSerif = Merriweather({
-  subsets: ["latin"],
-  variable: "--font-serif",
-});
+  const fontSerif = Instrument_Serif({
+    subsets: ["latin"],
+    weight: "400",
+    variable: "--font-serif",
+  });
 
-const fontMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-});
+  const fontMono = Geist_Mono({
+    subsets: ["latin"],
+    variable: "--font-mono",
+  });
 
 export const metadata: Metadata = {
   title: "IoT Security Platform",
