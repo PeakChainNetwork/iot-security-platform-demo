@@ -1,0 +1,55 @@
+# Environment variables
+
+## Dashboard (`www`)
+
+<div className="space-y-2">
+  <div className="rounded-lg border bg-card p-4">
+    <div className="flex items-center gap-2">
+      <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">NEXT_PUBLIC_BACKEND_URL</code>
+      <span className="rounded-full bg-destructive/10 px-2 py-0.5 text-[11px] font-semibold text-destructive">Required</span>
+    </div>
+    <div className="mt-2 text-sm text-muted-foreground leading-relaxed">
+      Base URL for REST calls (e.g. <code>http://localhost:8000</code>). Do not include a trailing slash — the client appends <code>/api/v1/...</code> automatically.
+    </div>
+  </div>
+  <div className="rounded-lg border bg-card p-4">
+    <div className="flex items-center gap-2">
+      <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">NEXT_PUBLIC_WS_BACKEND_URL</code>
+      <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">Optional</span>
+    </div>
+    <div className="mt-2 text-sm text-muted-foreground leading-relaxed">
+      Alternate WebSocket origin. Defaults to the REST base URL when unset.
+    </div>
+  </div>
+</div>
+
+### Example `.env.local`
+
+<Snippet title=".env.local" value="NEXT_PUBLIC_BACKEND_URL=http://localhost:8000" type="sh">
+{`NEXT_PUBLIC_BACKEND_URL=http://localhost:8000\n# NEXT_PUBLIC_WS_BACKEND_URL=ws://localhost:8000`}
+</Snippet>
+
+## Backend
+
+See `iot-security-backend/app/core/config.py` for authoritative settings (API prefix, DB URL, feature flags). Typical keys include:
+
+<div className="space-y-2">
+  <div className="rounded-lg border bg-card p-4">
+    <div className="flex items-center gap-2">
+      <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">DATABASE_URL</code>
+      <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">Config</span>
+    </div>
+    <div className="mt-2 text-sm text-muted-foreground leading-relaxed">Database connection string (PostgreSQL, SQLite, etc.).</div>
+  </div>
+  <div className="rounded-lg border bg-card p-4">
+    <div className="flex items-center gap-2">
+      <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">MQTT_BROKER_HOST</code>
+      <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">Config</span>
+    </div>
+    <div className="mt-2 text-sm text-muted-foreground leading-relaxed">Broker endpoint for MQTT ingestion.</div>
+  </div>
+</div>
+
+<Callout title="Security" variant="warning">
+Never commit production secrets into the repo. Use local `.env` files or your deployment platform's secret store.
+</Callout>

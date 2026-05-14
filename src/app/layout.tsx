@@ -1,22 +1,22 @@
 import type { Metadata } from "next"
-import { Geist, Instrument_Serif, Geist_Mono } from "next/font/google";
+import { Lora, Roboto_Mono, Inter, Geist } from "next/font/google";
 import "./globals.css"
 
-import { AppShell } from "@/components/app-shell"
 import { ThemeProvider } from "@/components/theme-provider"
+import { TooltipProvider } from "@/components/ui/tooltip"
+import { cn } from "@/lib/utils";
 
-  const fontSans = Geist({
-    subsets: ["latin"],
-    variable: "--font-sans",
-  });
+const geistHeading = Geist({subsets:['latin'],variable:'--font-heading'});
 
-  const fontSerif = Instrument_Serif({
+  const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+
+  const fontSerif = Lora({
     subsets: ["latin"],
     weight: "400",
     variable: "--font-serif",
   });
 
-  const fontMono = Geist_Mono({
+  const fontMono = Roboto_Mono({
     subsets: ["latin"],
     variable: "--font-mono",
   });
@@ -35,11 +35,11 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${fontSans.variable} ${fontSerif.variable} ${fontMono.variable} h-full antialiased`}
+      className={cn("h-full", "antialiased", fontSerif.variable, fontMono.variable, "font-sans", inter.variable, geistHeading.variable)}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="flex h-full min-h-0 flex-col">
         <ThemeProvider>
-          <AppShell>{children}</AppShell>
+          <TooltipProvider delayDuration={0}>{children}</TooltipProvider>
         </ThemeProvider>
       </body>
     </html>

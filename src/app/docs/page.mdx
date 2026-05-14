@@ -1,0 +1,42 @@
+# Documentation
+
+Welcome to the **Peaksoft IoT Security Platform** documentation. These pages cover getting started, architecture concepts, operational guides, and a full **API reference** including WebSocket contracts.
+
+## Browse
+
+<div className="grid gap-3 sm:grid-cols-2">
+  <a href="/docs/getting-started/prerequisites" className="group no-underline">
+    <div className="rounded-lg border bg-card p-4 transition-colors hover:bg-muted/40">
+      <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Getting started</div>
+      <div className="mt-1 text-sm font-medium text-foreground group-hover:text-foreground">Prerequisites, install, repo layout, env vars, local run, verification.</div>
+    </div>
+  </a>
+  <a href="/docs/concepts/architecture" className="group no-underline">
+    <div className="rounded-lg border bg-card p-4 transition-colors hover:bg-muted/40">
+      <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Concepts</div>
+      <div className="mt-1 text-sm font-medium text-foreground group-hover:text-foreground">How the dashboard, backend, and telemetry pipeline fit together.</div>
+    </div>
+  </a>
+  <a href="/docs/guides/iot-migration-guide" className="group no-underline">
+    <div className="rounded-lg border bg-card p-4 transition-colors hover:bg-muted/40">
+      <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Guides</div>
+      <div className="mt-1 text-sm font-medium text-foreground group-hover:text-foreground">Deep dives such as migrating from the simulator to real machines.</div>
+    </div>
+  </a>
+  <a href="/docs/api" className="group no-underline">
+    <div className="rounded-lg border bg-card p-4 transition-colors hover:bg-muted/40">
+      <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">API reference</div>
+      <div className="mt-1 text-sm font-medium text-foreground group-hover:text-foreground">REST endpoints from the committed OpenAPI snapshot plus WebSocket streams.</div>
+    </div>
+  </a>
+</div>
+
+## Regenerating the API snapshot
+
+After backend route or schema changes, run from the repo root (with the backend virtualenv active):
+
+<Snippet title="Export OpenAPI snapshot" value="pnpm docs:openapi" type="shell">
+{`$ pnpm docs:openapi`}
+</Snippet>
+
+This overwrites `public/openapi.json` using `iot-security-backend/scripts/export_openapi.py`.

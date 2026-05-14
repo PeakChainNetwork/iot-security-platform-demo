@@ -1,0 +1,1136 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "IoT Security Platform API",
+    "version": "0.1.0",
+    "description": "Snapshot for docs UI. Regenerate with: pnpm docs:openapi (requires backend venv)."
+  },
+  "paths": {
+    "/api/v1/devices": {
+      "get": {
+        "summary": "List devices",
+        "description": "Returns a paginated list of all registered IoT devices. Supports optional filtering by device status and type. Results are sorted by last_seen descending.",
+        "tags": ["devices"],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["online", "offline", "maintenance"] },
+            "required": false,
+            "description": "Filter devices by their current connectivity status.",
+            "example": "online"
+          },
+          {
+            "name": "device_type",
+            "in": "query",
+            "schema": { "type": "string" },
+            "required": false,
+            "description": "Filter devices by hardware type (e.g. sensor, gateway, camera).",
+            "example": "sensor"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of device objects matching the filter criteria.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/DeviceRead" }
+                },
+                "example": [
+                  {
+                    "id": "dev-001",
+                    "name": "Temperature Sensor A",
+                    "device_type": "sensor",
+                    "status": "online",
+                    "risk_score": 12.5,
+                    "compliance_score": 94.0,
+                    "last_seen": "2026-05-14T10:30:00Z"
+                  }
+                ]
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid query parameters.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ValidationError" },
+                "example": {
+                  "detail": [
+                    {
+                      "loc": ["query", "status"],
+                      "msg": "value is not a valid enumeration member; permitted: 'online', 'offline', 'maintenance'",
+                      "type": "value_error.enum"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Internal server error" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Register device",
+        "description": "Registers a new IoT device in the platform. The device will be set to 'offline' status initially with default risk and compliance scores. A unique ID is generated server-side.",
+        "tags": ["devices"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/DeviceCreate" },
+              "example": {
+                "name": "Temperature Sensor B",
+                "device_type": "sensor",
+                "ip_address": "192.168.1.42"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Device successfully registered. Returns the created device object.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DeviceRead" },
+                "example": {
+                  "id": "dev-007",
+                  "name": "Temperature Sensor B",
+                  "device_type": "sensor",
+                  "status": "offline",
+                  "risk_score": 0.0,
+                  "compliance_score": 0.0,
+                  "last_seen": null
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "A device with the same name already exists.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Device with name 'Temperature Sensor B' already exists." }
+              }
+            }
+          },
+          "422": {
+            "description": "Request body validation failed.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ValidationError" },
+                "example": {
+                  "detail": [
+                    { "loc": ["body", "name"], "msg": "field required", "type": "value_error.missing" }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Internal server error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/devices/stats/summary": {
+      "get": {
+        "summary": "Device stats summary",
+        "description": "Returns aggregate device statistics including total registered devices and how many are currently online.",
+        "tags": ["devices"],
+        "responses": {
+          "200": {
+            "description": "Aggregate device counts.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/StatsSummary" },
+                "example": { "total": 47, "online": 31 }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Internal server error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/devices/{device_id}": {
+      "get": {
+        "summary": "Get device",
+        "description": "Returns full details for a single device, including all base fields plus expanded detail sections (firmware info, network config, security posture).",
+        "tags": ["devices"],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Unique device identifier.",
+            "example": "dev-001"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Full device detail including expanded sections.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DeviceDetailRead" },
+                "example": {
+                  "id": "dev-001",
+                  "name": "Temperature Sensor A",
+                  "device_type": "sensor",
+                  "status": "online",
+                  "risk_score": 12.5,
+                  "compliance_score": 94.0,
+                  "last_seen": "2026-05-14T10:30:00Z",
+                  "sections": {
+                    "firmware": { "version": "2.1.4", "last_updated": "2026-04-10" },
+                    "network": { "ip": "192.168.1.42", "protocol": "MQTT" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Device not found.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Device 'dev-999' not found." }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Internal server error" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update device",
+        "description": "Updates mutable fields on an existing device. Only provided fields are changed; omitted fields remain unchanged.",
+        "tags": ["devices"],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Unique device identifier.",
+            "example": "dev-001"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/DeviceUpdate" },
+              "example": { "name": "Temp Sensor A (updated)", "status": "maintenance" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated device object.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DeviceRead" },
+                "example": {
+                  "id": "dev-001",
+                  "name": "Temp Sensor A (updated)",
+                  "device_type": "sensor",
+                  "status": "maintenance",
+                  "risk_score": 12.5,
+                  "compliance_score": 94.0,
+                  "last_seen": "2026-05-14T10:30:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Device not found.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Device 'dev-999' not found." }
+              }
+            }
+          },
+          "422": {
+            "description": "Request body validation failed.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ValidationError" },
+                "example": {
+                  "detail": [
+                    { "loc": ["body", "status"], "msg": "value is not a valid enumeration member", "type": "value_error.enum" }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Internal server error" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete device",
+        "description": "Permanently removes a device and all associated telemetry, alerts, and vulnerability records. This action cannot be undone.",
+        "tags": ["devices"],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Unique device identifier.",
+            "example": "dev-001"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Device deleted successfully. No response body."
+          },
+          "404": {
+            "description": "Device not found.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Device 'dev-999' not found." }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Internal server error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/devices/{device_id}/telemetry": {
+      "get": {
+        "summary": "Device telemetry",
+        "description": "Returns recent telemetry readings for a specific device, ordered by timestamp descending. Each reading contains a metric name and numeric value.",
+        "tags": ["devices"],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Unique device identifier.",
+            "example": "dev-001"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 50, "minimum": 1, "maximum": 500 },
+            "description": "Maximum number of telemetry readings to return.",
+            "example": 20
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of telemetry readings.",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/TelemetryRead" } },
+                "example": [
+                  { "timestamp": "2026-05-14T10:30:00Z", "metric": "temperature", "value": 23.4 },
+                  { "timestamp": "2026-05-14T10:29:00Z", "metric": "humidity", "value": 61.2 }
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Device not found.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Device 'dev-999' not found." }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid query parameters.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ValidationError" },
+                "example": {
+                  "detail": [
+                    { "loc": ["query", "limit"], "msg": "ensure this value is greater than or equal to 1", "type": "value_error.number.not_ge" }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Internal server error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/system/health": {
+      "get": {
+        "summary": "System health",
+        "description": "Returns real-time system health KPIs including threats detected, monitored device count, uptime percentage, and average response time.",
+        "tags": ["system"],
+        "responses": {
+          "200": {
+            "description": "Current system health metrics.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SystemHealthRead" },
+                "example": {
+                  "threats_detected": 3,
+                  "devices_monitored": 47,
+                  "system_uptime_pct": 99.97,
+                  "avg_response_time_ms": 42
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Internal server error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/metrics/pipeline": {
+      "get": {
+        "summary": "Pipeline metrics",
+        "description": "Returns per-stage metrics for the KI data processing pipeline, including throughput, success rate, average latency, and current status.",
+        "tags": ["metrics"],
+        "responses": {
+          "200": {
+            "description": "Array of pipeline stage metrics.",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/PipelineStageRead" } },
+                "example": [
+                  { "name": "ingestion", "throughput": 1420.5, "success_rate": 99.8, "avg_latency_ms": 12.3, "status": "healthy" },
+                  { "name": "enrichment", "throughput": 1380.0, "success_rate": 99.5, "avg_latency_ms": 45.1, "status": "healthy" }
+                ]
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Internal server error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/metrics/data-streams": {
+      "get": {
+        "summary": "Data streams",
+        "description": "Returns current values and status for monitored data streams (e.g. events/sec, bandwidth, queue depth).",
+        "tags": ["metrics"],
+        "responses": {
+          "200": {
+            "description": "Array of data stream readings.",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/DataStreamRead" } },
+                "example": [
+                  { "key": "events_per_sec", "name": "Events / sec", "current_value": 342.7, "unit": "events/s", "status": "normal" },
+                  { "key": "queue_depth", "name": "Queue Depth", "current_value": 18, "unit": "messages", "status": "normal" }
+                ]
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Internal server error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/alerts": {
+      "get": {
+        "summary": "List alerts",
+        "description": "Returns all security alerts across the platform, ordered by timestamp descending. Includes active, acknowledged, and dismissed alerts.",
+        "tags": ["alerts"],
+        "responses": {
+          "200": {
+            "description": "Array of alert objects.",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/AlertRead" } },
+                "example": [
+                  {
+                    "id": "alert-101",
+                    "severity": "high",
+                    "title": "Unusual outbound traffic detected",
+                    "description": "Device dev-003 sent 12 MB to an unknown external IP in the last 5 minutes.",
+                    "timestamp_ms": 1715680200000,
+                    "source": "anomaly-engine",
+                    "status": "active"
+                  }
+                ]
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Internal server error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/alerts/{alert_id}/dismiss": {
+      "post": {
+        "summary": "Dismiss alert",
+        "description": "Marks an alert as dismissed. Dismissed alerts are retained for audit but no longer surface in active views.",
+        "tags": ["alerts"],
+        "parameters": [
+          {
+            "name": "alert_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Unique alert identifier.",
+            "example": "alert-101"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Alert dismissed successfully.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DismissResponse" },
+                "example": { "id": "alert-101", "status": "dismissed", "dismissed_at": "2026-05-14T11:00:00Z" }
+              }
+            }
+          },
+          "404": {
+            "description": "Alert not found.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Alert 'alert-999' not found." }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Internal server error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/anomalies": {
+      "get": {
+        "summary": "List anomalies",
+        "description": "Returns all detected anomalies across monitored devices. Each anomaly includes the originating device, severity classification, and a confidence score from the ML model.",
+        "tags": ["anomalies"],
+        "responses": {
+          "200": {
+            "description": "Array of anomaly objects.",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/AnomalyRead" } },
+                "example": [
+                  { "id": "anom-201", "device_id": "dev-003", "severity": "high", "score": 0.92 },
+                  { "id": "anom-202", "device_id": "dev-012", "severity": "medium", "score": 0.68 }
+                ]
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Internal server error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/anomalies/stats": {
+      "get": {
+        "summary": "Anomaly stats",
+        "description": "Returns aggregate anomaly statistics including total count, breakdown by severity, and trend data over the last 24 hours.",
+        "tags": ["anomalies"],
+        "responses": {
+          "200": {
+            "description": "Anomaly statistics.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AnomalyStatsRead" },
+                "example": {
+                  "total": 14,
+                  "by_severity": { "critical": 1, "high": 3, "medium": 6, "low": 4 },
+                  "last_24h_count": 5,
+                  "avg_score": 0.72
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Internal server error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vulnerabilities/summary": {
+      "get": {
+        "summary": "Vulnerability summary",
+        "description": "Returns a platform-wide vulnerability summary including total count, breakdown by severity, and top affected device types.",
+        "tags": ["vulnerabilities"],
+        "responses": {
+          "200": {
+            "description": "Vulnerability summary data.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/VulnerabilitySummaryResponse" },
+                "example": {
+                  "total": 23,
+                  "by_severity": { "critical": 2, "high": 7, "medium": 10, "low": 4 },
+                  "affected_devices": 12,
+                  "top_cve": "CVE-2026-1234"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Internal server error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/devices/{device_id}/vulnerabilities": {
+      "get": {
+        "summary": "Device vulnerabilities",
+        "description": "Returns known vulnerabilities affecting a specific device, including CVE identifiers, severity, and remediation status.",
+        "tags": ["vulnerabilities"],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Unique device identifier.",
+            "example": "dev-003"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of vulnerability records for the device.",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/DeviceVulnerabilityRead" } },
+                "example": [
+                  {
+                    "id": "vuln-301",
+                    "cve_id": "CVE-2026-1234",
+                    "severity": "critical",
+                    "title": "Remote code execution via MQTT payload",
+                    "status": "open",
+                    "discovered_at": "2026-05-10T08:00:00Z"
+                  }
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Device not found.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Device 'dev-999' not found." }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Internal server error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pipeline/start": {
+      "post": {
+        "summary": "Start KI pipeline",
+        "description": "Starts the KI data processing pipeline. If the pipeline is already running, returns 409. Triggers ingestion, enrichment, and anomaly detection stages.",
+        "tags": ["pipeline"],
+        "responses": {
+          "200": {
+            "description": "Pipeline started successfully.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PipelineActionResponse" },
+                "example": { "status": "started", "message": "Pipeline started successfully.", "started_at": "2026-05-14T11:00:00Z" }
+              }
+            }
+          },
+          "409": {
+            "description": "Pipeline is already running.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Pipeline is already running." }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Internal server error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pipeline/stop": {
+      "post": {
+        "summary": "Stop KI pipeline",
+        "description": "Gracefully stops the KI pipeline. In-flight messages are drained before shutdown. Returns 409 if the pipeline is not currently running.",
+        "tags": ["pipeline"],
+        "responses": {
+          "200": {
+            "description": "Pipeline stopped successfully.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PipelineActionResponse" },
+                "example": { "status": "stopped", "message": "Pipeline stopped successfully.", "stopped_at": "2026-05-14T11:05:00Z" }
+              }
+            }
+          },
+          "409": {
+            "description": "Pipeline is not running.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Pipeline is not currently running." }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Internal server error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pipeline/status": {
+      "get": {
+        "summary": "Pipeline status",
+        "description": "Returns the current pipeline state (running, stopped, error) along with uptime and stage summary.",
+        "tags": ["pipeline"],
+        "responses": {
+          "200": {
+            "description": "Current pipeline status.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PipelineStatusRead" },
+                "example": { "status": "running", "uptime_seconds": 3621, "stages_healthy": 4, "stages_total": 4 }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Internal server error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pipeline/metrics": {
+      "get": {
+        "summary": "Pipeline operational metrics",
+        "description": "Returns operational metrics for the running pipeline: messages processed, error count, throughput rates, and resource usage.",
+        "tags": ["pipeline"],
+        "responses": {
+          "200": {
+            "description": "Pipeline operational metrics.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PipelineMetricsRead" },
+                "example": {
+                  "messages_processed": 142850,
+                  "errors": 12,
+                  "throughput_per_sec": 1420.5,
+                  "cpu_usage_pct": 34.2,
+                  "memory_usage_mb": 512
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Internal server error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/compliance/summary": {
+      "get": {
+        "summary": "Compliance summary",
+        "description": "Returns the platform-wide compliance posture: overall score, framework-level scores, and non-compliant device count.",
+        "tags": ["compliance"],
+        "responses": {
+          "200": {
+            "description": "Compliance summary data.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ComplianceSummaryRead" },
+                "example": {
+                  "overall_score": 87.5,
+                  "frameworks": {
+                    "NIST": 91.0,
+                    "ISO27001": 84.0,
+                    "IEC62443": 88.0
+                  },
+                  "non_compliant_devices": 5,
+                  "last_audit": "2026-05-12T00:00:00Z"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "detail": "Internal server error" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DeviceRead": {
+        "type": "object",
+        "description": "Core device representation returned by list and detail endpoints.",
+        "properties": {
+          "id": { "type": "string", "description": "Unique device identifier, generated server-side.", "example": "dev-001" },
+          "name": { "type": "string", "description": "Human-readable device name.", "example": "Temperature Sensor A" },
+          "device_type": { "type": "string", "description": "Hardware category (sensor, gateway, camera, etc.).", "example": "sensor" },
+          "status": { "type": "string", "enum": ["online", "offline", "maintenance"], "description": "Current connectivity status.", "example": "online" },
+          "risk_score": { "type": "number", "description": "Calculated risk score (0-100). Higher means more risk.", "example": 12.5 },
+          "compliance_score": { "type": "number", "description": "Compliance score (0-100). Higher means more compliant.", "example": 94.0 },
+          "last_seen": { "type": "string", "format": "date-time", "description": "ISO 8601 timestamp of the last heartbeat or telemetry event.", "example": "2026-05-14T10:30:00Z" }
+        }
+      },
+      "DeviceCreate": {
+        "type": "object",
+        "description": "Payload for registering a new device.",
+        "required": ["name", "device_type"],
+        "properties": {
+          "name": { "type": "string", "description": "Human-readable device name. Must be unique.", "example": "Temperature Sensor B" },
+          "device_type": { "type": "string", "description": "Hardware category.", "example": "sensor" },
+          "ip_address": { "type": "string", "nullable": true, "description": "Optional IP address. Set to null if the device uses dynamic addressing.", "example": "192.168.1.42" }
+        }
+      },
+      "DeviceUpdate": {
+        "type": "object",
+        "description": "Partial update payload. Only include fields you want to change.",
+        "properties": {
+          "name": { "type": "string", "description": "New device name.", "example": "Temp Sensor A (updated)" },
+          "status": { "type": "string", "enum": ["online", "offline", "maintenance"], "description": "New device status.", "example": "maintenance" }
+        }
+      },
+      "DeviceDetailRead": {
+        "description": "Extended device representation with detail sections.",
+        "allOf": [
+          { "$ref": "#/components/schemas/DeviceRead" },
+          {
+            "type": "object",
+            "properties": {
+              "sections": { "type": "object", "description": "Dynamic detail sections (firmware, network, security posture).", "example": { "firmware": { "version": "2.1.4" }, "network": { "ip": "192.168.1.42" } } }
+            }
+          }
+        ]
+      },
+      "TelemetryRead": {
+        "type": "object",
+        "description": "A single telemetry reading from a device.",
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time", "description": "ISO 8601 timestamp when the reading was captured.", "example": "2026-05-14T10:30:00Z" },
+          "metric": { "type": "string", "description": "Name of the metric (temperature, humidity, voltage, etc.).", "example": "temperature" },
+          "value": { "type": "number", "description": "Numeric value of the reading.", "example": 23.4 }
+        }
+      },
+      "StatsSummary": {
+        "type": "object",
+        "description": "Aggregate device count statistics.",
+        "properties": {
+          "total": { "type": "integer", "description": "Total registered devices.", "example": 47 },
+          "online": { "type": "integer", "description": "Devices currently online.", "example": 31 }
+        }
+      },
+      "SystemHealthRead": {
+        "type": "object",
+        "description": "System-wide health KPIs.",
+        "properties": {
+          "threats_detected": { "type": "integer", "description": "Number of active threats currently being tracked.", "example": 3 },
+          "devices_monitored": { "type": "integer", "description": "Total number of devices under active monitoring.", "example": 47 },
+          "system_uptime_pct": { "type": "number", "description": "System uptime percentage over the last 30 days.", "example": 99.97 },
+          "avg_response_time_ms": { "type": "integer", "description": "Average API response time in milliseconds.", "example": 42 }
+        }
+      },
+      "PipelineStageRead": {
+        "type": "object",
+        "description": "Metrics for a single pipeline processing stage.",
+        "properties": {
+          "name": { "type": "string", "description": "Stage name (ingestion, enrichment, detection, alerting).", "example": "ingestion" },
+          "throughput": { "type": "number", "description": "Messages processed per second.", "example": 1420.5 },
+          "success_rate": { "type": "number", "description": "Percentage of messages processed without error.", "example": 99.8 },
+          "avg_latency_ms": { "type": "number", "description": "Average processing latency in milliseconds.", "example": 12.3 },
+          "status": { "type": "string", "enum": ["healthy", "degraded", "error"], "description": "Stage health status.", "example": "healthy" }
+        }
+      },
+      "DataStreamRead": {
+        "type": "object",
+        "description": "Current value and status for a monitored data stream.",
+        "properties": {
+          "key": { "type": "string", "description": "Unique stream identifier.", "example": "events_per_sec" },
+          "name": { "type": "string", "description": "Human-readable stream name.", "example": "Events / sec" },
+          "current_value": { "type": "number", "description": "Latest recorded value.", "example": 342.7 },
+          "unit": { "type": "string", "description": "Unit of measurement.", "example": "events/s" },
+          "status": { "type": "string", "enum": ["normal", "warning", "critical"], "description": "Stream health status.", "example": "normal" }
+        }
+      },
+      "AlertRead": {
+        "type": "object",
+        "description": "A security alert raised by the anomaly engine or rule-based triggers.",
+        "properties": {
+          "id": { "type": "string", "description": "Unique alert identifier.", "example": "alert-101" },
+          "severity": { "type": "string", "enum": ["low", "medium", "high", "critical"], "description": "Alert severity classification.", "example": "high" },
+          "title": { "type": "string", "description": "Short alert title.", "example": "Unusual outbound traffic detected" },
+          "description": { "type": "string", "description": "Detailed description of the alert context.", "example": "Device dev-003 sent 12 MB to an unknown external IP." },
+          "timestamp_ms": { "type": "integer", "description": "Unix timestamp in milliseconds when the alert was raised.", "example": 1715680200000 },
+          "source": { "type": "string", "description": "System component that generated the alert.", "example": "anomaly-engine" },
+          "status": { "type": "string", "enum": ["active", "acknowledged", "dismissed"], "description": "Current alert lifecycle status.", "example": "active" }
+        }
+      },
+      "AnomalyRead": {
+        "type": "object",
+        "description": "A detected anomaly from the ML model.",
+        "properties": {
+          "id": { "type": "string", "description": "Unique anomaly identifier.", "example": "anom-201" },
+          "device_id": { "type": "string", "description": "Device that triggered the anomaly.", "example": "dev-003" },
+          "severity": { "type": "string", "enum": ["low", "medium", "high", "critical"], "description": "Severity classification based on score thresholds.", "example": "high" },
+          "score": { "type": "number", "description": "ML confidence score (0.0 to 1.0). Higher means more anomalous.", "example": 0.92 }
+        }
+      },
+      "AnomalyStatsRead": {
+        "type": "object",
+        "description": "Aggregate anomaly statistics.",
+        "properties": {
+          "total": { "type": "integer", "description": "Total anomalies detected.", "example": 14 },
+          "by_severity": { "type": "object", "description": "Count of anomalies grouped by severity.", "example": { "critical": 1, "high": 3, "medium": 6, "low": 4 } },
+          "last_24h_count": { "type": "integer", "description": "Anomalies detected in the last 24 hours.", "example": 5 },
+          "avg_score": { "type": "number", "description": "Average ML confidence score across all anomalies.", "example": 0.72 }
+        }
+      },
+      "VulnerabilitySummaryResponse": {
+        "type": "object",
+        "description": "Platform-wide vulnerability summary.",
+        "properties": {
+          "total": { "type": "integer", "description": "Total known vulnerabilities.", "example": 23 },
+          "by_severity": { "type": "object", "description": "Count grouped by severity.", "example": { "critical": 2, "high": 7, "medium": 10, "low": 4 } },
+          "affected_devices": { "type": "integer", "description": "Number of devices with at least one vulnerability.", "example": 12 },
+          "top_cve": { "type": "string", "description": "Most critical CVE identifier.", "example": "CVE-2026-1234" }
+        }
+      },
+      "DeviceVulnerabilityRead": {
+        "type": "object",
+        "description": "A vulnerability record for a specific device.",
+        "properties": {
+          "id": { "type": "string", "description": "Internal vulnerability record ID.", "example": "vuln-301" },
+          "cve_id": { "type": "string", "description": "CVE identifier from the NVD database.", "example": "CVE-2026-1234" },
+          "severity": { "type": "string", "enum": ["low", "medium", "high", "critical"], "description": "Vulnerability severity.", "example": "critical" },
+          "title": { "type": "string", "description": "Short vulnerability description.", "example": "Remote code execution via MQTT payload" },
+          "status": { "type": "string", "enum": ["open", "mitigated", "resolved"], "description": "Current remediation status.", "example": "open" },
+          "discovered_at": { "type": "string", "format": "date-time", "description": "When the vulnerability was first detected.", "example": "2026-05-10T08:00:00Z" }
+        }
+      },
+      "ComplianceSummaryRead": {
+        "type": "object",
+        "description": "Platform-wide compliance posture.",
+        "properties": {
+          "overall_score": { "type": "number", "description": "Weighted compliance score (0-100).", "example": 87.5 },
+          "frameworks": { "type": "object", "description": "Per-framework compliance scores.", "example": { "NIST": 91.0, "ISO27001": 84.0, "IEC62443": 88.0 } },
+          "non_compliant_devices": { "type": "integer", "description": "Devices failing compliance checks.", "example": 5 },
+          "last_audit": { "type": "string", "format": "date-time", "description": "Timestamp of the most recent compliance audit.", "example": "2026-05-12T00:00:00Z" }
+        }
+      },
+      "DismissResponse": {
+        "type": "object",
+        "description": "Confirmation that an alert was dismissed.",
+        "properties": {
+          "id": { "type": "string", "description": "Alert ID that was dismissed.", "example": "alert-101" },
+          "status": { "type": "string", "description": "New alert status.", "example": "dismissed" },
+          "dismissed_at": { "type": "string", "format": "date-time", "description": "Timestamp of dismissal.", "example": "2026-05-14T11:00:00Z" }
+        }
+      },
+      "PipelineActionResponse": {
+        "type": "object",
+        "description": "Response for pipeline start/stop actions.",
+        "properties": {
+          "status": { "type": "string", "description": "New pipeline state.", "example": "started" },
+          "message": { "type": "string", "description": "Human-readable result message.", "example": "Pipeline started successfully." }
+        }
+      },
+      "PipelineStatusRead": {
+        "type": "object",
+        "description": "Current pipeline operational state.",
+        "properties": {
+          "status": { "type": "string", "enum": ["running", "stopped", "error"], "description": "Pipeline state.", "example": "running" },
+          "uptime_seconds": { "type": "integer", "description": "Seconds since the pipeline was last started.", "example": 3621 },
+          "stages_healthy": { "type": "integer", "description": "Number of healthy stages.", "example": 4 },
+          "stages_total": { "type": "integer", "description": "Total number of pipeline stages.", "example": 4 }
+        }
+      },
+      "PipelineMetricsRead": {
+        "type": "object",
+        "description": "Pipeline operational metrics.",
+        "properties": {
+          "messages_processed": { "type": "integer", "description": "Total messages processed since last start.", "example": 142850 },
+          "errors": { "type": "integer", "description": "Total processing errors.", "example": 12 },
+          "throughput_per_sec": { "type": "number", "description": "Current throughput rate.", "example": 1420.5 },
+          "cpu_usage_pct": { "type": "number", "description": "CPU usage percentage.", "example": 34.2 },
+          "memory_usage_mb": { "type": "integer", "description": "Memory usage in megabytes.", "example": 512 }
+        }
+      },
+      "ValidationError": {
+        "type": "object",
+        "description": "FastAPI validation error response (422).",
+        "properties": {
+          "detail": {
+            "type": "array",
+            "description": "List of validation errors.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "loc": { "type": "array", "items": { "type": "string" }, "description": "Path to the invalid field.", "example": ["body", "name"] },
+                "msg": { "type": "string", "description": "Human-readable error message.", "example": "field required" },
+                "type": { "type": "string", "description": "Error type identifier.", "example": "value_error.missing" }
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "Standard error envelope for 4xx/5xx responses.",
+        "properties": {
+          "detail": { "type": "string", "description": "Human-readable error message.", "example": "Resource not found." }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,92 @@
+# Verification checklist
+
+Use this list after running `scripts/setup.sh` or after an environment change to confirm everything works.
+
+## Docker stack
+
+<div className="space-y-2">
+  <div className="flex gap-3 rounded-lg border bg-card p-4">
+    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">1</span>
+    <div>
+      <div className="text-sm font-medium text-foreground">All containers running</div>
+      <Snippet title="Check containers" value="docker ps" type="shell">
+        {`$ docker ps`}
+      </Snippet>
+      <div className="mt-2 text-sm text-muted-foreground leading-relaxed">You should see containers for the backend, PostgreSQL, Mosquitto, Wazuh nodes, and the dashboard.</div>
+    </div>
+  </div>
+  <div className="flex gap-3 rounded-lg border bg-card p-4">
+    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">2</span>
+    <div>
+      <div className="text-sm font-medium text-foreground">Backend health</div>
+      <Snippet title="Health check" value="curl -s http://localhost:8000/health | jq" type="shell">
+        {`$ curl -s http://localhost:8000/health | jq`}
+      </Snippet>
+      <div className="mt-2 text-sm text-muted-foreground leading-relaxed">Returns JSON with a healthy status.</div>
+    </div>
+  </div>
+  <div className="flex gap-3 rounded-lg border bg-card p-4">
+    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">3</span>
+    <div>
+      <div className="text-sm font-medium text-foreground">System health</div>
+      <Snippet title="System KPIs" value="curl -s http://localhost:8000/api/v1/system/health | jq" type="shell">
+        {`$ curl -s http://localhost:8000/api/v1/system/health | jq`}
+      </Snippet>
+      <div className="mt-2 text-sm text-muted-foreground leading-relaxed">Returns KPI-style fields used by the dashboard.</div>
+    </div>
+  </div>
+  <div className="flex gap-3 rounded-lg border bg-card p-4">
+    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">4</span>
+    <div>
+      <div className="text-sm font-medium text-foreground">Dashboard loads</div>
+      <div className="mt-1 text-sm text-muted-foreground leading-relaxed">Open <code>https://localhost</code> in your browser. Log in with <code>admin</code> / <code>SecretPassword</code>. The dashboard should show device data and live telemetry.</div>
+    </div>
+  </div>
+</div>
+
+## Backend API
+
+<div className="space-y-2">
+  <div className="flex gap-3 rounded-lg border bg-card p-4">
+    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">5</span>
+    <div>
+      <div className="text-sm font-medium text-foreground">OpenAPI docs</div>
+      <div className="mt-1 text-sm text-muted-foreground leading-relaxed">Open <code>http://localhost:8000/docs</code> to confirm FastAPI's interactive API documentation loads.</div>
+    </div>
+  </div>
+  <div className="flex gap-3 rounded-lg border bg-card p-4">
+    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">6</span>
+    <div>
+      <div className="text-sm font-medium text-foreground">Device data seeded</div>
+      <Snippet title="List devices" value="curl -s http://localhost:8000/api/v1/devices | jq" type="shell">
+        {`$ curl -s http://localhost:8000/api/v1/devices | jq`}
+      </Snippet>
+      <div className="mt-2 text-sm text-muted-foreground leading-relaxed">Should return seeded devices (dev-001 through dev-005).</div>
+    </div>
+  </div>
+</div>
+
+## Documentation site (optional)
+
+If running the Next.js frontend locally:
+
+<div className="space-y-2">
+  <div className="flex gap-3 rounded-lg border bg-card p-4">
+    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">7</span>
+    <div>
+      <div className="text-sm font-medium text-foreground">Docs root</div>
+      <div className="mt-1 text-sm text-muted-foreground leading-relaxed"><code>/docs</code> renders the documentation introduction.</div>
+    </div>
+  </div>
+  <div className="flex gap-3 rounded-lg border bg-card p-4">
+    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">8</span>
+    <div>
+      <div className="text-sm font-medium text-foreground">API explorer</div>
+      <div className="mt-1 text-sm text-muted-foreground leading-relaxed"><code>/docs/api</code> loads the API explorer and lists operations from <code>public/openapi.json</code>.</div>
+    </div>
+  </div>
+</div>
+
+<Callout title="Regenerate OpenAPI" variant="default">
+After backend API changes, run <code>pnpm docs:openapi</code> from the <code>www</code> directory and commit the updated snapshot.
+</Callout>

@@ -29,7 +29,7 @@ export function AppShell({
   return (
     <div
       className={cn(
-        "min-h-full flex flex-col bg-gradient-to-b from-background via-background to-muted/30",
+        "flex min-h-0 flex-1 flex-col bg-gradient-to-b from-background via-background to-muted/30",
         className
       )}
     >

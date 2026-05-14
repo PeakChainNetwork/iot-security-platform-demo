@@ -1,0 +1,946 @@
+{
+  "info": {
+    "_postman_id": "iot-security-platform-collection",
+    "name": "IoT Security Platform API",
+    "description": "Complete REST API collection for the IoT Security Platform.\n\nIncludes all device management, system health, metrics, alerts, anomalies, vulnerabilities, pipeline control, and compliance endpoints.\n\nImported from the committed OpenAPI 3.1.0 specification.\n\n## Setup\n1. Import the companion environment file (IoT Security Platform Environment)\n2. Set the `base_url` variable to your backend address (default: http://localhost:8000)\n3. Start making requests!",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Devices",
+      "description": "IoT device management — list, register, update, delete, telemetry.",
+      "item": [
+        {
+          "name": "List devices",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/devices?status=online&device_type=sensor",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "devices"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "online",
+                  "description": "Filter devices by connectivity status (online | offline | maintenance).",
+                  "disabled": true
+                },
+                {
+                  "key": "device_type",
+                  "value": "sensor",
+                  "description": "Filter devices by hardware type (e.g. sensor, gateway, camera).",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Returns a paginated list of all registered IoT devices. Supports optional filtering by device status and type. Results are sorted by last_seen descending."
+          },
+          "response": [
+            {
+              "name": "200 — Device list",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/devices",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "devices"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "[\n  {\n    \"id\": \"dev-001\",\n    \"name\": \"Temperature Sensor A\",\n    \"device_type\": \"sensor\",\n    \"status\": \"online\",\n    \"risk_score\": 12.5,\n    \"compliance_score\": 94.0,\n    \"last_seen\": \"2026-05-14T10:30:00Z\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Register device",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Temperature Sensor B\",\n  \"device_type\": \"sensor\",\n  \"ip_address\": \"192.168.1.42\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/devices",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "devices"]
+            },
+            "description": "Registers a new IoT device in the platform. The device will be set to 'offline' status initially with default risk and compliance scores. A unique ID is generated server-side."
+          },
+          "response": [
+            {
+              "name": "201 — Device created",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/devices",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "devices"]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"id\": \"dev-007\",\n  \"name\": \"Temperature Sensor B\",\n  \"device_type\": \"sensor\",\n  \"status\": \"offline\",\n  \"risk_score\": 0.0,\n  \"compliance_score\": 0.0,\n  \"last_seen\": null\n}"
+            },
+            {
+              "name": "409 — Duplicate name",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/devices",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "devices"]
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"detail\": \"Device with name 'Temperature Sensor B' already exists.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Device stats summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/devices/stats/summary",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "devices", "stats", "summary"]
+            },
+            "description": "Returns aggregate device statistics including total registered devices and how many are currently online."
+          },
+          "response": [
+            {
+              "name": "200 — Stats summary",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/devices/stats/summary",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "devices", "stats", "summary"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"total\": 47,\n  \"online\": 31\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get device",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/devices/:device_id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "devices", ":device_id"],
+              "variable": [
+                {
+                  "key": "device_id",
+                  "value": "dev-001",
+                  "description": "Unique device identifier."
+                }
+              ]
+            },
+            "description": "Returns full details for a single device, including all base fields plus expanded detail sections (firmware info, network config, security posture)."
+          },
+          "response": [
+            {
+              "name": "200 — Device detail",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/devices/:device_id",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "devices", ":device_id"],
+                  "variable": [{ "key": "device_id", "value": "dev-001" }]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"id\": \"dev-001\",\n  \"name\": \"Temperature Sensor A\",\n  \"device_type\": \"sensor\",\n  \"status\": \"online\",\n  \"risk_score\": 12.5,\n  \"compliance_score\": 94.0,\n  \"last_seen\": \"2026-05-14T10:30:00Z\",\n  \"sections\": {\n    \"firmware\": { \"version\": \"2.1.4\", \"last_updated\": \"2026-04-10\" },\n    \"network\": { \"ip\": \"192.168.1.42\", \"protocol\": \"MQTT\" }\n  }\n}"
+            },
+            {
+              "name": "404 — Not found",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/devices/:device_id",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "devices", ":device_id"],
+                  "variable": [{ "key": "device_id", "value": "dev-999" }]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"detail\": \"Device 'dev-999' not found.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update device",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Temp Sensor A (updated)\",\n  \"status\": \"maintenance\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/devices/:device_id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "devices", ":device_id"],
+              "variable": [
+                {
+                  "key": "device_id",
+                  "value": "dev-001",
+                  "description": "Unique device identifier."
+                }
+              ]
+            },
+            "description": "Updates mutable fields on an existing device. Only provided fields are changed; omitted fields remain unchanged."
+          },
+          "response": [
+            {
+              "name": "200 — Updated device",
+              "originalRequest": {
+                "method": "PUT",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/devices/:device_id",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "devices", ":device_id"],
+                  "variable": [{ "key": "device_id", "value": "dev-001" }]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"id\": \"dev-001\",\n  \"name\": \"Temp Sensor A (updated)\",\n  \"device_type\": \"sensor\",\n  \"status\": \"maintenance\",\n  \"risk_score\": 12.5,\n  \"compliance_score\": 94.0,\n  \"last_seen\": \"2026-05-14T10:30:00Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete device",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/devices/:device_id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "devices", ":device_id"],
+              "variable": [
+                {
+                  "key": "device_id",
+                  "value": "dev-001",
+                  "description": "Unique device identifier."
+                }
+              ]
+            },
+            "description": "Permanently removes a device and all associated telemetry, alerts, and vulnerability records. This action cannot be undone."
+          },
+          "response": [
+            {
+              "name": "204 — Deleted",
+              "originalRequest": {
+                "method": "DELETE",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/devices/:device_id",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "devices", ":device_id"],
+                  "variable": [{ "key": "device_id", "value": "dev-001" }]
+                }
+              },
+              "status": "No Content",
+              "code": 204,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "body": ""
+            },
+            {
+              "name": "404 — Not found",
+              "originalRequest": {
+                "method": "DELETE",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/devices/:device_id",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "devices", ":device_id"],
+                  "variable": [{ "key": "device_id", "value": "dev-999" }]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"detail\": \"Device 'dev-999' not found.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Device telemetry",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/devices/:device_id/telemetry?limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "devices", ":device_id", "telemetry"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Maximum number of telemetry readings to return (1–500, default 50).",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "device_id",
+                  "value": "dev-001",
+                  "description": "Unique device identifier."
+                }
+              ]
+            },
+            "description": "Returns recent telemetry readings for a specific device, ordered by timestamp descending. Each reading contains a metric name and numeric value."
+          },
+          "response": [
+            {
+              "name": "200 — Telemetry readings",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/devices/:device_id/telemetry",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "devices", ":device_id", "telemetry"],
+                  "variable": [{ "key": "device_id", "value": "dev-001" }]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "[\n  { \"timestamp\": \"2026-05-14T10:30:00Z\", \"metric\": \"temperature\", \"value\": 23.4 },\n  { \"timestamp\": \"2026-05-14T10:29:00Z\", \"metric\": \"humidity\", \"value\": 61.2 }\n]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "System",
+      "description": "System-wide health KPIs.",
+      "item": [
+        {
+          "name": "System health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/system/health",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "system", "health"]
+            },
+            "description": "Returns real-time system health KPIs including threats detected, monitored device count, uptime percentage, and average response time."
+          },
+          "response": [
+            {
+              "name": "200 — System health",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/system/health",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "system", "health"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"threats_detected\": 3,\n  \"devices_monitored\": 47,\n  \"system_uptime_pct\": 99.97,\n  \"avg_response_time_ms\": 42\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Metrics",
+      "description": "Pipeline and data stream metrics.",
+      "item": [
+        {
+          "name": "Pipeline metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/metrics/pipeline",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "metrics", "pipeline"]
+            },
+            "description": "Returns per-stage metrics for the KI data processing pipeline, including throughput, success rate, average latency, and current status."
+          },
+          "response": [
+            {
+              "name": "200 — Pipeline stages",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/metrics/pipeline",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "metrics", "pipeline"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "[\n  { \"name\": \"ingestion\", \"throughput\": 1420.5, \"success_rate\": 99.8, \"avg_latency_ms\": 12.3, \"status\": \"healthy\" },\n  { \"name\": \"enrichment\", \"throughput\": 1380.0, \"success_rate\": 99.5, \"avg_latency_ms\": 45.1, \"status\": \"healthy\" }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Data streams",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/metrics/data-streams",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "metrics", "data-streams"]
+            },
+            "description": "Returns current values and status for monitored data streams (e.g. events/sec, bandwidth, queue depth)."
+          },
+          "response": [
+            {
+              "name": "200 — Data streams",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/metrics/data-streams",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "metrics", "data-streams"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "[\n  { \"key\": \"events_per_sec\", \"name\": \"Events / sec\", \"current_value\": 342.7, \"unit\": \"events/s\", \"status\": \"normal\" },\n  { \"key\": \"queue_depth\", \"name\": \"Queue Depth\", \"current_value\": 18, \"unit\": \"messages\", \"status\": \"normal\" }\n]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Alerts",
+      "description": "Security alert management.",
+      "item": [
+        {
+          "name": "List alerts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/alerts",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "alerts"]
+            },
+            "description": "Returns all security alerts across the platform, ordered by timestamp descending. Includes active, acknowledged, and dismissed alerts."
+          },
+          "response": [
+            {
+              "name": "200 — Alert list",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/alerts",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "alerts"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "[\n  {\n    \"id\": \"alert-101\",\n    \"severity\": \"high\",\n    \"title\": \"Unusual outbound traffic detected\",\n    \"description\": \"Device dev-003 sent 12 MB to an unknown external IP in the last 5 minutes.\",\n    \"timestamp_ms\": 1715680200000,\n    \"source\": \"anomaly-engine\",\n    \"status\": \"active\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Dismiss alert",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/alerts/:alert_id/dismiss",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "alerts", ":alert_id", "dismiss"],
+              "variable": [
+                {
+                  "key": "alert_id",
+                  "value": "alert-101",
+                  "description": "Unique alert identifier."
+                }
+              ]
+            },
+            "description": "Marks an alert as dismissed. Dismissed alerts are retained for audit but no longer surface in active views."
+          },
+          "response": [
+            {
+              "name": "200 — Dismissed",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/alerts/:alert_id/dismiss",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "alerts", ":alert_id", "dismiss"],
+                  "variable": [{ "key": "alert_id", "value": "alert-101" }]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"id\": \"alert-101\",\n  \"status\": \"dismissed\",\n  \"dismissed_at\": \"2026-05-14T11:00:00Z\"\n}"
+            },
+            {
+              "name": "404 — Not found",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/alerts/:alert_id/dismiss",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "alerts", ":alert_id", "dismiss"],
+                  "variable": [{ "key": "alert_id", "value": "alert-999" }]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"detail\": \"Alert 'alert-999' not found.\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Anomalies",
+      "description": "ML-detected anomaly data.",
+      "item": [
+        {
+          "name": "List anomalies",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/anomalies",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "anomalies"]
+            },
+            "description": "Returns all detected anomalies across monitored devices. Each anomaly includes the originating device, severity classification, and a confidence score from the ML model."
+          },
+          "response": [
+            {
+              "name": "200 — Anomaly list",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/anomalies",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "anomalies"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "[\n  { \"id\": \"anom-201\", \"device_id\": \"dev-003\", \"severity\": \"high\", \"score\": 0.92 },\n  { \"id\": \"anom-202\", \"device_id\": \"dev-012\", \"severity\": \"medium\", \"score\": 0.68 }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Anomaly stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/anomalies/stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "anomalies", "stats"]
+            },
+            "description": "Returns aggregate anomaly statistics including total count, breakdown by severity, and trend data over the last 24 hours."
+          },
+          "response": [
+            {
+              "name": "200 — Anomaly stats",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/anomalies/stats",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "anomalies", "stats"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"total\": 14,\n  \"by_severity\": { \"critical\": 1, \"high\": 3, \"medium\": 6, \"low\": 4 },\n  \"last_24h_count\": 5,\n  \"avg_score\": 0.72\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Vulnerabilities",
+      "description": "Vulnerability tracking and summaries.",
+      "item": [
+        {
+          "name": "Vulnerability summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/vulnerabilities/summary",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "vulnerabilities", "summary"]
+            },
+            "description": "Returns a platform-wide vulnerability summary including total count, breakdown by severity, and top affected device types."
+          },
+          "response": [
+            {
+              "name": "200 — Vulnerability summary",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/vulnerabilities/summary",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "vulnerabilities", "summary"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"total\": 23,\n  \"by_severity\": { \"critical\": 2, \"high\": 7, \"medium\": 10, \"low\": 4 },\n  \"affected_devices\": 12,\n  \"top_cve\": \"CVE-2026-1234\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Device vulnerabilities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/devices/:device_id/vulnerabilities",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "devices", ":device_id", "vulnerabilities"],
+              "variable": [
+                {
+                  "key": "device_id",
+                  "value": "dev-003",
+                  "description": "Unique device identifier."
+                }
+              ]
+            },
+            "description": "Returns known vulnerabilities affecting a specific device, including CVE identifiers, severity, and remediation status."
+          },
+          "response": [
+            {
+              "name": "200 — Device vulnerabilities",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/devices/:device_id/vulnerabilities",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "devices", ":device_id", "vulnerabilities"],
+                  "variable": [{ "key": "device_id", "value": "dev-003" }]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "[\n  {\n    \"id\": \"vuln-301\",\n    \"cve_id\": \"CVE-2026-1234\",\n    \"severity\": \"critical\",\n    \"title\": \"Remote code execution via MQTT payload\",\n    \"status\": \"open\",\n    \"discovered_at\": \"2026-05-10T08:00:00Z\"\n  }\n]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Pipeline",
+      "description": "KI data processing pipeline control and status.",
+      "item": [
+        {
+          "name": "Start KI pipeline",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/pipeline/start",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "pipeline", "start"]
+            },
+            "description": "Starts the KI data processing pipeline. If the pipeline is already running, returns 409. Triggers ingestion, enrichment, and anomaly detection stages."
+          },
+          "response": [
+            {
+              "name": "200 — Started",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/pipeline/start",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "pipeline", "start"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"status\": \"started\",\n  \"message\": \"Pipeline started successfully.\",\n  \"started_at\": \"2026-05-14T11:00:00Z\"\n}"
+            },
+            {
+              "name": "409 — Already running",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/pipeline/start",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "pipeline", "start"]
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"detail\": \"Pipeline is already running.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Stop KI pipeline",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/pipeline/stop",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "pipeline", "stop"]
+            },
+            "description": "Gracefully stops the KI pipeline. In-flight messages are drained before shutdown. Returns 409 if the pipeline is not currently running."
+          },
+          "response": [
+            {
+              "name": "200 — Stopped",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/pipeline/stop",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "pipeline", "stop"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"status\": \"stopped\",\n  \"message\": \"Pipeline stopped successfully.\",\n  \"stopped_at\": \"2026-05-14T11:05:00Z\"\n}"
+            },
+            {
+              "name": "409 — Not running",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/pipeline/stop",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "pipeline", "stop"]
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"detail\": \"Pipeline is not currently running.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Pipeline status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/pipeline/status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "pipeline", "status"]
+            },
+            "description": "Returns the current pipeline state (running, stopped, error) along with uptime and stage summary."
+          },
+          "response": [
+            {
+              "name": "200 — Pipeline status",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/pipeline/status",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "pipeline", "status"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"status\": \"running\",\n  \"uptime_seconds\": 3621,\n  \"stages_healthy\": 4,\n  \"stages_total\": 4\n}"
+            }
+          ]
+        },
+        {
+          "name": "Pipeline operational metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/pipeline/metrics",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "pipeline", "metrics"]
+            },
+            "description": "Returns operational metrics for the running pipeline: messages processed, error count, throughput rates, and resource usage."
+          },
+          "response": [
+            {
+              "name": "200 — Pipeline metrics",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/pipeline/metrics",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "pipeline", "metrics"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"messages_processed\": 142850,\n  \"errors\": 12,\n  \"throughput_per_sec\": 1420.5,\n  \"cpu_usage_pct\": 34.2,\n  \"memory_usage_mb\": 512\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Compliance",
+      "description": "Compliance posture and framework scores.",
+      "item": [
+        {
+          "name": "Compliance summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/compliance/summary",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "compliance", "summary"]
+            },
+            "description": "Returns the platform-wide compliance posture: overall score, framework-level scores, and non-compliant device count."
+          },
+          "response": [
+            {
+              "name": "200 — Compliance summary",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/api/v1/compliance/summary",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "compliance", "summary"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"overall_score\": 87.5,\n  \"frameworks\": {\n    \"NIST\": 91.0,\n    \"ISO27001\": 84.0,\n    \"IEC62443\": 88.0\n  },\n  \"non_compliant_devices\": 5,\n  \"last_audit\": \"2026-05-12T00:00:00Z\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "WebSocket",
+      "description": "Real-time WebSocket streams. Note: Postman supports WebSocket requests — create a new WebSocket request and use these URLs.",
+      "item": [
+        {
+          "name": "Live telemetry stream",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/ws/telemetry?device_id=dev-001",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "ws", "telemetry"],
+              "query": [
+                {
+                  "key": "device_id",
+                  "value": "dev-001",
+                  "description": "Filter stream to a single device. Omit for broadcast feed."
+                }
+              ]
+            },
+            "description": "WebSocket endpoint — use ws:// or wss:// protocol.\n\nOpens a persistent WebSocket connection that streams real-time telemetry readings from IoT devices.\n\nServer → Client message example:\n```json\n{\n  \"device_id\": \"dev-001\",\n  \"metric\": \"temperature\",\n  \"value\": 23.4,\n  \"unit\": \"°C\",\n  \"timestamp\": \"2026-05-14T10:30:01Z\"\n}\n```\n\nConnection URL: ws://localhost:8000/api/v1/ws/telemetry?device_id=dev-001"
+          },
+          "response": []
+        },
+        {
+          "name": "Dashboard widget stream",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/ws/dashboard",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "ws", "dashboard"]
+            },
+            "description": "WebSocket endpoint — use ws:// or wss:// protocol.\n\nStreams real-time updates for all dashboard widgets. Messages arrive as typed envelopes.\n\nEnvelope types: system_health, pipeline_stages, data_streams, alerts, anomaly_stats, device_stats\n\nServer → Client message example:\n```json\n{\n  \"type\": \"system_health\",\n  \"data\": {\n    \"threats_detected\": 3,\n    \"devices_monitored\": 47,\n    \"system_uptime_pct\": 99.97,\n    \"avg_response_time_ms\": 42\n  },\n  \"timestamp\": \"2026-05-14T10:30:05Z\"\n}\n```\n\nConnection URL: ws://localhost:8000/api/v1/ws/dashboard"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

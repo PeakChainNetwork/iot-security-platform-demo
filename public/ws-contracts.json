@@ -1,0 +1,190 @@
+[
+  {
+    "id": "ws-telemetry",
+    "method": "WEBSOCKET",
+    "path": "/api/v1/ws/telemetry",
+    "summary": "Live telemetry stream (MQTT-backed)",
+    "description": "Opens a persistent WebSocket connection that streams real-time telemetry readings from IoT devices. The server pushes JSON messages as they arrive from the MQTT ingestion bridge. Use the optional device_id query parameter to subscribe to a single device; omit it to receive the broadcast feed for all devices. The connection remains open until either side closes it.",
+    "queryParameters": [
+      {
+        "name": "device_id",
+        "required": false,
+        "schema": { "type": "string" },
+        "description": "Filter the stream to a single device. When set, only telemetry for this device ID is pushed. Omit for the full broadcast feed.",
+        "example": "dev-001"
+      }
+    ],
+    "protocol": "WebSocket",
+    "exampleUrl": "ws://localhost:8000/api/v1/ws/telemetry?device_id=dev-001",
+    "clientToServer": {
+      "description": "The client can optionally send text frames to keep the connection alive. The server ignores the content but resets the idle timeout on any received frame.",
+      "messageSchema": {
+        "type": "string",
+        "description": "Any text frame (typically \"ping\" or empty string)."
+      },
+      "example": "ping"
+    },
+    "serverToClient": {
+      "description": "The server pushes JSON-encoded telemetry readings. Each message represents a single metric value captured at a point in time for a specific device.",
+      "messageSchema": {
+        "type": "object",
+        "properties": {
+          "device_id": { "type": "string", "description": "Device that produced the reading.", "example": "dev-001" },
+          "metric": { "type": "string", "description": "Metric name (temperature, humidity, voltage, cpu_load, etc.).", "example": "temperature" },
+          "value": { "type": "number", "description": "Numeric metric value.", "example": 23.4 },
+          "unit": { "type": "string", "description": "Unit of measurement.", "example": "°C" },
+          "timestamp": { "type": "string", "format": "date-time", "description": "ISO 8601 capture timestamp.", "example": "2026-05-14T10:30:01Z" }
+        }
+      },
+      "example": {
+        "device_id": "dev-001",
+        "metric": "temperature",
+        "value": 23.4,
+        "unit": "°C",
+        "timestamp": "2026-05-14T10:30:01Z"
+      }
+    },
+    "errors": [
+      {
+        "code": 1008,
+        "reason": "Policy violation",
+        "description": "Sent when the device_id query parameter references a device that does not exist.",
+        "example": { "code": 1008, "reason": "Device 'dev-999' not found." }
+      },
+      {
+        "code": 1011,
+        "reason": "Internal error",
+        "description": "Sent when the backend MQTT bridge is unavailable or encounters an unrecoverable error.",
+        "example": { "code": 1011, "reason": "MQTT bridge connection lost." }
+      },
+      {
+        "code": 1001,
+        "reason": "Going away",
+        "description": "Sent when the server is shutting down gracefully (e.g. during deployment).",
+        "example": { "code": 1001, "reason": "Server shutting down." }
+      }
+    ],
+    "connectionLifecycle": {
+      "handshake": "Standard HTTP upgrade to WebSocket at the given path. No authentication headers required in development; production requires a valid session cookie or Bearer token in the Sec-WebSocket-Protocol header.",
+      "heartbeat": "The server sends a WebSocket ping frame every 30 seconds. If the client does not respond with a pong within 10 seconds, the connection is closed with code 1001.",
+      "reconnection": "Clients should implement exponential backoff reconnection (initial delay 1s, max 30s). The server does not buffer missed messages during disconnection.",
+      "idleTimeout": "Connections idle for more than 60 seconds (no frames in either direction) are closed by the server."
+    },
+    "jsExample": "const ws = new WebSocket(\n  `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/api/v1/ws/telemetry?device_id=dev-001`\n);\n\nws.onopen = () => console.log('Connected to telemetry stream');\n\nws.onmessage = (event) => {\n  const reading = JSON.parse(event.data);\n  console.log(`${reading.device_id}: ${reading.metric} = ${reading.value}${reading.unit}`);\n};\n\nws.onclose = (event) => {\n  console.log(`Closed: ${event.code} ${event.reason}`);\n};\n\nws.onerror = (err) => console.error('WebSocket error:', err);"
+  },
+  {
+    "id": "ws-dashboard",
+    "method": "WEBSOCKET",
+    "path": "/api/v1/ws/dashboard",
+    "summary": "Dashboard widget update stream",
+    "description": "Opens a persistent WebSocket connection that streams real-time updates for all dashboard widgets. Messages arrive as typed envelopes with a discriminator field (type) and a data payload. The frontend dashboard hook dispatches each envelope to the appropriate widget reducer. This single connection replaces polling for KPIs, pipeline status, data streams, alerts, and anomaly counts.",
+    "queryParameters": [],
+    "protocol": "WebSocket",
+    "exampleUrl": "ws://localhost:8000/api/v1/ws/dashboard",
+    "clientToServer": {
+      "description": "The client can send text frames to keep the connection alive. No structured commands are currently supported.",
+      "messageSchema": {
+        "type": "string",
+        "description": "Any text frame (typically \"ping\" or empty string)."
+      },
+      "example": "ping"
+    },
+    "serverToClient": {
+      "description": "The server pushes typed JSON envelopes. Each envelope has a type field that identifies the widget and a data payload with the updated values. Messages arrive at varying intervals depending on the data source (KPIs every 5s, alerts on-demand, pipeline metrics every 2s).",
+      "messageSchema": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["system_health", "pipeline_stages", "data_streams", "alerts", "anomaly_stats", "device_stats"],
+            "description": "Envelope type discriminator. Determines which widget should consume the data.",
+            "example": "system_health"
+          },
+          "data": {
+            "type": "object",
+            "description": "Payload shape varies by type. See examples below."
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Server timestamp when the envelope was emitted.",
+            "example": "2026-05-14T10:30:05Z"
+          }
+        }
+      },
+      "examples": [
+        {
+          "label": "system_health",
+          "description": "System KPIs: threats, monitored devices, uptime, response time.",
+          "payload": {
+            "type": "system_health",
+            "data": {
+              "threats_detected": 3,
+              "devices_monitored": 47,
+              "system_uptime_pct": 99.97,
+              "avg_response_time_ms": 42
+            },
+            "timestamp": "2026-05-14T10:30:05Z"
+          }
+        },
+        {
+          "label": "pipeline_stages",
+          "description": "Per-stage pipeline metrics (throughput, latency, status).",
+          "payload": {
+            "type": "pipeline_stages",
+            "data": [
+              { "name": "ingestion", "throughput": 1420.5, "success_rate": 99.8, "avg_latency_ms": 12.3, "status": "healthy" },
+              { "name": "enrichment", "throughput": 1380.0, "success_rate": 99.5, "avg_latency_ms": 45.1, "status": "healthy" }
+            ],
+            "timestamp": "2026-05-14T10:30:07Z"
+          }
+        },
+        {
+          "label": "alerts",
+          "description": "Pushed when a new alert is raised or an existing alert changes status.",
+          "payload": {
+            "type": "alerts",
+            "data": {
+              "id": "alert-101",
+              "severity": "high",
+              "title": "Unusual outbound traffic detected",
+              "status": "active",
+              "timestamp_ms": 1715680200000
+            },
+            "timestamp": "2026-05-14T10:30:10Z"
+          }
+        },
+        {
+          "label": "device_stats",
+          "description": "Aggregate device counts.",
+          "payload": {
+            "type": "device_stats",
+            "data": { "total": 47, "online": 31 },
+            "timestamp": "2026-05-14T10:30:15Z"
+          }
+        }
+      ]
+    },
+    "errors": [
+      {
+        "code": 1011,
+        "reason": "Internal error",
+        "description": "Sent when the backend event bus encounters an unrecoverable error.",
+        "example": { "code": 1011, "reason": "Event bus subscription failed." }
+      },
+      {
+        "code": 1001,
+        "reason": "Going away",
+        "description": "Sent when the server is shutting down gracefully.",
+        "example": { "code": 1001, "reason": "Server shutting down." }
+      }
+    ],
+    "connectionLifecycle": {
+      "handshake": "Standard HTTP upgrade to WebSocket. No authentication required in development; production requires a valid session cookie.",
+      "heartbeat": "Server sends a WebSocket ping frame every 30 seconds. Client must respond with pong within 10 seconds or the connection is closed.",
+      "reconnection": "Clients should reconnect with exponential backoff (1s initial, 30s max). On reconnect, the server immediately pushes a full state snapshot for all widget types.",
+      "idleTimeout": "No idle timeout — the server continuously pushes updates."
+    },
+    "jsExample": "const ws = new WebSocket(\n  `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/api/v1/ws/dashboard`\n);\n\nws.onmessage = (event) => {\n  const envelope = JSON.parse(event.data);\n  switch (envelope.type) {\n    case 'system_health':\n      updateHealthWidget(envelope.data);\n      break;\n    case 'pipeline_stages':\n      updatePipelineWidget(envelope.data);\n      break;\n    case 'alerts':\n      handleNewAlert(envelope.data);\n      break;\n    case 'device_stats':\n      updateDeviceCount(envelope.data);\n      break;\n    default:\n      console.warn('Unknown envelope type:', envelope.type);\n  }\n};\n\nws.onclose = (event) => {\n  console.log(`Dashboard WS closed: ${event.code}`);\n  // Reconnect with backoff...\n};"
+  }
+]

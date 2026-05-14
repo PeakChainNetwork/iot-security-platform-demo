@@ -1,0 +1,89 @@
+# Installation
+
+The entire stack — backend, database, message broker, Wazuh SIEM, dashboard, ML training, and telemetry simulator — is bootstrapped by a single script.
+
+## 1. Clone the monorepo
+
+<Snippet title="Clone the repository" value="git clone https://github.com/PeakChainNetwork/peaksoft-security-platform.git && cd peaksoft-security-platform" type="shell">
+{`$ git clone https://github.com/PeakChainNetwork/peaksoft-security-platform.git\n$ cd peaksoft-security-platform`}
+</Snippet>
+
+## 2. Run the setup script
+
+<Snippet title="One-click setup" value="bash scripts/setup.sh" type="shell">
+{`$ bash scripts/setup.sh`}
+</Snippet>
+
+<Callout title="What the script does" variant="info">
+This single command handles the entire bootstrap sequence automatically. Sit back — it takes a few minutes on first run.
+</Callout>
+
+### Setup steps (handled for you)
+
+<div className="space-y-2">
+  <div className="flex gap-3 rounded-lg border bg-card p-4">
+    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">1</span>
+    <div>
+      <div className="text-sm font-medium text-foreground">Checks Docker &amp; Compose</div>
+      <div className="mt-1 text-sm text-muted-foreground leading-relaxed">Validates that Docker and Compose V2 (or V1 fallback) are available.</div>
+    </div>
+  </div>
+  <div className="flex gap-3 rounded-lg border bg-card p-4">
+    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">2</span>
+    <div>
+      <div className="text-sm font-medium text-foreground">Generates SSL certificates</div>
+      <div className="mt-1 text-sm text-muted-foreground leading-relaxed">Creates TLS certs for the Wazuh indexer cluster.</div>
+    </div>
+  </div>
+  <div className="flex gap-3 rounded-lg border bg-card p-4">
+    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">3</span>
+    <div>
+      <div className="text-sm font-medium text-foreground">Builds Docker images</div>
+      <div className="mt-1 text-sm text-muted-foreground leading-relaxed">Builds the IoT security backend and the custom Peaksoft dashboard image.</div>
+    </div>
+  </div>
+  <div className="flex gap-3 rounded-lg border bg-card p-4">
+    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">4</span>
+    <div>
+      <div className="text-sm font-medium text-foreground">Launches the stack</div>
+      <div className="mt-1 text-sm text-muted-foreground leading-relaxed">Starts all services via Docker Compose — database, broker, Wazuh nodes, backend, and dashboard.</div>
+    </div>
+  </div>
+  <div className="flex gap-3 rounded-lg border bg-card p-4">
+    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">5</span>
+    <div>
+      <div className="text-sm font-medium text-foreground">Runs migrations &amp; seeds data</div>
+      <div className="mt-1 text-sm text-muted-foreground leading-relaxed">Waits for PostgreSQL, applies Alembic migrations, and seeds initial device data.</div>
+    </div>
+  </div>
+  <div className="flex gap-3 rounded-lg border bg-card p-4">
+    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">6</span>
+    <div>
+      <div className="text-sm font-medium text-foreground">Starts simulator &amp; trains models</div>
+      <div className="mt-1 text-sm text-muted-foreground leading-relaxed">Launches the MQTT telemetry simulator and trains the KI-Pipeline ML models.</div>
+    </div>
+  </div>
+</div>
+
+## 3. Access the platform
+
+Once setup completes, the script prints connection details:
+
+<div className="grid gap-3 sm:grid-cols-3">
+  <div className="rounded-lg border bg-card p-4">
+    <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Dashboard</div>
+    <code className="mt-1 block text-sm font-medium text-foreground">https://localhost</code>
+  </div>
+  <div className="rounded-lg border bg-card p-4">
+    <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Username</div>
+    <code className="mt-1 block text-sm font-medium text-foreground">admin</code>
+  </div>
+  <div className="rounded-lg border bg-card p-4">
+    <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Password</div>
+    <code className="mt-1 block text-sm font-medium text-foreground">SecretPassword</code>
+  </div>
+</div>
+
+<Callout title="Startup time" variant="default">
+It may take 2–3 minutes for all services to become healthy after setup finishes.
+</Callout>
