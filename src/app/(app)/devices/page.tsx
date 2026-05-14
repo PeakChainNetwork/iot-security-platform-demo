@@ -10,7 +10,7 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from "@/components/ui/empty"
-import { getDevices } from "@/lib/api"
+import { ApiError, getDevices } from "@/lib/api"
 import type { DeviceRead } from "@/lib/backend-types"
 import { minutesSince, parseBackendDate } from "@/lib/dates"
 
@@ -114,7 +114,18 @@ function DeviceCard({ device }: { device: DeviceRead }) {
 }
 
 export default async function DevicesPage() {
-  const devices = await getDevices()
+  let devices: DeviceRead[] = []
+  let error: string | null = null
+
+  try {
+    devices = await getDevices()
+  } catch (err) {
+    if (err instanceof ApiError) {
+      error = err.message
+    } else {
+      error = "Could not reach the backend. Make sure the server is running."
+    }
+  }
 
   return (
     <div className="flex flex-1 flex-col">
@@ -128,7 +139,24 @@ export default async function DevicesPage() {
           </p>
         </div>
 
-        {devices.length === 0 ? (
+        {error ? (
+          <Empty className="bg-card">
+            <EmptyHeader>
+              <EmptyTitle>Couldn't load devices</EmptyTitle>
+              <EmptyDescription>{error}</EmptyDescription>
+              <EmptyDescription>
+                Check that the backend is running and{" "}
+                <code className="rounded bg-muted px-1 py-0.5 text-xs">NEXT_PUBLIC_BACKEND_URL</code>{" "}
+                is set correctly.
+              </EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
+              <a href="/devices">
+                <Badge variant="outline">Retry</Badge>
+              </a>
+            </EmptyContent>
+          </Empty>
+        ) : devices.length === 0 ? (
           <Empty className="bg-card">
             <EmptyHeader>
               <EmptyTitle>No devices found</EmptyTitle>

@@ -46,7 +46,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
                   <BreadcrumbSeparator className="hidden md:block" />
                   <BreadcrumbItem className="min-w-0">
                     <BreadcrumbPage className="truncate font-normal text-muted-foreground">
-                      Peaksoft Security Platform
+                      IoT Security Platform
                     </BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>

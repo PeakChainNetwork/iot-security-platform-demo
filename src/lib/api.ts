@@ -36,23 +36,37 @@ function urlFor(pathname: string) {
 }
 
 async function fetchJson<T>(pathname: string): Promise<T> {
-  const res = await fetch(urlFor(pathname), {
-    cache: "no-store",
-    headers: {
-      "ngrok-skip-browser-warning": "true",
-    },
-  })
+  let res: Response
+
+  try {
+    res = await fetch(urlFor(pathname), {
+      cache: "no-store",
+      headers: {
+        "ngrok-skip-browser-warning": "true",
+      },
+    })
+  } catch {
+    throw new ApiError(
+      0,
+      "Could not reach the backend. Make sure the server is running and the URL is correct."
+    )
+  }
 
   if (!res.ok) {
     let detail = ""
     try {
-      detail = await res.text()
+      const ct = res.headers.get("content-type") ?? ""
+      if (ct.includes("application/json")) {
+        const body = await res.json()
+        detail = body.detail ?? body.message ?? ""
+        if (typeof detail !== "string") detail = JSON.stringify(detail)
+      }
     } catch {
-      // ignore
+      // ignore unreadable / HTML bodies
     }
     throw new ApiError(
       res.status,
-      `Request failed: ${res.status} ${res.statusText}${detail ? ` — ${detail}` : ""}`
+      detail || `Backend returned ${res.status}. The service may be offline or the endpoint unavailable.`
     )
   }
 

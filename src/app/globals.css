@@ -276,4 +276,5 @@
   .docs-prose blockquote {
     @apply border-l-4 border-primary/30 pl-4 italic text-muted-foreground;
   }
+
 }
