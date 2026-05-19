@@ -19,7 +19,7 @@ Legacy `/dashboard` redirects to `/`.
 - **pnpm** (recommended) or npm
 - A running **iot-security-backend** instance, or any deployment exposing the same REST/WebSocket API
 
-This package lives in the monorepo at `peaksoft-security-platform/www`. You can develop it here or point environment variables at a remote API.
+This app is its own Git repository: [iot-security-platform-demo](https://github.com/PeakChainNetwork/iot-security-platform-demo). In the full platform checkout it lives at `peaksoft-security-platform/www` as a **git submodule** so backend and UI stay in one working tree. You can also clone the demo repo alone and point environment variables at a remote API.
 
 ## Quick start
 
@@ -170,11 +170,21 @@ For global UI state (e.g. Zustand), add:
 store/connection-store.ts   # WS status shared across views
 ```
 
-## Monorepo context
+## Platform checkout (submodule)
+
+Clone the parent repo with submodules:
+
+```bash
+git clone --recurse-submodules https://github.com/PeakChainNetwork/peaksoft-security-platform.git
+# existing clone:
+git submodule update --init www
+```
+
+From the repo root, run frontend Git commands with `./scripts/git-www.sh` (e.g. `./scripts/git-www.sh status`) or `git -C www`.
 
 | Package | Path | Role |
 |---------|------|------|
-| Web UI | `www/` | Next.js frontend |
+| Web UI | `www/` (submodule → demo repo) | Next.js frontend |
 | API | `iot-security-backend/` | FastAPI services |
 
 ## License
