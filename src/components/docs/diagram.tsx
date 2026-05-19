@@ -14,6 +14,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 
+function DiagramCanvas({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex w-full justify-center overflow-x-auto">
+      <div className="w-full min-w-0 max-w-4xl">{children}</div>
+    </div>
+  )
+}
+
 export function Diagram({
   title,
   description,
@@ -38,20 +46,22 @@ export function Diagram({
                 Expand
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-4xl">
+            <DialogContent className="sm:max-w-5xl">
               <DialogHeader>
                 <DialogTitle>{title}</DialogTitle>
                 <DialogDescription>{description}</DialogDescription>
               </DialogHeader>
-              <div className="rounded-xl border bg-card p-3 sm:p-4">
-                <div className="mx-auto w-full max-w-[1000px]">{children}</div>
+              <div className="rounded-xl border bg-muted/20 p-4 sm:p-6">
+                <DiagramCanvas>{children}</DiagramCanvas>
               </div>
             </DialogContent>
           </Dialog>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="rounded-xl border bg-card p-3 sm:p-4">{children}</div>
+        <div className="rounded-xl border bg-muted/20 p-4 sm:p-6">
+          <DiagramCanvas>{children}</DiagramCanvas>
+        </div>
       </CardContent>
     </Card>
   )

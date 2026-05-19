@@ -59,14 +59,14 @@ const STEPS = [
     icon: VariableIcon,
     title: "Configure base_url (if needed)",
     description:
-      'The default base_url is http://localhost:8000. If your backend runs elsewhere (e.g. behind ngrok or on a different port), click the environment quick-look icon (eye icon) next to the dropdown, then click "Edit" and change the value.',
+      'The default base_url is http://localhost:8000. If the platform runs elsewhere (e.g. behind ngrok or on a different port), click the environment quick-look icon (eye icon) next to the dropdown, then click "Edit" and change the value.',
   },
   {
     number: 5,
     icon: PlayIcon,
     title: "Send your first request",
     description:
-      'Expand the "Devices" folder in the collection sidebar, click "List devices", and hit Send. You should see the JSON response from your running backend.',
+      'Expand the "Devices" folder in the collection sidebar, click "List devices", and hit Send. You should see the JSON response from the platform.',
   },
 ] as const
 
@@ -107,7 +107,7 @@ export function PostmanGuide() {
             <p className="text-sm text-muted-foreground leading-relaxed">
               Pre-configures the{" "}
               <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">base_url</code> variable so every
-              request in the collection points to your backend automatically.
+              request in the collection points to the platform API automatically.
             </p>
             <Button asChild variant="outline" className="w-full gap-2">
               <a href={ENVIRONMENT_HREF} download={ENVIRONMENT_FILENAME}>
@@ -229,8 +229,8 @@ export function PostmanGuide() {
                 </td>
                 <td className="px-3 py-2 font-mono text-xs text-muted-foreground">http://localhost:8000</td>
                 <td className="px-3 py-2 text-xs text-muted-foreground">
-                  Root URL for the main backend service. All request paths are appended to this. Change it if you&apos;re
-                  using ngrok, Docker, or a remote server.
+                  Root URL for the platform API. All request paths are appended to this. Set this to the base URL
+                  provided for your environment (demo, pilot, or production).
                 </td>
               </tr>
             </tbody>
@@ -241,20 +241,10 @@ export function PostmanGuide() {
           <CardContent className="flex gap-3 pt-4">
             <LayersIcon className="mt-0.5 size-4 shrink-0 text-amber-600 dark:text-amber-400" />
             <div className="space-y-1">
-              <p className="text-sm font-medium text-foreground">Scanner &amp; CVE services</p>
+              <p className="text-sm font-medium text-foreground">Machine integration scope</p>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                This collection covers the main backend API (port 8000). The scanner service (port 8083) and CVE
-                intelligence service (port 8082) have their own OpenAPI specs at{" "}
-                <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">/docs</code> on their respective
-                ports. You can import those auto-generated specs into Postman directly from{" "}
-                <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">
-                  http://localhost:8083/openapi.json
-                </code>{" "}
-                and{" "}
-                <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">
-                  http://localhost:8082/openapi.json
-                </code>
-                .
+                This collection covers the platform APIs you need to verify telemetry ingestion, device state,
+                alerts, and live streams. It does not include internal operator-only services.
               </p>
             </div>
           </CardContent>
@@ -274,7 +264,7 @@ export function PostmanGuide() {
             },
             {
               title: "Use the Collection Runner",
-              body: 'Right-click the collection name and select "Run collection" to execute all requests in sequence — useful for a quick smoke test of your backend.',
+              body: 'Right-click the collection name and select "Run collection" to execute all requests in sequence — useful for a quick smoke test of the platform API.',
             },
             {
               title: "WebSocket requests",

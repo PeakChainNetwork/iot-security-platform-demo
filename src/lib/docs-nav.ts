@@ -19,30 +19,23 @@ export const docsNav: DocsNavSection[] = [
     items: [
       { title: "Introduction", href: "/docs" },
       { title: "Prerequisites", href: "/docs/getting-started/prerequisites" },
-      { title: "Installation", href: "/docs/getting-started/installation" },
-      { title: "Project structure", href: "/docs/getting-started/project-structure" },
-      { title: "Environment variables", href: "/docs/getting-started/environment-variables" },
-      { title: "Run locally", href: "/docs/getting-started/run-locally" },
+      { title: "Credentials & access", href: "/docs/getting-started/installation" },
       { title: "Verification", href: "/docs/getting-started/verification" },
     ],
   },
   {
     title: "Concepts",
     items: [
-      { title: "Architecture overview", href: "/docs/concepts/architecture" },
+      { title: "How it works", href: "/docs/concepts/architecture" },
       { title: "Data flow", href: "/docs/concepts/data-flow" },
     ],
   },
   {
     title: "Guides",
     items: [
-      { title: "Dashboard overview", href: "/docs/guides/dashboard-overview" },
-      { title: "Device management", href: "/docs/guides/device-management" },
-      { title: "Live telemetry & digital twin", href: "/docs/guides/live-telemetry" },
-      { title: "Alerts & anomaly detection", href: "/docs/guides/alerts-anomalies" },
-      { title: "Vulnerability tracking", href: "/docs/guides/vulnerability-tracking" },
-      { title: "IoT migration guide", href: "/docs/guides/iot-migration-guide" },
-      { title: "IoT integration (technical)", href: "/docs/guides/iot-integration-technical" },
+      { title: "MQTT integration", href: "/docs/guides/iot-integration-technical" },
+      { title: "Migration rollout", href: "/docs/guides/iot-migration-guide" },
+      { title: "Platform API capabilities", href: "/docs/guides/platform-api" },
     ],
   },
   {

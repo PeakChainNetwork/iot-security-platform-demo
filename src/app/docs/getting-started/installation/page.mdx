@@ -1,89 +1,53 @@
-# Installation
+<DocsPageHeader
+  eyebrow="Getting started"
+  title="Credentials & access"
+  description="Values you need before publishing telemetry or calling the API."
+/>
 
-The entire stack — backend, database, message broker, Wazuh SIEM, dashboard, ML training, and telemetry simulator — is bootstrapped by a single script.
+<DocsSection title="Provided to you">
 
-## 1. Clone the monorepo
+<DocsDeliverableGrid>
+  <DocsDeliverableCard title="API base URL" icon="globe">
+    HTTPS origin for REST and WebSocket (for example <code>https://&lt;api-host&gt;</code>).
+  </DocsDeliverableCard>
+  <DocsDeliverableCard title="Message hub" icon="mqtt">
+    MQTT broker host, port, and credentials for <code>site/&lt;device_id&gt;/telemetry</code>.
+  </DocsDeliverableCard>
+  <DocsDeliverableCard title="Device IDs" icon="registry">
+    Stable <code>device_id</code> values to use in topics and API paths.
+  </DocsDeliverableCard>
+  <DocsDeliverableCard title="Dashboard URL" icon="dashboard" optional>
+    Optional operator UI login, if included in your contract.
+  </DocsDeliverableCard>
+</DocsDeliverableGrid>
 
-<Snippet title="Clone the repository" value="git clone https://github.com/PeakChainNetwork/peaksoft-security-platform.git && cd peaksoft-security-platform" type="shell">
-{`$ git clone https://github.com/PeakChainNetwork/peaksoft-security-platform.git\n$ cd peaksoft-security-platform`}
-</Snippet>
+</DocsSection>
 
-## 2. Run the setup script
+<DocsSection title="You provide">
 
-<Snippet title="One-click setup" value="bash scripts/setup.sh" type="shell">
-{`$ bash scripts/setup.sh`}
-</Snippet>
+<DocsDeliverableGrid>
+  <DocsDeliverableCard title="Site gateway" icon="mqtt">
+    Publishes JSON telemetry readings to the message hub.
+  </DocsDeliverableCard>
+  <DocsDeliverableCard title="Network path" icon="globe">
+    Connectivity from your site to the MQTT broker and API host.
+  </DocsDeliverableCard>
+</DocsDeliverableGrid>
 
-<Callout title="What the script does" variant="info">
-This single command handles the entire bootstrap sequence automatically. Sit back — it takes a few minutes on first run.
-</Callout>
+</DocsSection>
 
-### Setup steps (handled for you)
+<DocsSection title="Next">
 
-<div className="space-y-2">
-  <div className="flex gap-3 rounded-lg border bg-card p-4">
-    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">1</span>
-    <div>
-      <div className="text-sm font-medium text-foreground">Checks Docker &amp; Compose</div>
-      <div className="mt-1 text-sm text-muted-foreground leading-relaxed">Validates that Docker and Compose V2 (or V1 fallback) are available.</div>
-    </div>
-  </div>
-  <div className="flex gap-3 rounded-lg border bg-card p-4">
-    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">2</span>
-    <div>
-      <div className="text-sm font-medium text-foreground">Generates SSL certificates</div>
-      <div className="mt-1 text-sm text-muted-foreground leading-relaxed">Creates TLS certs for the Wazuh indexer cluster.</div>
-    </div>
-  </div>
-  <div className="flex gap-3 rounded-lg border bg-card p-4">
-    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">3</span>
-    <div>
-      <div className="text-sm font-medium text-foreground">Builds Docker images</div>
-      <div className="mt-1 text-sm text-muted-foreground leading-relaxed">Builds the IoT security backend and the custom dashboard image.</div>
-    </div>
-  </div>
-  <div className="flex gap-3 rounded-lg border bg-card p-4">
-    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">4</span>
-    <div>
-      <div className="text-sm font-medium text-foreground">Launches the stack</div>
-      <div className="mt-1 text-sm text-muted-foreground leading-relaxed">Starts all services via Docker Compose — database, broker, Wazuh nodes, backend, and dashboard.</div>
-    </div>
-  </div>
-  <div className="flex gap-3 rounded-lg border bg-card p-4">
-    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">5</span>
-    <div>
-      <div className="text-sm font-medium text-foreground">Runs migrations &amp; seeds data</div>
-      <div className="mt-1 text-sm text-muted-foreground leading-relaxed">Waits for PostgreSQL, applies Alembic migrations, and seeds initial device data.</div>
-    </div>
-  </div>
-  <div className="flex gap-3 rounded-lg border bg-card p-4">
-    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">6</span>
-    <div>
-      <div className="text-sm font-medium text-foreground">Starts simulator &amp; trains models</div>
-      <div className="mt-1 text-sm text-muted-foreground leading-relaxed">Launches the MQTT telemetry simulator and trains the KI-Pipeline ML models.</div>
-    </div>
-  </div>
-</div>
+<DocsSteps>
+  <DocsStep step={1} title="Tools">
+    [Prerequisites](/docs/getting-started/prerequisites)
+  </DocsStep>
+  <DocsStep step={2} title="MQTT contract">
+    [MQTT integration](/docs/guides/iot-integration-technical)
+  </DocsStep>
+  <DocsStep step={3} title="Verify">
+    [Verification checklist](/docs/getting-started/verification)
+  </DocsStep>
+</DocsSteps>
 
-## 3. Access the platform
-
-Once setup completes, the script prints connection details:
-
-<div className="grid gap-3 sm:grid-cols-3">
-  <div className="rounded-lg border bg-card p-4">
-    <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Dashboard</div>
-    <code className="mt-1 block text-sm font-medium text-foreground">https://localhost</code>
-  </div>
-  <div className="rounded-lg border bg-card p-4">
-    <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Username</div>
-    <code className="mt-1 block text-sm font-medium text-foreground">admin</code>
-  </div>
-  <div className="rounded-lg border bg-card p-4">
-    <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Password</div>
-    <code className="mt-1 block text-sm font-medium text-foreground">SecretPassword</code>
-  </div>
-</div>
-
-<Callout title="Startup time" variant="default">
-It may take 2–3 minutes for all services to become healthy after setup finishes.
-</Callout>
+</DocsSection>

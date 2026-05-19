@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 import { CopyButton } from "@/components/copy-button"
+import { DocsShellCommand } from "@/components/docs/docs-shell-command"
 import {
   ChevronDownIcon,
   ChevronRightIcon,
@@ -602,19 +603,7 @@ function EndpointDetail({ op, spec }: { op: OpRef; spec: OpenApiDoc }) {
         </div>
       )}
 
-      {/* cURL */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <h4 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            <TerminalIcon className="size-3" />
-            cURL
-          </h4>
-          <CopyButton value={curl} label="Copy cURL" />
-        </div>
-        <pre className="overflow-x-auto rounded-lg border bg-muted/30 p-4 font-mono text-xs leading-relaxed text-foreground">
-          {curl}
-        </pre>
-      </div>
+      <DocsShellCommand label="cURL" value={curl} />
     </div>
   )
 }

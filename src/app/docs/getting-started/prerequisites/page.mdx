@@ -1,47 +1,32 @@
-# Prerequisites
+<DocsPageHeader
+  eyebrow="Getting started"
+  title="Prerequisites"
+  description="Tools to publish MQTT telemetry and call the HTTP API."
+  badges={["MQTT", "REST"]}
+/>
 
-The entire platform runs as a Docker stack orchestrated by a single setup script. You only need two things installed on your machine.
+<DocsSection title="Required">
 
-## Required
+<DocsDeliverableGrid>
+  <DocsDeliverableCard title="MQTT client" icon="mqtt">
+    CLI or library that publishes JSON (for example <code>mosquitto_pub</code>, Paho, or a gateway MQTT export).
+  </DocsDeliverableCard>
+  <DocsDeliverableCard title="HTTP client" icon="terminal">
+    <code>curl</code>, Postman, or your application for REST calls.
+  </DocsDeliverableCard>
+</DocsDeliverableGrid>
 
-<div className="grid gap-3 sm:grid-cols-2">
-  <div className="rounded-lg border bg-card p-4">
-    <div className="flex items-center gap-2">
-      <span className="flex size-6 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">1</span>
-      <span className="font-medium text-foreground">Docker</span>
-    </div>
-    <div className="mt-2 text-sm text-muted-foreground leading-relaxed">Docker Engine (Linux) or Docker Desktop (macOS / Windows + WSL2). Includes Docker Compose V2.</div>
-  </div>
-  <div className="rounded-lg border bg-card p-4">
-    <div className="flex items-center gap-2">
-      <span className="flex size-6 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">2</span>
-      <span className="font-medium text-foreground">Git</span>
-    </div>
-    <div className="mt-2 text-sm text-muted-foreground leading-relaxed">To clone the monorepo. Any recent version works.</div>
-  </div>
-</div>
+</DocsSection>
 
-<Callout title="That's it" variant="info">
-You do **not** need to install Node.js, Python, pnpm, or any backend dependencies locally. Everything runs inside Docker containers managed by <code>scripts/setup.sh</code>.
-</Callout>
+<DocsSection title="Optional">
 
-## Optional (for local frontend dev)
+<DocsDeliverableGrid>
+  <DocsDeliverableCard title="WebSocket CLI" icon="websocket" optional>
+    For manual subscription tests (for example <code>websocat</code>).
+  </DocsDeliverableCard>
+  <DocsDeliverableCard title="Postman" icon="postman" optional>
+    [Postman collection](/docs/api/postman) for REST exploration.
+  </DocsDeliverableCard>
+</DocsDeliverableGrid>
 
-If you want to develop the Next.js frontend (`www`) outside Docker:
-
-<div className="space-y-2">
-  <div className="flex gap-3 rounded-lg border bg-card p-4">
-    <span className="mt-0.5 text-sm text-muted-foreground">—</span>
-    <div>
-      <div className="text-sm font-medium text-foreground">Node.js 20+ &amp; pnpm</div>
-      <div className="mt-1 text-sm text-muted-foreground leading-relaxed">For running <code>pnpm dev</code> locally against the Dockerised backend.</div>
-    </div>
-  </div>
-  <div className="flex gap-3 rounded-lg border bg-card p-4">
-    <span className="mt-0.5 text-sm text-muted-foreground">—</span>
-    <div>
-      <div className="text-sm font-medium text-foreground">websocat</div>
-      <div className="mt-1 text-sm text-muted-foreground leading-relaxed">Useful for manually probing WebSocket endpoints documented under <strong>API reference</strong>.</div>
-    </div>
-  </div>
-</div>
+</DocsSection>

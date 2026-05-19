@@ -268,4 +268,3 @@ export function useDashboardWs(onEnvelope: (env: DashboardEnvelope) => void) {
     })
   }, [backendBase])
 }
-
