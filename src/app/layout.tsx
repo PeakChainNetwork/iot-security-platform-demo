@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { Lora, Roboto_Mono, Inter, Geist } from "next/font/google";
 import "./globals.css"
 
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider } from "@/components/common/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils";
 

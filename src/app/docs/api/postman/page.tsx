@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 
-import { PostmanGuide } from "@/components/docs/postman-guide"
+import { PostmanGuide } from "@/features/docs/components/postman-guide"
 
 export const metadata: Metadata = {
   title: "Postman Collection",

@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 
-import { ApiExplorer } from "@/components/docs/api-explorer"
+import { ApiExplorer } from "@/features/docs/components/api-explorer"
 
 export const metadata: Metadata = {
   title: "API reference",

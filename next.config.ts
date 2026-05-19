@@ -6,6 +6,11 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: "/dashboard",
+        destination: "/",
+        permanent: true,
+      },
+      {
         source: "/docs/iot-migration-guide",
         destination: "/docs/guides/iot-migration-guide",
         permanent: true,

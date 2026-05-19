@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "check": "pnpm lint && pnpm typecheck && pnpm build",
     "docs:openapi": "cd ../iot-security-backend && python3 scripts/export_openapi.py"
   },
   "dependencies": {

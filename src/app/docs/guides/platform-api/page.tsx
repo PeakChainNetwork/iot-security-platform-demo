@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 
-import { PlatformApiBody } from "@/components/docs/guides/platform-api-body"
+import { PlatformApiBody } from "@/features/docs/components/guides/platform-api-body"
 
 export const metadata: Metadata = {
   title: "Platform API capabilities",

@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
 
-import { DocsInsetHeader } from "@/components/docs/docs-inset-header"
-import { DocsSearchProvider } from "@/components/docs/docs-search-provider"
-import { DocsSidebar } from "@/components/docs/docs-sidebar"
+import { DocsInsetHeader } from "@/features/docs/components/docs-inset-header"
+import { DocsSearchProvider } from "@/features/docs/components/docs-search-provider"
+import { DocsSidebar } from "@/features/docs/components/docs-sidebar"
 import {
   Breadcrumb,
   BreadcrumbItem,

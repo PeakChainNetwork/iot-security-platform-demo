@@ -1,33 +1,33 @@
 import type { MDXComponents } from "mdx/types"
 
-import { Callout } from "@/components/docs/callout"
-import { CodeBlock } from "@/components/docs/code-block"
-import { Diagram } from "@/components/docs/diagram"
-import { DocsChecklist, DocsChecklistItem } from "@/components/docs/docs-checklist"
+import { Callout } from "@/features/docs/components/callout"
+import { CodeBlock } from "@/features/docs/components/code-block"
+import { Diagram } from "@/features/docs/components/diagram"
+import { DocsChecklist, DocsChecklistItem } from "@/features/docs/components/docs-checklist"
 import {
   DocsDeliverableCard,
   DocsDeliverableGrid,
-} from "@/components/docs/docs-deliverable-card"
-import { DocsEndpointTable } from "@/components/docs/docs-endpoint-table"
-import { DocsNavCard } from "@/components/docs/docs-nav-card"
-import { DocsPageHeader } from "@/components/docs/docs-page-header"
+} from "@/features/docs/components/docs-deliverable-card"
+import { DocsEndpointTable } from "@/features/docs/components/docs-endpoint-table"
+import { DocsNavCard } from "@/features/docs/components/docs-nav-card"
+import { DocsPageHeader } from "@/features/docs/components/docs-page-header"
 import {
   DocsOptionalItem,
   DocsRequirementCard,
   DocsRequirementGrid,
-} from "@/components/docs/docs-requirement-card"
-import { DocsSection } from "@/components/docs/docs-section"
-import { DocsResponseExample } from "@/components/docs/docs-response-example"
-import { DocsStep, DocsSteps } from "@/components/docs/docs-steps"
-import { DocsShellCommand } from "@/components/docs/docs-shell-command"
-import { DocsVerificationCommand } from "@/components/docs/docs-verification-command"
+} from "@/features/docs/components/docs-requirement-card"
+import { DocsSection } from "@/features/docs/components/docs-section"
+import { DocsResponseExample } from "@/features/docs/components/docs-response-example"
+import { DocsStep, DocsSteps } from "@/features/docs/components/docs-steps"
+import { DocsShellCommand } from "@/features/docs/components/docs-shell-command"
+import { DocsVerificationCommand } from "@/features/docs/components/docs-verification-command"
 import {
   DocsVerificationCriteria,
   DocsVerificationCriterion,
   DocsVerificationFlow,
   DocsVerificationStep,
-} from "@/components/docs/docs-verification-step"
-import { Snippet } from "@/components/docs/snippet"
+} from "@/features/docs/components/docs-verification-step"
+import { Snippet } from "@/features/docs/components/snippet"
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
