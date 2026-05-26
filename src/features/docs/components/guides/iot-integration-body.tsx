@@ -1,26 +1,22 @@
 "use client"
 
-import * as React from "react"
 import Link from "next/link"
 
+import { CodeBlock } from "@/features/docs/components/code-block"
 import { DocsPageHeader } from "@/features/docs/components/docs-page-header"
+import { DocsResponseExample } from "@/features/docs/components/docs-response-example"
 import { Callout } from "@/features/docs/components/callout"
 import { Diagram } from "@/features/docs/components/diagram"
-import { HighLevelFlowDiagram } from "@/features/docs/components/diagrams/high-level-flow-diagram"
 import { MessageContractDiagram } from "@/features/docs/components/diagrams/message-contract-diagram"
-import { MqttPipelineDiagram } from "@/features/docs/components/diagrams/mqtt-pipeline-diagram"
 import { TopicStructureDiagram } from "@/features/docs/components/diagrams/topic-structure-diagram"
-import { TroubleshootingTreeDiagram } from "@/features/docs/components/diagrams/troubleshooting-tree-diagram"
 import { Snippet } from "@/features/docs/components/snippet"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import {
-  CheckCircle2Icon,
-  TerminalIcon,
-  WrenchIcon,
-  CableIcon,
-} from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { CableIcon } from "lucide-react"
+
+const endpointExample = "wss://<mqtt-host>:443/mqtt"
 
 const examplePayload = `{
   "timestamp": "2026-04-07T13:23:26.009702+00:00",
@@ -31,6 +27,261 @@ const examplePayload = `{
   "rotational_speed": 980.389,
   "status": "ok"
 }`
+
+const requestBodySchema = `{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PeakSoftRealMachineTelemetry",
+  "type": "object",
+  "required": ["timestamp"],
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp, UTC preferred"
+    },
+    "temperature": { "type": "number" },
+    "pressure": { "type": "number" },
+    "vibration": { "type": "number" },
+    "power_draw": { "type": "number" },
+    "rotational_speed": { "type": "number" },
+    "status": {
+      "type": "string",
+      "enum": ["ok", "warning", "critical"]
+    }
+  },
+  "additionalProperties": true
+}`
+
+const pythonPublisherExample = `import json
+import os
+import time
+from datetime import datetime, timezone
+
+import paho.mqtt.client as mqtt
+
+MQTT_HOST = os.getenv("MQTT_HOST", "<mqtt-host>")
+MQTT_PORT = int(os.getenv("MQTT_PORT", "443"))
+MQTT_USERNAME = os.getenv("MQTT_USERNAME", "<mqtt-username>")
+MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "<mqtt-password>")
+MQTT_WS_PATH = os.getenv("MQTT_WS_PATH", "/mqtt")
+DEVICE_ID = os.getenv("DEVICE_ID", "line-a-press-01")
+PUBLISH_INTERVAL_SECONDS = float(os.getenv("PUBLISH_INTERVAL_SECONDS", "10"))
+TOPIC = f"site/{DEVICE_ID}/telemetry"
+
+
+def build_payload() -> dict:
+    return {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "temperature": 45.8,
+        "pressure": 124.8,
+        "vibration": 2.6,
+        "power_draw": 4.0,
+        "rotational_speed": 980.0,
+        "status": "ok",
+    }
+
+
+def on_connect(client, _userdata, _flags, reason_code, _properties=None):
+    print(f"Connected to PeakSoft MQTT with rc={reason_code}")
+
+
+def on_disconnect(client, _userdata, reason_code, _properties=None):
+    print(f"Disconnected from PeakSoft MQTT with rc={reason_code}")
+
+
+client = mqtt.Client(client_id=f"peaksoft-{DEVICE_ID}", transport="websockets")
+client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
+client.ws_set_options(path=MQTT_WS_PATH)
+client.tls_set()
+client.reconnect_delay_set(min_delay=1, max_delay=30)
+client.on_connect = on_connect
+client.on_disconnect = on_disconnect
+
+client.connect(MQTT_HOST, MQTT_PORT, keepalive=60)
+client.loop_start()
+
+try:
+    while True:
+        payload = build_payload()
+        message = json.dumps(payload)
+        info = client.publish(TOPIC, message, qos=1, retain=False)
+        info.wait_for_publish(timeout=10)
+        if info.rc != mqtt.MQTT_ERR_SUCCESS:
+            raise RuntimeError(f"Publish failed with rc={info.rc}")
+        print(f"Published telemetry to {TOPIC}: {message}")
+        time.sleep(PUBLISH_INTERVAL_SECONDS)
+finally:
+    client.loop_stop()
+    client.disconnect()
+`
+
+const javascriptPublisherExample = `import mqtt from "mqtt"
+
+const host = process.env.MQTT_HOST ?? "<mqtt-host>"
+const port = Number(process.env.MQTT_PORT ?? "443")
+const username = process.env.MQTT_USERNAME ?? "<mqtt-username>"
+const password = process.env.MQTT_PASSWORD ?? "<mqtt-password>"
+const deviceId = process.env.DEVICE_ID ?? "line-a-press-01"
+const topic = \`site/\${deviceId}/telemetry\`
+
+const client = mqtt.connect(\`wss://\${host}:\${port}/mqtt\`, {
+  username,
+  password,
+  clientId: \`peaksoft-\${deviceId}\`,
+  keepalive: 60,
+  reconnectPeriod: 1000,
+  rejectUnauthorized: true,
+})
+
+client.on("connect", () => {
+  console.log("Connected to PeakSoft MQTT")
+
+  setInterval(() => {
+    const payload = {
+      timestamp: new Date().toISOString(),
+      temperature: 45.8,
+      pressure: 124.8,
+      vibration: 2.6,
+      power_draw: 4.0,
+      rotational_speed: 980.0,
+      status: "ok",
+    }
+
+    client.publish(topic, JSON.stringify(payload), { qos: 1, retain: false }, (error) => {
+      if (error) {
+        console.error("Publish failed:", error)
+        return
+      }
+      console.log(\`Published telemetry to \${topic}\`)
+    })
+  }, 10_000)
+})
+
+client.on("reconnect", () => console.log("Reconnecting to PeakSoft MQTT..."))
+client.on("error", (error) => console.error("MQTT error:", error))
+client.on("close", () => console.log("MQTT connection closed"))
+`
+
+const csharpPublisherExample = `using System.Text;
+using MQTTnet;
+using MQTTnet.Client;
+using MQTTnet.Protocol;
+
+var host = Environment.GetEnvironmentVariable("MQTT_HOST") ?? "<mqtt-host>";
+var username = Environment.GetEnvironmentVariable("MQTT_USERNAME") ?? "<mqtt-username>";
+var password = Environment.GetEnvironmentVariable("MQTT_PASSWORD") ?? "<mqtt-password>";
+var deviceId = Environment.GetEnvironmentVariable("DEVICE_ID") ?? "line-a-press-01";
+var topic = $"site/{deviceId}/telemetry";
+
+var factory = new MqttClientFactory();
+var client = factory.CreateMqttClient();
+
+var options = new MqttClientOptionsBuilder()
+    .WithClientId($"peaksoft-{deviceId}")
+    .WithWebSocketServer($"wss://{host}:443/mqtt")
+    .WithCredentials(username, password)
+    .WithTlsOptions(new MqttClientTlsOptionsBuilder().UseTls().Build())
+    .Build();
+
+client.ConnectedAsync += args =>
+{
+    Console.WriteLine("Connected to PeakSoft MQTT");
+    return Task.CompletedTask;
+};
+
+client.DisconnectedAsync += args =>
+{
+    Console.WriteLine("Disconnected from PeakSoft MQTT");
+    return Task.CompletedTask;
+};
+
+await client.ConnectAsync(options);
+
+while (true)
+{
+    var payload = """
+    {
+      "timestamp": "%TIMESTAMP%",
+      "temperature": 45.8,
+      "pressure": 124.8,
+      "vibration": 2.6,
+      "power_draw": 4.0,
+      "rotational_speed": 980.0,
+      "status": "ok"
+    }
+    """.Replace("%TIMESTAMP%", DateTimeOffset.UtcNow.ToString("O"));
+
+    var message = new MqttApplicationMessageBuilder()
+        .WithTopic(topic)
+        .WithPayload(Encoding.UTF8.GetBytes(payload))
+        .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
+        .WithRetainFlag(false)
+        .Build();
+
+    await client.PublishAsync(message);
+    Console.WriteLine($"Published telemetry to {topic}");
+    await Task.Delay(TimeSpan.FromSeconds(10));
+}`
+
+const statusCommand = `curl -sS "https://<your-status-url>/api/v1/ingestion/status"`
+
+const disconnectedStatusExample = `{
+  "sources": {
+    "real_machines": {
+      "status": "disconnected",
+      "message": "Real machine gateway service is disconnected."
+    }
+  }
+}`
+
+const connectedStatusExample = `{
+  "sources": {
+    "real_machines": {
+      "status": "connected",
+      "message": "Real machine gateway service is connected.",
+      "last_message_at": "2026-05-26T11:35:00.000000+00:00"
+    }
+  }
+}`
+
+const connectionSettings = [
+  {
+    title: "Transport",
+    value: "MQTT over WebSockets (WSS)",
+    desc: "Use secure WebSockets for the external client path. Do not rely on raw internet-facing MQTT/TCP.",
+  },
+  {
+    title: "Endpoint",
+    value: endpointExample,
+    desc: "Port 443 and WebSocket path /mqtt are part of the connection contract for the client gateway.",
+  },
+  {
+    title: "Authentication",
+    value: "Username + password",
+    desc: "PeakSoft provides the credentials. Store them securely and rotate them when requested.",
+  },
+  {
+    title: "Delivery",
+    value: "QoS 1, retain=false",
+    desc: "QoS 1 is the recommended publish mode for telemetry. Keep retained messages disabled unless agreed.",
+  },
+]
+
+const handoffItems = [
+  "MQTT host or URL",
+  "MQTT username",
+  "MQTT password",
+  "Your approved device IDs",
+  "Status-check URL",
+]
+
+const onboardingSteps = [
+  "Choose or build a gateway application that can read telemetry from your real machines.",
+  "Assign a stable device_id to each machine and keep that identifier unchanged over time.",
+  "Configure the gateway with the MQTT host, username, password, and WebSocket path /mqtt.",
+  "Publish JSON telemetry to site/{device_id}/telemetry using QoS 1 over WSS on port 443.",
+  "Verify that the connection is accepted and the status-check endpoint changes to connected after the first valid message.",
+]
 
 const pitfalls = [
   {
@@ -49,16 +300,16 @@ const pitfalls = [
 
 const troubleshooting = [
   {
-    problem: "No messages on the hub",
-    solution: "Check gateway connection, topic naming, and whether the publisher is running.",
+    problem: "Connection fails immediately",
+    solution: "Check the host, port 443, WebSocket path /mqtt, TLS, and the MQTT username/password.",
   },
   {
-    problem: "Hub has data but UI is empty",
-    solution: "Check MQTT broker connectivity and topic naming and the device_id used by the UI.",
+    problem: "Connection works but data does not appear",
+    solution: "Check the topic name, device_id, JSON payload shape, and whether at least one publish actually succeeded.",
   },
   {
-    problem: "Intermittent updates",
-    solution: "Reduce publish bursts, add buffering, and verify the expected update rate.",
+    problem: "Intermittent delivery",
+    solution: "Add reconnect logic, buffer briefly during short outages, and avoid unnecessary publish bursts.",
   },
 ]
 
@@ -67,133 +318,121 @@ export function IoTIntegrationTechnicalBody() {
     <div className="space-y-10">
       <DocsPageHeader
         eyebrow="Guides"
-        title="Using real machines (integration details)"
-        badges={["MQTT ingestion", "Payload contract"]}
+        title="Connect your real machines"
+        badges={["Client guide", "MQTT over WSS", "Payload schema"]}
         icon={CableIcon}
         description={
           <>
-            MQTT topic, JSON payload, and ingestion checks for real machines via your site gateway. For
-            the rollout strategy, see the{" "}
+            This guide explains exactly how to connect your real-machine gateway to PeakSoft: connection
+            settings, topic naming, payload schema, example code, validation, and troubleshooting. For
+            the broader setup flow, see{" "}
             <Link
               className="font-medium text-primary underline underline-offset-4 hover:text-primary/90"
-              href="/guides/iot-migration-guide"
+              href="/docs/getting-started/verification"
             >
-              migration guide
+              verification
             </Link>
             .
           </>
         }
       />
 
-      {/* System diagrams */}
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Diagram title="System view" description="Where real telemetry enters and how it reaches the API.">
-          <MqttPipelineDiagram />
-        </Diagram>
+      <Callout variant="info" title="What you are connecting">
+        Your machines usually connect through a small site gateway service that reads local telemetry and
+        forwards it to PeakSoft over an authenticated MQTT connection.
+      </Callout>
 
-        <Diagram title="Message contract" description="Topic path and JSON payload shape.">
-          <MessageContractDiagram />
-        </Diagram>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">What you need from PeakSoft</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-3 sm:grid-cols-2">
+            {handoffItems.map((item) => (
+              <div key={item} className="rounded-lg border bg-card p-4 text-sm text-muted-foreground leading-relaxed">
+                <div className="font-medium text-foreground">{item}</div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">What your gateway must do</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm text-muted-foreground">
+            {onboardingSteps.map((step, index) => (
+              <div key={step} className="flex gap-3">
+                <Badge variant="secondary" className="mt-0.5 shrink-0 text-xs">
+                  {index + 1}
+                </Badge>
+                <span className="leading-relaxed">{step}</span>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
       </div>
 
       <Separator />
 
-      {/* High-level flow */}
-      <section id="flow" className="scroll-mt-24 space-y-4">
+      <section id="connection" className="scroll-mt-24 space-y-4">
         <div className="space-y-1">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Architecture
+            Connection
           </p>
           <h2 className="font-heading text-xl font-semibold tracking-tight">
-            High-level flow (what stays the same)
+            Exact broker settings
           </h2>
           <p className="max-w-3xl text-sm text-muted-foreground leading-relaxed">
-            Real machines publish telemetry to the message hub. The platform ingests readings and pushes live updates to the dashboard and API.
+            Use these settings in your MQTT client or site gateway exactly as shown unless PeakSoft gives
+            you a different value.
           </p>
         </div>
 
-        <Diagram
-          title="High-level flow diagram"
-          description="Real machines → gateway → hub → platform → UI, with optional history storage."
-        >
-          <HighLevelFlowDiagram />
-        </Diagram>
+        <Snippet title="Broker endpoint" value={endpointExample} type="MQTT">
+          {endpointExample}
+        </Snippet>
 
-        <Callout variant="default" title="Migration guide">
-          If you want the rollout strategy and stakeholder overview, start with{" "}
-          <Link className="font-medium text-primary underline underline-offset-4" href="/guides/iot-migration-guide">
-            the migration guide
-          </Link>.
+        <div className="grid gap-4 lg:grid-cols-2">
+          {connectionSettings.map((setting) => (
+            <Card key={setting.title}>
+              <CardHeader>
+                <CardTitle className="text-base">{setting.title}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 text-sm text-muted-foreground">
+                <div className="rounded-xl border bg-card p-4 font-mono text-xs text-muted-foreground whitespace-pre-wrap">
+                  {setting.value}
+                </div>
+                <p className="leading-relaxed">{setting.desc}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <Callout variant="warning" title="Required external connection format">
+          Use <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">wss://&lt;mqtt-host&gt;:443/mqtt</code>{" "}
+          with TLS enabled. Do not replace this with a plain WebSocket or unsecured MQTT connection.
         </Callout>
       </section>
 
       <Separator />
 
-      {/* What you must implement */}
-      <section id="requirements" className="scroll-mt-24 space-y-4">
-        <div className="space-y-1">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Requirements
-          </p>
-          <h2 className="font-heading text-xl font-semibold tracking-tight">
-            What you must implement
-          </h2>
-        </div>
-
-        <div className="grid gap-3 sm:grid-cols-3">
-          <div className="flex gap-3 rounded-lg border bg-card p-4">
-            <CheckCircle2Icon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-            <div className="text-sm text-muted-foreground leading-relaxed">
-              Publish telemetry for each machine using a stable{" "}
-              <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">device_id</code>.
-            </div>
-          </div>
-          <div className="flex gap-3 rounded-lg border bg-card p-4">
-            <CheckCircle2Icon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-            <div className="text-sm text-muted-foreground leading-relaxed">
-              Send timestamps and metrics as JSON on the correct topic.
-            </div>
-          </div>
-          <div className="flex gap-3 rounded-lg border bg-card p-4">
-            <CheckCircle2Icon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-            <div className="text-sm text-muted-foreground leading-relaxed">
-              Maintain a reasonable update rate (e.g., 1–5 Hz for live dashboards).
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <Separator />
-
-      {/* MQTT topic contract */}
       <section id="topic" className="scroll-mt-24 space-y-4">
         <div className="space-y-1">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            MQTT
+            Topic
           </p>
           <h2 className="font-heading text-xl font-semibold tracking-tight">
-            Topic contract
+            Publish topic
           </h2>
           <p className="max-w-3xl text-sm text-muted-foreground leading-relaxed">
-            The platform listens using a wildcard equivalent to{" "}
-            <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">site/+/telemetry</code>.
+            Publish one telemetry stream per machine using the topic pattern below.
           </p>
         </div>
 
-        <Diagram
-          title="Topic structure breakdown"
-          description="Each segment has a fixed role. The platform listens using a wildcard for the middle segment."
-        >
-          <TopicStructureDiagram />
-        </Diagram>
-
         <div className="grid gap-4 lg:grid-cols-2">
           <div className="space-y-4">
-            <Snippet
-              title="Publish topic"
-              value="site/<device_id>/telemetry"
-              type="MQTT"
-            >
+            <Snippet title="Required topic" value="site/<device_id>/telemetry" type="MQTT">
               site/&lt;device_id&gt;/telemetry
             </Snippet>
 
@@ -208,52 +447,72 @@ export function IoTIntegrationTechnicalBody() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base">
-                Device identity rules
-              </CardTitle>
+              <CardTitle className="text-base">Device ID rules</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-muted-foreground">
               <div className="flex gap-3">
-                <Badge variant="secondary" className="mt-0.5 shrink-0 text-xs">Stable</Badge>
+                <Badge variant="secondary" className="mt-0.5 shrink-0 text-xs">
+                  Stable
+                </Badge>
                 <span className="leading-relaxed">
-                  A machine&apos;s <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">device_id</code>{" "}
-                  must not change over time (even across reboots).
+                  Keep the same <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">device_id</code>{" "}
+                  for the same physical machine over time.
                 </span>
               </div>
               <div className="flex gap-3">
-                <Badge variant="secondary" className="mt-0.5 shrink-0 text-xs">Unique</Badge>
+                <Badge variant="secondary" className="mt-0.5 shrink-0 text-xs">
+                  Unique
+                </Badge>
                 <span className="leading-relaxed">
-                  One ID per physical asset. No reuse across different machines.
+                  Use one unique ID per physical asset.
                 </span>
               </div>
               <div className="flex gap-3">
-                <Badge variant="secondary" className="mt-0.5 shrink-0 text-xs">Safe</Badge>
+                <Badge variant="secondary" className="mt-0.5 shrink-0 text-xs">
+                  Safe
+                </Badge>
                 <span className="leading-relaxed">
-                  Use letters, numbers, dash, and underscore only. Avoid spaces and slashes.
+                  Use letters, numbers, dashes, and underscores only.
                 </span>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        <Callout variant="default" title="Parallel pilot">
-          During rollout, demo traffic may still use <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">factory/&lt;device_id&gt;/telemetry</code>.
-          Your production machines must publish to <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">site/&lt;device_id&gt;/telemetry</code>.
-        </Callout>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <Diagram
+            title="Topic structure"
+            description="Expand to inspect the topic segments and how device IDs fit into the publish path."
+          >
+            <TopicStructureDiagram />
+          </Diagram>
+          <Diagram
+            title="Message structure"
+            description="Expand to review how the MQTT topic and JSON payload work together."
+          >
+            <MessageContractDiagram />
+          </Diagram>
+        </div>
       </section>
 
       <Separator />
 
-      {/* Payload contract */}
       <section id="payload" className="scroll-mt-24 space-y-4">
         <div className="space-y-1">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            JSON
+            Payload
           </p>
           <h2 className="font-heading text-xl font-semibold tracking-tight">
-            Payload contract
+            Telemetry request body schema
           </h2>
+          <p className="max-w-3xl text-sm text-muted-foreground leading-relaxed">
+            Each MQTT message must contain a JSON telemetry payload that follows this schema.
+          </p>
         </div>
+
+        <Callout variant="default" title="Schema usage">
+          MQTT does not use an HTTP request body, but the payload you publish should match this JSON schema.
+        </Callout>
 
         <div className="grid gap-4 lg:grid-cols-2">
           <div className="space-y-4">
@@ -264,15 +523,15 @@ export function IoTIntegrationTechnicalBody() {
               <CardContent className="space-y-2 text-sm text-muted-foreground">
                 <div className="flex gap-3">
                   <code className="mt-0.5 shrink-0 rounded bg-muted px-1.5 py-0.5 font-mono text-xs">timestamp</code>
-                  <span className="leading-relaxed">ISO 8601 recommended (UTC preferred).</span>
+                  <span className="leading-relaxed">ISO 8601 timestamp, UTC preferred.</span>
                 </div>
                 <Separator />
                 <div className="leading-relaxed">
-                  One or more metric keys such as{" "}
+                  Include one or more metric fields such as{" "}
                   <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">temperature</code>,{" "}
                   <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">pressure</code>,{" "}
                   <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">vibration</code>,{" "}
-                  <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">power_draw</code>,{" "}
+                  <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">power_draw</code>, or{" "}
                   <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">rotational_speed</code>.
                 </div>
               </CardContent>
@@ -283,35 +542,138 @@ export function IoTIntegrationTechnicalBody() {
                 <CardTitle className="text-base">Optional fields</CardTitle>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground leading-relaxed">
-                <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">status</code>{" "}
-                — one of{" "}
+                <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">status</code> can be{" "}
                 <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">ok</code>,{" "}
-                <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">warning</code>,{" "}
+                <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">warning</code>, or{" "}
                 <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">critical</code>.
               </CardContent>
             </Card>
 
-            <Callout variant="info" title="Units & normalisation">
-              If your site uses different units or names, normalise them in your gateway before publish so the platform receives consistent values across all machines.
+            <Callout variant="info" title="Data formatting">
+              Send numeric readings as JSON numbers, keep field names stable, and normalize units before
+              publishing.
             </Callout>
           </div>
 
-          <Snippet title="Example payload" value={examplePayload} type="JSON">
-            {examplePayload}
-          </Snippet>
+          <div className="space-y-4">
+            <Snippet title="Telemetry schema" value={requestBodySchema} type="JSON">
+              {requestBodySchema}
+            </Snippet>
+            <Snippet title="Example payload" value={examplePayload} type="JSON">
+              {examplePayload}
+            </Snippet>
+          </div>
         </div>
       </section>
 
       <Separator />
 
-      {/* Common pitfalls */}
+      <section id="publisher-example" className="scroll-mt-24 space-y-4">
+        <div className="space-y-1">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Example
+          </p>
+          <h2 className="font-heading text-xl font-semibold tracking-tight">
+            Reference publishers
+          </h2>
+          <p className="max-w-3xl text-sm text-muted-foreground leading-relaxed">
+            Use these examples as starting points for your gateway or test script. Each one connects over
+            WSS, authenticates with username and password, publishes to{" "}
+            <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">site/&lt;device_id&gt;/telemetry</code>,
+            and sends JSON telemetry with QoS 1.
+          </p>
+        </div>
+
+        <Tabs defaultValue="python" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="python">Python</TabsTrigger>
+            <TabsTrigger value="javascript">JavaScript</TabsTrigger>
+            <TabsTrigger value="csharp">C#</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="python" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Python (`paho-mqtt`)</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Snippet title="Install dependency" value="pip install paho-mqtt" type="bash">
+                  pip install paho-mqtt
+                </Snippet>
+                <CodeBlock language="python">{pythonPublisherExample}</CodeBlock>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="javascript" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">JavaScript / Node.js (`mqtt`)</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Snippet title="Install dependency" value="npm install mqtt" type="bash">
+                  npm install mqtt
+                </Snippet>
+                <CodeBlock language="javascript">{javascriptPublisherExample}</CodeBlock>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="csharp" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">C# (`MQTTnet`)</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Snippet title="Install dependency" value="dotnet add package MQTTnet" type="bash">
+                  dotnet add package MQTTnet
+                </Snippet>
+                <CodeBlock language="csharp">{csharpPublisherExample}</CodeBlock>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </section>
+
+      <Separator />
+
+      <section id="verify" className="scroll-mt-24 space-y-4">
+        <div className="space-y-1">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Verify
+          </p>
+          <h2 className="font-heading text-xl font-semibold tracking-tight">
+            How to confirm your connection is working
+          </h2>
+          <p className="max-w-3xl text-sm text-muted-foreground leading-relaxed">
+            After you send at least one valid telemetry message, the status URL provided by PeakSoft
+            should show your real-machine source as connected.
+          </p>
+        </div>
+
+        <Snippet title="Status check command" value={statusCommand} type="bash">
+          {statusCommand}
+        </Snippet>
+
+        <div className="grid gap-4 lg:grid-cols-2">
+          <DocsResponseExample title="Before the first valid publish" status={200}>
+            {disconnectedStatusExample}
+          </DocsResponseExample>
+          <DocsResponseExample title="After a successful publish" status={200}>
+            {connectedStatusExample}
+          </DocsResponseExample>
+        </div>
+      </section>
+
+      <Separator />
+
       <section id="pitfalls" className="scroll-mt-24 space-y-4">
         <div className="space-y-1">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Watch out
+            Avoid
           </p>
           <h2 className="font-heading text-xl font-semibold tracking-tight">
-            Common pitfalls
+            Common mistakes
           </h2>
         </div>
 
@@ -326,46 +688,26 @@ export function IoTIntegrationTechnicalBody() {
 
       <Separator />
 
-      <Callout variant="info" title="End-to-end checks">
-        Run the ordered checklist on{" "}
-        <Link href="/getting-started/verification" className="font-medium text-primary underline underline-offset-4">
-          Verification
-        </Link>
-        {" "}(health, ingestion status, MQTT publish, REST, WebSocket).
-      </Callout>
-
-      <Separator />
-
-      {/* Troubleshooting */}
       <section id="troubleshoot" className="scroll-mt-24 space-y-4">
         <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <WrenchIcon className="size-4 text-muted-foreground" />
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Help
-            </p>
-          </div>
-          <h2 className="font-heading text-xl font-semibold tracking-tight">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Troubleshooting
+          </p>
+          <h2 className="font-heading text-xl font-semibold tracking-tight">
+            If the gateway does not connect or send data
           </h2>
         </div>
 
-        <Diagram
-          title="Troubleshooting decision tree"
-          description="No data on the dashboard? Follow this path to isolate the issue."
-        >
-          <TroubleshootingTreeDiagram />
-        </Diagram>
-
         <div className="space-y-2">
           {troubleshooting.map((t) => (
-            <div key={t.problem} className="flex gap-3 rounded-lg border bg-card p-4">
-              <TerminalIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-              <div>
-                <div className="text-sm font-medium text-foreground">{t.problem}</div>
-                <div className="mt-1 text-sm text-muted-foreground leading-relaxed">{t.solution}</div>
-              </div>
-            </div>
+            <Card key={t.problem}>
+              <CardHeader>
+                <CardTitle className="text-base">{t.problem}</CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground leading-relaxed">
+                {t.solution}
+              </CardContent>
+            </Card>
           ))}
         </div>
       </section>

@@ -4,10 +4,12 @@ export function DocsResponseExample({
   title,
   status,
   children,
+  language = "json",
 }: {
   title: string
   status?: number
   children: string
+  language?: "text" | "json" | "python" | "javascript" | "typescript" | "csharp" | "bash"
 }) {
   return (
     <div className="space-y-2">
@@ -22,7 +24,7 @@ export function DocsResponseExample({
           </span>
         ) : null}
       </div>
-      <CodeBlock>{children.trim()}</CodeBlock>
+      <CodeBlock language={language}>{children.trim()}</CodeBlock>
     </div>
   )
 }
