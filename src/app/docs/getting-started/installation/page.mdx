@@ -1,3 +1,8 @@
+import {
+  API_BASE_URL_EXAMPLE,
+  MQTT_BROKER_WSS_URL_EXAMPLE,
+} from "@/lib/platform-constants"
+
 <DocsPageHeader
   eyebrow="Getting started"
   title="Credentials & access"
@@ -8,10 +13,10 @@
 
 <DocsDeliverableGrid>
   <DocsDeliverableCard title="API base URL" icon="globe">
-    HTTPS origin for REST and WebSocket (for example <code>https://&lt;api-host&gt;</code>).
+    HTTPS origin for REST and WebSocket (for example <code>{API_BASE_URL_EXAMPLE}</code>).
   </DocsDeliverableCard>
   <DocsDeliverableCard title="Message hub" icon="mqtt">
-    MQTT broker host, port, and credentials for <code>site/&lt;device_id&gt;/telemetry</code>.
+    MQTT broker host, port, and credentials for <code>{MQTT_BROKER_WSS_URL_EXAMPLE}</code>.
   </DocsDeliverableCard>
   <DocsDeliverableCard title="Device IDs" icon="registry">
     Stable <code>device_id</code> values to use in topics and API paths.

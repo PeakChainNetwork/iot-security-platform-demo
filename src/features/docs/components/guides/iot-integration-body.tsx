@@ -14,9 +14,16 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  API_INGESTION_STATUS_URL_EXAMPLE,
+  DEVICE_ID_PLACEHOLDER,
+  MQTT_BROKER_WSS_URL_EXAMPLE,
+  MQTT_HOST_PLACEHOLDER,
+  MQTT_PASSWORD_PLACEHOLDER,
+  MQTT_TOPIC_EXAMPLE,
+  MQTT_USERNAME_PLACEHOLDER,
+} from "@/lib/platform-constants"
 import { CableIcon } from "lucide-react"
-
-const endpointExample = "wss://<mqtt-host>:443/mqtt"
 
 const examplePayload = `{
   "timestamp": "2026-04-07T13:23:26.009702+00:00",
@@ -59,12 +66,12 @@ from datetime import datetime, timezone
 
 import paho.mqtt.client as mqtt
 
-MQTT_HOST = os.getenv("MQTT_HOST", "<mqtt-host>")
+MQTT_HOST = os.getenv("MQTT_HOST", "${MQTT_HOST_PLACEHOLDER}")
 MQTT_PORT = int(os.getenv("MQTT_PORT", "443"))
-MQTT_USERNAME = os.getenv("MQTT_USERNAME", "<mqtt-username>")
-MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "<mqtt-password>")
+MQTT_USERNAME = os.getenv("MQTT_USERNAME", "${MQTT_USERNAME_PLACEHOLDER}")
+MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "${MQTT_PASSWORD_PLACEHOLDER}")
 MQTT_WS_PATH = os.getenv("MQTT_WS_PATH", "/mqtt")
-DEVICE_ID = os.getenv("DEVICE_ID", "line-a-press-01")
+DEVICE_ID = os.getenv("DEVICE_ID", "${DEVICE_ID_PLACEHOLDER}")
 PUBLISH_INTERVAL_SECONDS = float(os.getenv("PUBLISH_INTERVAL_SECONDS", "10"))
 TOPIC = f"site/{DEVICE_ID}/telemetry"
 
@@ -117,11 +124,11 @@ finally:
 
 const javascriptPublisherExample = `import mqtt from "mqtt"
 
-const host = process.env.MQTT_HOST ?? "<mqtt-host>"
+const host = process.env.MQTT_HOST ?? "${MQTT_HOST_PLACEHOLDER}"
 const port = Number(process.env.MQTT_PORT ?? "443")
-const username = process.env.MQTT_USERNAME ?? "<mqtt-username>"
-const password = process.env.MQTT_PASSWORD ?? "<mqtt-password>"
-const deviceId = process.env.DEVICE_ID ?? "line-a-press-01"
+const username = process.env.MQTT_USERNAME ?? "${MQTT_USERNAME_PLACEHOLDER}"
+const password = process.env.MQTT_PASSWORD ?? "${MQTT_PASSWORD_PLACEHOLDER}"
+const deviceId = process.env.DEVICE_ID ?? "${DEVICE_ID_PLACEHOLDER}"
 const topic = \`site/\${deviceId}/telemetry\`
 
 const client = mqtt.connect(\`wss://\${host}:\${port}/mqtt\`, {
@@ -167,10 +174,10 @@ using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Protocol;
 
-var host = Environment.GetEnvironmentVariable("MQTT_HOST") ?? "<mqtt-host>";
-var username = Environment.GetEnvironmentVariable("MQTT_USERNAME") ?? "<mqtt-username>";
-var password = Environment.GetEnvironmentVariable("MQTT_PASSWORD") ?? "<mqtt-password>";
-var deviceId = Environment.GetEnvironmentVariable("DEVICE_ID") ?? "line-a-press-01";
+var host = Environment.GetEnvironmentVariable("MQTT_HOST") ?? "${MQTT_HOST_PLACEHOLDER}";
+var username = Environment.GetEnvironmentVariable("MQTT_USERNAME") ?? "${MQTT_USERNAME_PLACEHOLDER}";
+var password = Environment.GetEnvironmentVariable("MQTT_PASSWORD") ?? "${MQTT_PASSWORD_PLACEHOLDER}";
+var deviceId = Environment.GetEnvironmentVariable("DEVICE_ID") ?? "${DEVICE_ID_PLACEHOLDER}";
 var topic = $"site/{deviceId}/telemetry";
 
 var factory = new MqttClientFactory();
@@ -223,7 +230,7 @@ while (true)
     await Task.Delay(TimeSpan.FromSeconds(10));
 }`
 
-const statusCommand = `curl -sS "https://<your-status-url>/api/v1/ingestion/status"`
+const statusCommand = `curl -sS "${API_INGESTION_STATUS_URL_EXAMPLE}"`
 
 const disconnectedStatusExample = `{
   "sources": {
@@ -252,7 +259,7 @@ const connectionSettings = [
   },
   {
     title: "Endpoint",
-    value: endpointExample,
+    value: MQTT_BROKER_WSS_URL_EXAMPLE,
     desc: "Port 443 and WebSocket path /mqtt are part of the connection contract for the client gateway.",
   },
   {
@@ -389,8 +396,8 @@ export function IoTIntegrationTechnicalBody() {
           </p>
         </div>
 
-        <Snippet title="Broker endpoint" value={endpointExample} type="MQTT">
-          {endpointExample}
+        <Snippet title="Broker endpoint" value={MQTT_BROKER_WSS_URL_EXAMPLE} type="MQTT">
+          {MQTT_BROKER_WSS_URL_EXAMPLE}
         </Snippet>
 
         <div className="grid gap-4 lg:grid-cols-2">
@@ -410,7 +417,7 @@ export function IoTIntegrationTechnicalBody() {
         </div>
 
         <Callout variant="warning" title="Required external connection format">
-          Use <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">wss://&lt;mqtt-host&gt;:443/mqtt</code>{" "}
+          Use <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">{MQTT_BROKER_WSS_URL_EXAMPLE}</code>{" "}
           with TLS enabled. Do not replace this with a plain WebSocket or unsecured MQTT connection.
         </Callout>
       </section>
@@ -432,8 +439,8 @@ export function IoTIntegrationTechnicalBody() {
 
         <div className="grid gap-4 lg:grid-cols-2">
           <div className="space-y-4">
-            <Snippet title="Required topic" value="site/<device_id>/telemetry" type="MQTT">
-              site/&lt;device_id&gt;/telemetry
+            <Snippet title="Required topic" value={MQTT_TOPIC_EXAMPLE} type="MQTT">
+              {MQTT_TOPIC_EXAMPLE}
             </Snippet>
 
             <Snippet

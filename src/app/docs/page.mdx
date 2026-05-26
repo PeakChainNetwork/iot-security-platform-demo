@@ -1,3 +1,8 @@
+import {
+  PLATFORM_GITHUB_REPO_URL,
+  WEB_UI_GITHUB_REPO_URL,
+} from "@/lib/platform-constants"
+
 # Documentation
 
 Welcome to the **IoT Security Platform** documentation. These pages cover getting started, architecture concepts, operational guides, and a full **API reference** including WebSocket contracts.
@@ -27,6 +32,27 @@ Welcome to the **IoT Security Platform** documentation. These pages cover gettin
     <div className="rounded-lg border bg-card p-4 transition-colors hover:bg-muted/40">
       <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">API reference</div>
       <div className="mt-1 text-sm font-medium text-foreground group-hover:text-foreground">REST endpoints from the committed OpenAPI snapshot plus WebSocket streams.</div>
+    </div>
+  </a>
+</div>
+
+## Repository links
+
+<div className="grid gap-3 sm:grid-cols-2">
+  <a href={PLATFORM_GITHUB_REPO_URL} target="_blank" rel="noreferrer" className="group no-underline">
+    <div className="rounded-lg border bg-card p-4 transition-colors hover:bg-muted/40">
+      <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Platform repo</div>
+      <div className="mt-1 text-sm font-medium text-foreground group-hover:text-foreground">
+        {PLATFORM_GITHUB_REPO_URL}
+      </div>
+    </div>
+  </a>
+  <a href={WEB_UI_GITHUB_REPO_URL} target="_blank" rel="noreferrer" className="group no-underline">
+    <div className="rounded-lg border bg-card p-4 transition-colors hover:bg-muted/40">
+      <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Web UI repo</div>
+      <div className="mt-1 text-sm font-medium text-foreground group-hover:text-foreground">
+        {WEB_UI_GITHUB_REPO_URL}
+      </div>
     </div>
   </a>
 </div>

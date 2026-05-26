@@ -11,6 +11,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty"
 import { ApiError } from "@/lib/api-client"
+import { BACKEND_BASE_URL_ENV_VAR } from "@/lib/platform-constants"
 import { getDevices } from "@/features/devices"
 import type { DeviceRead } from "@/types/backend-types"
 import { minutesSince, parseBackendDate } from "@/lib/dates"
@@ -147,7 +148,7 @@ export default async function DevicesPage() {
               <EmptyDescription>{error}</EmptyDescription>
               <EmptyDescription>
                 Check that the backend is running and{" "}
-                <code className="rounded bg-muted px-1 py-0.5 text-xs">NEXT_PUBLIC_BACKEND_URL</code>{" "}
+                <code className="rounded bg-muted px-1 py-0.5 text-xs">{BACKEND_BASE_URL_ENV_VAR}</code>{" "}
                 is set correctly.
               </EmptyDescription>
             </EmptyHeader>

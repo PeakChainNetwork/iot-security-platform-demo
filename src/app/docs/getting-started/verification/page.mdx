@@ -1,3 +1,12 @@
+import {
+  API_DEVICES_URL_EXAMPLE,
+  API_HEALTH_URL_EXAMPLE,
+  API_INGESTION_STATUS_URL_EXAMPLE,
+  API_TELEMETRY_WS_URL_EXAMPLE,
+  MQTT_TCP_PUBLISH_EXAMPLE,
+  MQTT_TOPIC_EXAMPLE,
+} from "@/lib/platform-constants"
+
 <DocsPageHeader
   eyebrow="Getting started"
   title="Verification"
@@ -11,7 +20,7 @@
 
 <DocsVerificationStep step={1} title="Platform health">
 
-<DocsVerificationCommand value="curl -s https://<api-host>/health" />
+<DocsVerificationCommand value={`curl -s ${API_HEALTH_URL_EXAMPLE}`} />
 
 <DocsVerificationCriteria>
   <DocsVerificationCriterion label="status" value="healthy" success />
@@ -21,10 +30,10 @@
 
 <DocsVerificationStep step={2} title="Check ingestion status">
 
-<DocsVerificationCommand value="curl -s https://<api-host>/api/v1/ingestion/status" />
+<DocsVerificationCommand value={`curl -s ${API_INGESTION_STATUS_URL_EXAMPLE}`} />
 
 <DocsVerificationCriteria note="These values appear in the response after a successful publish to the telemetry topic.">
-  <DocsVerificationCriterion label="Publish topic" value="site/<device_id>/telemetry" />
+  <DocsVerificationCriterion label="Publish topic" value={MQTT_TOPIC_EXAMPLE} />
   <DocsVerificationCriterion label="sources.real_machines.status" value="connected" success />
   <DocsVerificationCriterion label="last_message_at" value="should be set" />
 </DocsVerificationCriteria>
@@ -33,11 +42,7 @@
 
 <DocsVerificationStep step={3} title="Publish test telemetry">
 
-<DocsVerificationCommand
-  value={`mosquitto_pub -h <mqtt-host> -p 1883 \\
-  -t 'site/<device_id>/telemetry' \\
-  -m '{"timestamp":"2026-05-18T14:30:00+00:00","temperature":25.0,"pressure":100.0,"status":"ok"}'`}
-/>
+<DocsVerificationCommand value={MQTT_TCP_PUBLISH_EXAMPLE} />
 
 <DocsVerificationCriteria>
   <DocsVerificationCriterion label="Publish result" value="accepted for a registered device_id" />
@@ -47,7 +52,7 @@
 
 <DocsVerificationStep step={4} title="Device state (REST)">
 
-<DocsVerificationCommand value="curl -s https://<api-host>/api/v1/devices" />
+<DocsVerificationCommand value={`curl -s ${API_DEVICES_URL_EXAMPLE}`} />
 
 <DocsVerificationCriteria>
   <DocsVerificationCriterion label="last_seen" value="updated after publish" />
@@ -58,7 +63,7 @@
 
 <DocsVerificationStep step={5} title="Live stream (WebSocket)">
 
-<DocsVerificationCommand value="wss://<api-host>/api/v1/ws/telemetry?device_id=<device_id>" />
+<DocsVerificationCommand value={API_TELEMETRY_WS_URL_EXAMPLE} />
 
 <DocsVerificationCriteria>
   <DocsVerificationCriterion label="device_id" value="matches published machine" />

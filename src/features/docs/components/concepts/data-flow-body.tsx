@@ -7,6 +7,10 @@ import { DocsPageHeader } from "@/features/docs/components/docs-page-header"
 import { DocsResponseExample } from "@/features/docs/components/docs-response-example"
 import { DocsSection } from "@/features/docs/components/docs-section"
 import { Snippet } from "@/features/docs/components/snippet"
+import {
+  API_WS_BASE_URL_EXAMPLE,
+  MQTT_TCP_PUBLISH_EXAMPLE,
+} from "@/lib/platform-constants"
 import { ArrowLeftRightIcon } from "lucide-react"
 
 const restEndpoints = [
@@ -72,9 +76,7 @@ export function DataFlowBody() {
       <DocsSection title="MQTT input" description="JSON payload contract is defined in the MQTT integration guide.">
         <Snippet
           title="Example publish"
-          value={`mosquitto_pub -h <mqtt-host> -p 1883 \\
-  -t 'site/<device_id>/telemetry' \\
-  -m '{"timestamp":"2026-05-18T14:30:00+00:00","temperature":25.0,"pressure":100.0,"status":"ok"}'`}
+          value={MQTT_TCP_PUBLISH_EXAMPLE}
           type="shell"
         />
         <p className="text-sm text-muted-foreground">
@@ -104,7 +106,7 @@ export function DataFlowBody() {
         </p>
       </DocsSection>
 
-      <DocsSection title="WebSocket streams" description="Connect with wss://&lt;api-host&gt; plus the path below.">
+      <DocsSection title="WebSocket streams" description={`Connect with ${API_WS_BASE_URL_EXAMPLE} plus the path below.`}>
         <div className="space-y-3">
           {wsStreams.map((s) => (
             <div key={s.path} className="rounded-xl border border-chart-2/20 bg-chart-2/5 p-4">

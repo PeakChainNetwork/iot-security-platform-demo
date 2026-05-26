@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { LOCAL_BACKEND_BASE_URL } from "@/lib/platform-constants"
 import {
   DownloadIcon,
   FileJsonIcon,
@@ -59,7 +60,7 @@ const STEPS = [
     icon: VariableIcon,
     title: "Configure base_url (if needed)",
     description:
-      'The default base_url is http://localhost:8000. If the platform runs elsewhere (e.g. behind ngrok or on a different port), click the environment quick-look icon (eye icon) next to the dropdown, then click "Edit" and change the value.',
+      `The default base_url is ${LOCAL_BACKEND_BASE_URL}. If the platform runs elsewhere (for example behind ngrok or on a different port), click the environment quick-look icon (eye icon) next to the dropdown, then click "Edit" and change the value.`,
   },
   {
     number: 5,
@@ -227,7 +228,7 @@ export function PostmanGuide() {
                 <td className="px-3 py-2">
                   <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs text-foreground">base_url</code>
                 </td>
-                <td className="px-3 py-2 font-mono text-xs text-muted-foreground">http://localhost:8000</td>
+                <td className="px-3 py-2 font-mono text-xs text-muted-foreground">{LOCAL_BACKEND_BASE_URL}</td>
                 <td className="px-3 py-2 text-xs text-muted-foreground">
                   Root URL for the platform API. All request paths are appended to this. Set this to the base URL
                   provided for your environment (demo, pilot, or production).
