@@ -9,11 +9,12 @@ export const WS_BACKEND_URL_ENV_VAR = "NEXT_PUBLIC_WS_BACKEND_URL"
 
 export const LOCAL_BACKEND_BASE_URL = "http://localhost:8000"
 
-export const API_HOST_PLACEHOLDER = "<api-host>"
+export const API_HOST_PLACEHOLDER = "shakily-dullness-backache.ngrok-free.dev"
 export const DEVICE_ID_PLACEHOLDER = "<device_id>"
-export const MQTT_HOST_PLACEHOLDER = "<mqtt-host>"
-export const MQTT_USERNAME_PLACEHOLDER = "<mqtt-username>"
-export const MQTT_PASSWORD_PLACEHOLDER = "<mqtt-password>"
+export const MQTT_HOST_PLACEHOLDER = "shrubs-dentist-submitter.ngrok-free.dev"
+export const MQTT_USERNAME_PLACEHOLDER = "iot_client"
+export const MQTT_PASSWORD_PLACEHOLDER = "iot_password"
+export const DASHBOARD_URL_EXAMPLE = "https://outshoot-platonic-destruct.ngrok-free.dev"
 
 export const API_BASE_URL_EXAMPLE = `https://${API_HOST_PLACEHOLDER}`
 export const API_WS_BASE_URL_EXAMPLE = `wss://${API_HOST_PLACEHOLDER}`
