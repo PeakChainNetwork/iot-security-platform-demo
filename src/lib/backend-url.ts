@@ -1,7 +1,5 @@
 import {
-  BACKEND_BASE_URL_ENV_VAR,
   LOCAL_BACKEND_BASE_URL,
-  WS_BACKEND_URL_ENV_VAR,
 } from "@/lib/platform-constants"
 
 function safeTrimSlashes(s: string) {
@@ -11,8 +9,8 @@ function safeTrimSlashes(s: string) {
 /** Client WebSocket / optional fallback; defaults when env is unset. */
 export function getBackendBaseUrl(): string {
   const raw =
-    process.env[WS_BACKEND_URL_ENV_VAR]?.trim() ||
-    process.env[BACKEND_BASE_URL_ENV_VAR]?.trim()
+    process.env.NEXT_PUBLIC_WS_BACKEND_URL?.trim() ||
+    process.env.NEXT_PUBLIC_BACKEND_URL?.trim()
 
   if (!raw) return LOCAL_BACKEND_BASE_URL
   return safeTrimSlashes(raw)
@@ -20,9 +18,9 @@ export function getBackendBaseUrl(): string {
 
 /** Server-side REST; requires NEXT_PUBLIC_BACKEND_URL. */
 export function requireBackendBaseUrl(): string {
-  const baseUrl = process.env[BACKEND_BASE_URL_ENV_VAR]?.trim()
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL?.trim()
   if (!baseUrl) {
-    throw new Error(`Missing env var: ${BACKEND_BASE_URL_ENV_VAR}`)
+    throw new Error(`Missing env var: ${baseUrl}`)
   }
   return safeTrimSlashes(baseUrl)
 }
