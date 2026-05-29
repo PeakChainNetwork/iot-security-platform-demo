@@ -15,34 +15,30 @@ export const DOCS_VERSIONS: string[] = [DOCS_VERSION]
 
 export const docsNav: DocsNavSection[] = [
   {
-    title: "Getting Started",
+    title: "Documentation",
     items: [
-      { title: "Introduction", href: "/docs" },
-      { title: "Prerequisites", href: "/docs/getting-started/prerequisites" },
-      { title: "Credentials & access", href: "/docs/getting-started/installation" },
-      { title: "Verification", href: "/docs/getting-started/verification" },
-    ],
-  },
-  {
-    title: "Concepts",
-    items: [
-      { title: "How it works", href: "/docs/concepts/architecture" },
-      { title: "Data flow", href: "/docs/concepts/data-flow" },
+      { title: "Overview", href: "/docs" },
+      { title: "How it works", href: "/docs/how-it-works" },
+      // Temporarily hidden — re-enable when ready:
+      // { title: "Tour the dashboard", href: "/docs/dashboard-tour" },
+      { title: "Run it locally", href: "/docs/run-locally" },
+      { title: "Connecting your machines", href: "/docs/connect" },
+      // { title: "FAQ & security", href: "/docs/faq" },
     ],
   },
   {
     title: "Guides",
     items: [
-      { title: "MQTT integration", href: "/docs/guides/iot-integration-technical" },
-      { title: "Migration rollout", href: "/docs/guides/iot-migration-guide" },
+      { title: "Rolling out to real machines", href: "/docs/guides/iot-migration-guide" },
       { title: "Platform API capabilities", href: "/docs/guides/platform-api" },
     ],
   },
   {
-    title: "API Reference",
+    title: "Developers",
     items: [
-      { title: "REST & WebSockets", href: "/docs/api" },
-      { title: "Postman Collection", href: "/docs/api/postman" },
+      { title: "MQTT integration", href: "/docs/developers/mqtt-integration" },
+      { title: "API reference", href: "/docs/api" },
+      { title: "Postman collection", href: "/docs/api/postman" },
     ],
   },
 ]

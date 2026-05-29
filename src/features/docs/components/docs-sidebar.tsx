@@ -7,14 +7,11 @@ import {
   BookMarkedIcon,
   BracesIcon,
   ChevronRightIcon,
-  ExternalLinkIcon,
-  LayersIcon,
-  RocketIcon,
+  CompassIcon,
   type LucideIcon,
 } from "lucide-react"
 
 import { VersionSwitcher } from "@/features/docs/components/version-switcher"
-import { Button } from "@/components/ui/button"
 import { docsNav, DOCS_VERSION, DOCS_VERSIONS, getActiveDocsNavHref } from "@/features/docs/lib/docs-nav"
 import { cn } from "@/lib/utils"
 import {
@@ -36,10 +33,9 @@ import {
 } from "@/components/ui/sidebar"
 
 const sectionIcons: Record<string, LucideIcon> = {
-  "Getting Started": RocketIcon,
-  Concepts: LayersIcon,
-  Guides: BookMarkedIcon,
-  "API Reference": BracesIcon,
+  Documentation: BookMarkedIcon,
+  Guides: CompassIcon,
+  Developers: BracesIcon,
 }
 
 export function DocsSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

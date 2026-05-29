@@ -27,7 +27,7 @@ export function DocsDeliverableCard({
   optional?: boolean
   children: React.ReactNode
 }) {
-  const Icon = resolveDocsIcon(icon)
+  const iconEl = React.createElement(resolveDocsIcon(icon), { className: "size-5" })
   return (
     <div
       className={cn(
@@ -39,7 +39,7 @@ export function DocsDeliverableCard({
         className="flex size-10 shrink-0 items-center justify-center rounded-lg border bg-primary/5 text-primary"
         aria-hidden
       >
-        <Icon className="size-5" />
+        {iconEl}
       </div>
       <div className="min-w-0 space-y-1.5">
         <div className="flex flex-wrap items-center gap-2">

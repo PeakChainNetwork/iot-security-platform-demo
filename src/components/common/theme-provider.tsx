@@ -17,7 +17,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useTheme() {
-  const { theme, resolvedTheme, setTheme } = useNextTheme()
+  const { resolvedTheme, setTheme } = useNextTheme()
 
   const toggleTheme = React.useCallback(() => {
     setTheme(resolvedTheme === "dark" ? "light" : "dark")

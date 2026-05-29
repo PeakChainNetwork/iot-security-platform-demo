@@ -144,7 +144,7 @@ export default async function DevicesPage() {
         {error ? (
           <Empty className="bg-card">
             <EmptyHeader>
-              <EmptyTitle>Couldn't load devices</EmptyTitle>
+              <EmptyTitle>Couldn&apos;t load devices</EmptyTitle>
               <EmptyDescription>{error}</EmptyDescription>
               <EmptyDescription>
                 Check that the backend is running and{" "}
@@ -153,9 +153,9 @@ export default async function DevicesPage() {
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
-              <a href="/devices">
+              <Link href="/devices">
                 <Badge variant="outline">Retry</Badge>
-              </a>
+              </Link>
             </EmptyContent>
           </Empty>
         ) : devices.length === 0 ? (

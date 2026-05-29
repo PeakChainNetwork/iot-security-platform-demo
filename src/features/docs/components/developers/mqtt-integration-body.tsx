@@ -10,6 +10,7 @@ import { Diagram } from "@/features/docs/components/diagram"
 import { MessageContractDiagram } from "@/features/docs/components/diagrams/message-contract-diagram"
 import { TopicStructureDiagram } from "@/features/docs/components/diagrams/topic-structure-diagram"
 import { Snippet } from "@/features/docs/components/snippet"
+import { SimulatedTerminal, type TerminalLine } from "@/features/docs/components/simulated-terminal"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -24,6 +25,15 @@ import {
   MQTT_USERNAME_PLACEHOLDER,
 } from "@/lib/platform-constants"
 import { CableIcon } from "lucide-react"
+
+const publisherRunOutput: TerminalLine[] = [
+  { text: "Connecting to PeakSoft MQTT over WSS...", tone: "muted" },
+  { text: "Connected (rc=0)", tone: "success" },
+  { text: `Published → site/${DEVICE_ID_PLACEHOLDER}/telemetry  {"temperature": 45.8, "pressure": 124.8, "status": "ok"}`, tone: "default" },
+  { text: `Published → site/${DEVICE_ID_PLACEHOLDER}/telemetry  {"temperature": 45.9, "pressure": 124.6, "status": "ok"}`, tone: "default" },
+  { text: `Published → site/${DEVICE_ID_PLACEHOLDER}/telemetry  {"temperature": 46.1, "pressure": 125.0, "status": "ok"}`, tone: "default" },
+  { text: "(publishing every 10s — press Ctrl+C to stop)", tone: "muted" },
+]
 
 const examplePayload = `{
   "timestamp": "2026-04-07T13:23:26.009702+00:00",
@@ -320,24 +330,24 @@ const troubleshooting = [
   },
 ]
 
-export function IoTIntegrationTechnicalBody() {
+export function MqttIntegrationBody() {
   return (
     <div className="space-y-10">
       <DocsPageHeader
-        eyebrow="Guides"
-        title="Connect your real machines"
-        badges={["Client guide", "MQTT over WSS", "Payload schema"]}
+        eyebrow="Developers"
+        title="MQTT integration (technical)"
+        badges={["MQTT over WSS", "Payload schema", "Reference publishers"]}
         icon={CableIcon}
         description={
           <>
-            This guide explains exactly how to connect your real-machine gateway to PeakSoft: connection
-            settings, topic naming, payload schema, example code, validation, and troubleshooting. For
-            the broader setup flow, see{" "}
+            The full technical reference for connecting a real-machine gateway to PeakSoft: connection
+            settings, topic naming, payload schema, example code, validation, and troubleshooting. For the
+            non-technical overview, see{" "}
             <Link
               className="font-medium text-primary underline underline-offset-4 hover:text-primary/90"
-              href="/docs/getting-started/verification"
+              href="/docs/connect"
             >
-              verification
+              connecting your machines
             </Link>
             .
           </>
@@ -590,6 +600,9 @@ export function IoTIntegrationTechnicalBody() {
             and sends JSON telemetry with QoS 1.
           </p>
         </div>
+
+        <p className="text-sm text-muted-foreground">Press Run to see what a publisher prints once connected:</p>
+        <SimulatedTerminal command="python publisher.py" lines={publisherRunOutput} label="publisher" />
 
         <Tabs defaultValue="python" className="space-y-4">
           <TabsList>

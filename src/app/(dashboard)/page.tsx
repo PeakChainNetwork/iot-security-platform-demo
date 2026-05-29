@@ -91,22 +91,22 @@ export default function DashboardPage() {
   useDashboardWs((env) => {
     switch (env.type) {
       case "kpis":
-        setKpis(env.data as any)
+        setKpis(env.data as SystemHealthRead)
         break
       case "pipeline":
-        setPipeline(env.data as any)
+        setPipeline(env.data as PipelineStageRead[])
         break
       case "data_streams":
-        setStreams(env.data as any)
+        setStreams(env.data as DataStreamRead[])
         break
       case "alerts":
-        setAlerts(env.data as any)
+        setAlerts(env.data as AlertRead[])
         break
       case "anomalies":
-        setAnomalies(env.data as any)
+        setAnomalies(env.data as AnomalyRead[])
         break
       case "vulnerabilities_summary":
-        setVulnSummary(env.data as any)
+        setVulnSummary(env.data as VulnerabilitySummaryResponse)
         break
       default:
         break

@@ -1,3 +1,4 @@
+import * as React from "react"
 import Link from "next/link"
 import type { LucideIcon } from "lucide-react"
 import { ArrowRightIcon } from "lucide-react"
@@ -20,7 +21,9 @@ export function DocsNavCard({
   icon?: DocsIconName | LucideIcon
   className?: string
 }) {
-  const ResolvedIcon = icon ? resolveDocsIcon(icon) : null
+  const iconEl = icon
+    ? React.createElement(resolveDocsIcon(icon), { className: "size-5", "aria-hidden": true })
+    : null
   return (
     <Link
       href={href}
@@ -38,9 +41,9 @@ export function DocsNavCard({
           </p>
           <p className="text-sm leading-relaxed text-muted-foreground">{description}</p>
         </div>
-        {ResolvedIcon ? (
+        {iconEl ? (
           <div className="flex size-10 shrink-0 items-center justify-center rounded-lg border bg-background/80 text-primary">
-            <ResolvedIcon className="size-5" aria-hidden />
+            {iconEl}
           </div>
         ) : null}
       </div>

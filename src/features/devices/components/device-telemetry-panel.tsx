@@ -269,7 +269,7 @@ export function DeviceTelemetryPanel({
               <div className="text-xs text-muted-foreground">Key readings</div>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-5">
                 {primaryKeys.map((k) => {
-                  const v = (metrics as any)?.[k]
+                  const v = (metrics as Record<string, unknown>)[k]
                   return (
                     <div key={k} className="rounded-xl border bg-card p-4">
                       <div className="text-xs text-muted-foreground">{metricLabel(k)}</div>

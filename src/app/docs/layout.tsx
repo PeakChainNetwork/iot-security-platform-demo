@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 
 import { DocsInsetHeader } from "@/features/docs/components/docs-inset-header"
+import { DocsPageFooter } from "@/features/docs/components/docs-page-footer"
 import { DocsSearchProvider } from "@/features/docs/components/docs-search-provider"
 import { DocsSidebar } from "@/features/docs/components/docs-sidebar"
 import {
@@ -55,6 +56,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
             <div className="docs-scroll min-h-0 flex-1 overflow-y-auto overscroll-y-contain">
               <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4 lg:max-w-5xl">
                 <article className="docs-main min-w-0 font-sans">{children}</article>
+                <DocsPageFooter />
               </div>
             </div>
           </SidebarInset>

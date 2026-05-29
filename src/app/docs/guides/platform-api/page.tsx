@@ -4,9 +4,9 @@ import { PlatformApiBody } from "@/features/docs/components/guides/platform-api-
 
 export const metadata: Metadata = {
   title: "Platform API capabilities",
-  description: "REST and WebSocket endpoints for devices, alerts, vulnerabilities, and dashboard KPIs.",
+  description: "What you can read back from the IoT Security Platform once telemetry is flowing.",
 }
 
-export default function PlatformApiPage() {
+export default function PlatformApiGuidePage() {
   return <PlatformApiBody />
 }

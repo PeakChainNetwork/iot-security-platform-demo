@@ -14,7 +14,6 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CopyButton } from "@/components/common/copy-button"
-import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { DeviceTelemetryPanel } from "@/features/devices/components/device-telemetry-panel"
 import { ApiError } from "@/lib/api-client"
@@ -28,6 +27,18 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty"
 import { minutesSince, parseBackendDate } from "@/lib/dates"
+
+type DeviceSections = {
+  sections?: {
+    vulnerabilities?: Array<{
+      cve_id: string
+      severity?: string
+      cvss_score?: number | null
+      description?: string
+    }>
+    alerts?: Array<{ id: string; title?: string; severity?: string; description?: string }>
+  }
+}
 
 function statusBadgeVariant(status: string) {
   const s = status.toLowerCase()
@@ -301,7 +312,7 @@ export default async function DeviceDetailsPage({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {((device as any).sections?.vulnerabilities ?? []).length === 0 ? (
+                  {((device as unknown as DeviceSections).sections?.vulnerabilities ?? []).length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={4} className="py-8">
                         <div className="text-sm text-muted-foreground">
@@ -310,7 +321,7 @@ export default async function DeviceDetailsPage({
                       </TableCell>
                     </TableRow>
                   ) : (
-                    (device as any).sections?.vulnerabilities?.slice(0, 8)?.map((v: any) => (
+                    (device as unknown as DeviceSections).sections?.vulnerabilities?.slice(0, 8)?.map((v) => (
                       <TableRow key={v.cve_id}>
                         <TableCell className="font-mono text-xs">{v.cve_id}</TableCell>
                         <TableCell>
@@ -341,12 +352,12 @@ export default async function DeviceDetailsPage({
                 Alerts derived by backend pipeline/DPI sources.
               </div>
               <div className="space-y-2">
-                {((device as any).sections?.alerts ?? []).length === 0 ? (
+                {((device as unknown as DeviceSections).sections?.alerts ?? []).length === 0 ? (
                   <div className="rounded-xl border bg-card p-4 text-sm text-muted-foreground">
                     No alerts for this device yet.
                   </div>
                 ) : (
-                  ((device as any).sections?.alerts ?? []).slice(0, 6).map((a: any) => (
+                  ((device as unknown as DeviceSections).sections?.alerts ?? []).slice(0, 6).map((a) => (
                     <div key={a.id} className="rounded-xl border bg-card p-3">
                       <div className="flex items-center justify-between gap-3">
                         <div className="font-medium">{a.title}</div>

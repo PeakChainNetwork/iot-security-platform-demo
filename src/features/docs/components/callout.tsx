@@ -1,4 +1,4 @@
-import { AlertTriangleIcon, CircleAlertIcon, InfoIcon } from "lucide-react"
+import { AlertTriangleIcon, CircleAlertIcon, InfoIcon, LightbulbIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -7,6 +7,11 @@ const variants = {
     box: "border-border bg-muted/30",
     icon: CircleAlertIcon,
     iconClass: "text-muted-foreground",
+  },
+  tip: {
+    box: "border-chart-2/25 bg-chart-2/8",
+    icon: LightbulbIcon,
+    iconClass: "text-chart-2",
   },
   info: {
     box: "border-chart-1/25 bg-chart-1/8",
