@@ -12,7 +12,7 @@ import { BoxIcon, GitBranchIcon, RocketIcon } from "lucide-react"
 const cloneCommand = `git clone --recurse-submodules ${PLATFORM_GITHUB_REPO_URL}.git && cd peaksoft-security-platform`;
 
 const setupOutput: TerminalLine[] = [
-  { text: "🚀 Starting Peaksoft IoT Security setup...", tone: "header" },
+  { text: "🚀 Starting Peaksoft IoT Security setup....", tone: "header" },
   { text: "🔍 Checking requirements...", tone: "muted" },
   { text: "ℹ️  Using Docker Compose V2", tone: "muted" },
   { text: "🔐 Generating SSL certificates...", tone: "muted" },
