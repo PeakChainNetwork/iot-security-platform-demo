@@ -9,8 +9,10 @@ import { Snippet } from "@/features/docs/components/snippet"
 import { SimulatedTerminal, type TerminalLine } from "@/features/docs/components/simulated-terminal"
 import {
   BACKEND_BASE_URL_ENV_VAR,
+  MQTT_HOST_PLACEHOLDER,
+  MQTT_PASSWORD_PLACEHOLDER,
+  MQTT_USERNAME_PLACEHOLDER,
   SIMULATOR_GITHUB_REPO_URL,
-  SIMULATOR_RUN_COMMAND,
   WEB_UI_GITHUB_REPO_URL,
 } from "@/lib/platform-constants"
 import { KeyRoundIcon, MonitorIcon, RadioTowerIcon, RocketIcon } from "lucide-react"
@@ -18,7 +20,7 @@ import { KeyRoundIcon, MonitorIcon, RadioTowerIcon, RocketIcon } from "lucide-re
 const dashboardClone = `git clone ${WEB_UI_GITHUB_REPO_URL}.git && cd iot-security-platform-demo`
 const dashboardEnv = `${BACKEND_BASE_URL_ENV_VAR}=https://<peaksoft-backend-url>`
 const simulatorClone = `git clone ${SIMULATOR_GITHUB_REPO_URL}.git && cd iot-simulator`
-const simulatorEnv = `MQTT_HOST=<broker-host>\nMQTT_PORT=443\nMQTT_TRANSPORT=websockets\nMQTT_TLS=true\nMQTT_USERNAME=iot_client\nMQTT_PASSWORD=<password-from-peaksoft>`
+const simulatorEnv = `MQTT_HOST=${MQTT_HOST_PLACEHOLDER}\nMQTT_PORT=443\nMQTT_TRANSPORT=websockets\nMQTT_TLS=true\nMQTT_USERNAME=${MQTT_USERNAME_PLACEHOLDER}\nMQTT_PASSWORD=${MQTT_PASSWORD_PLACEHOLDER}`
 
 const dashboardRunOutput: TerminalLine[] = [
   { text: "> next dev", tone: "muted" },
@@ -28,11 +30,12 @@ const dashboardRunOutput: TerminalLine[] = [
 ]
 
 const simulatorRunOutput: TerminalLine[] = [
-  { text: "Connecting to broker over WSS...", tone: "muted" },
-  { text: "Connected to MQTT broker ✓", tone: "success" },
-  { text: "Publishing factory/dev-001/telemetry @ 1 Hz", tone: "default" },
-  { text: "Publishing factory/dev-002/telemetry @ 1 Hz", tone: "default" },
-  { text: "Publishing factory/dev-003/telemetry @ 1 Hz", tone: "default" },
+  { text: "Creating virtual environment...", tone: "muted" },
+  { text: "Installing dependencies...", tone: "muted" },
+  { text: "Starting simulator on http://localhost:8001 ...", tone: "muted" },
+  { text: "Connected to MQTT broker shrubs-…:443", tone: "success" },
+  { text: "Published 1 msg(s) to factory/dev-001/telemetry", tone: "default" },
+  { text: "Published 10 msg(s) to factory/dev-002/telemetry", tone: "default" },
   { text: "(open the dashboard to watch it arrive)", tone: "muted" },
 ]
 
@@ -138,35 +141,41 @@ export function RunLocallyBody() {
               <DocsShellCommand value={simulatorClone} label="In a terminal" />
             </div>
           </DocsStep>
-          <DocsStep step={2} title="Install dependencies">
-            <div className="mt-2 space-y-3">
-              <DocsShellCommand value="python -m venv .venv" label="Create a virtual environment" />
-              <p className="text-sm text-muted-foreground">
-                Activate it — <strong>Windows (PowerShell):</strong>{" "}
-                <code>.\.venv\Scripts\Activate.ps1</code> · <strong>macOS/Linux:</strong>{" "}
-                <code>source .venv/bin/activate</code>
-              </p>
-              <DocsShellCommand value="pip install -r requirements.txt" label="Install dependencies" />
+          <DocsStep step={2} title="Run it — one command">
+            <p>
+              The script sets up Python, installs everything, configures the broker (the demo broker is the
+              default), and starts publishing — no other setup needed.
+            </p>
+            <div className="mt-2 space-y-2">
+              <DocsShellCommand value=".\run.bat" label="Windows" />
+              <DocsShellCommand value="./run.sh" label="macOS / Linux" />
             </div>
-          </DocsStep>
-          <DocsStep step={3} title="Point it at PeakSoft's broker">
-            <p>Copy <code>.env.example</code> to <code>.env</code> and add the broker host + credentials:</p>
-            <div className="mt-2">
-              <Snippet title=".env" value={simulatorEnv} type="env">
-                {simulatorEnv}
-              </Snippet>
-            </div>
-          </DocsStep>
-          <DocsStep step={4} title="Start publishing">
-            <div className="mt-2">
-              <SimulatedTerminal command={SIMULATOR_RUN_COMMAND} lines={simulatorRunOutput} label="simulator" />
+            <div className="mt-3">
+              <SimulatedTerminal command=".\run.bat" lines={simulatorRunOutput} label="simulator" />
             </div>
             <p className="mt-2 text-sm text-muted-foreground">
-              It connects to the broker and streams telemetry — which flows through the live platform and shows
-              up in your dashboard.
+              Telemetry now flows through the live platform and shows up in your dashboard. A control API runs
+              on <code>http://localhost:8001</code> (try <code>POST /scenario</code> to drive an anomaly).
             </p>
           </DocsStep>
         </DocsSteps>
+
+        <DocsDetails summary="Run it manually / change the broker" description="The steps the script runs, and the broker settings.">
+          <DocsShellCommand value="python -m venv .venv" label="1 · Create a virtual environment" />
+          <p className="text-sm text-muted-foreground">
+            Activate — <strong>Windows (PowerShell):</strong> <code>.\.venv\Scripts\Activate.ps1</code> ·{" "}
+            <strong>macOS/Linux:</strong> <code>source .venv/bin/activate</code>
+          </p>
+          <DocsShellCommand value="pip install -r requirements.txt" label="2 · Install dependencies" />
+          <p className="text-sm text-muted-foreground">
+            3 · The broker is preset in <code>.env.example</code> (copied to <code>.env</code> on first run). To
+            change it, edit <code>.env</code>:
+          </p>
+          <Snippet title=".env" value={simulatorEnv} type="env">
+            {simulatorEnv}
+          </Snippet>
+          <DocsShellCommand value="uvicorn app.main:app --port 8001" label="4 · Start publishing" />
+        </DocsDetails>
       </section>
 
       <section className="space-y-3">
