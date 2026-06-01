@@ -265,10 +265,14 @@ export function RunLocallyBody() {
 
         <Callout variant="tip" title="Now drive an anomaly">
           With both running, tell the simulator to misbehave and watch the platform flag it in the dashboard:
-          <div className="mt-3">
+          <div className="mt-3 space-y-2">
             <DocsShellCommand
               value={`curl -X POST http://localhost:8001/scenario -H "Content-Type: application/json" -d '{"global_":{"scenario":"spike","enabled":true}}'`}
-              label="Inject a spike"
+              label="macOS / Linux / Git Bash"
+            />
+            <DocsShellCommand
+              value={`Invoke-RestMethod -Method Post -Uri http://localhost:8001/scenario -ContentType "application/json" -Body '{"global_":{"scenario":"spike","enabled":true}}'`}
+              label="Windows (PowerShell)"
             />
           </div>
           <span className="mt-2 block text-xs text-muted-foreground">
