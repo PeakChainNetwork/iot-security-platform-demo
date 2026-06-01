@@ -6,7 +6,6 @@ import { CodeBlock } from "@/features/docs/components/code-block"
 import { DocsPageHeader } from "@/features/docs/components/docs-page-header"
 import { DocsDetails } from "@/features/docs/components/docs-details"
 import { DocsFieldTable } from "@/features/docs/components/docs-field-table"
-import { ConnectionSimulator } from "@/features/docs/components/connection-simulator"
 import { PayloadBuilder } from "@/features/docs/components/payload-builder"
 import { SimulatedTerminal, type TerminalLine } from "@/features/docs/components/simulated-terminal"
 import { Callout } from "@/features/docs/components/callout"
@@ -170,15 +169,6 @@ export function ConnectBody() {
         </div>
         <FlowDiagram nodes={flowNodes} connectorLabels={["publish", "over WSS"]} />
       </div>
-
-      <section id="watch-it-connect" className="scroll-mt-24 space-y-3">
-        <h2 className="font-heading text-xl font-semibold tracking-tight">Watch a machine connect</h2>
-        <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
-          Press <strong>Connect machine</strong> to step through the exact sequence your gateway follows —
-          connect, sign in, send the first reading, and Peaksoft EU confirms it&apos;s live.
-        </p>
-        <ConnectionSimulator />
-      </section>
 
       {/* Connection schema */}
       <section id="connect" className="scroll-mt-24 space-y-3">
