@@ -28,7 +28,7 @@ import { CableIcon, CpuIcon, RadioTowerIcon, ShieldCheckIcon } from "lucide-reac
 const flowNodes: FlowNode[] = [
   { icon: CpuIcon, title: "Your machine", subtitle: "reads telemetry", tile: "bg-chart-3/15 text-chart-3" },
   { icon: RadioTowerIcon, title: "MQTT message", subtitle: "site/<id>/telemetry", tile: "bg-chart-5/15 text-chart-5" },
-  { icon: ShieldCheckIcon, title: "The platform", subtitle: "ingests & scores", tile: "bg-primary/15 text-primary", emphasized: true },
+  { icon: ShieldCheckIcon, title: "Peaksoft EU", subtitle: "ingests & scores", tile: "bg-primary/15 text-primary", emphasized: true },
 ]
 
 const statusOutput: TerminalLine[] = [
@@ -175,7 +175,7 @@ export function ConnectBody() {
         <h2 className="font-heading text-xl font-semibold tracking-tight">Watch a machine connect</h2>
         <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
           Press <strong>Connect machine</strong> to step through the exact sequence your gateway follows —
-          connect, sign in, send the first reading, and the platform confirms it&apos;s live.
+          connect, sign in, send the first reading, and Peaksoft EU confirms it&apos;s live.
         </p>
         <ConnectionSimulator />
       </section>

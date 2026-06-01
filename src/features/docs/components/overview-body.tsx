@@ -17,7 +17,7 @@ import {
 const flowNodes: FlowNode[] = [
   { icon: CpuIcon, title: "Your machines", subtitle: "send readings", tile: "bg-chart-3/15 text-chart-3" },
   { icon: RadioTowerIcon, title: "Site gateway", subtitle: "collect · forward", tile: "bg-chart-4/15 text-chart-4" },
-  { icon: ShieldCheckIcon, title: "The platform", subtitle: "watch · score risk", tile: "bg-primary/15 text-primary", emphasized: true },
+  { icon: ShieldCheckIcon, title: "Peaksoft EU", subtitle: "watch · score risk", tile: "bg-primary/15 text-primary", emphasized: true },
   { icon: GaugeIcon, title: "You see it live", subtitle: "dashboard · alerts", tile: "bg-chart-2/15 text-chart-2" },
 ]
 
@@ -57,7 +57,7 @@ export function OverviewBody() {
         eyebrow="Documentation"
         title="Overview"
         icon={ShieldCheckIcon}
-        description="Keep an eye on your industrial machines. Each one reports in, the platform watches for trouble and scores risk in real time, and you see the live picture — so problems surface before they become downtime."
+        description="Keep an eye on your industrial machines. Each one reports in, Peaksoft EU watches for trouble and scores risk in real time, and you see the live picture — so problems surface before they become downtime."
       />
 
       <section className="space-y-4">
@@ -80,7 +80,7 @@ export function OverviewBody() {
 
       <div className="rounded-2xl border bg-muted/20 p-5 sm:p-6">
         <div className="mb-5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          The platform at a glance
+          Peaksoft EU at a glance
         </div>
         <FlowDiagram nodes={flowNodes} connectorLabels={["", "MQTT", "live"]} />
       </div>

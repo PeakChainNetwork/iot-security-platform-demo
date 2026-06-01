@@ -11,7 +11,7 @@ import { CpuIcon, GaugeIcon, LayersIcon, ShieldCheckIcon } from "lucide-react"
 
 const flowNodes: FlowNode[] = [
   { icon: CpuIcon, title: "Your machines", subtitle: "send readings", tile: "bg-chart-3/15 text-chart-3" },
-  { icon: ShieldCheckIcon, title: "The platform", subtitle: "ingest · score risk · detect", tile: "bg-primary/15 text-primary", emphasized: true },
+  { icon: ShieldCheckIcon, title: "Peaksoft EU", subtitle: "ingest · score risk · detect", tile: "bg-primary/15 text-primary", emphasized: true },
   { icon: GaugeIcon, title: "Live dashboard", subtitle: "dashboard · alerts · API", tile: "bg-chart-2/15 text-chart-2" },
 ]
 
@@ -21,7 +21,7 @@ const steps = [
     desc: "Each machine reports its measurements — temperature, pressure, and so on — every few seconds.",
   },
   {
-    title: "The platform watches them",
+    title: "Peaksoft EU watches them",
     desc: "Readings are checked in real time, scored for risk, and matched against known vulnerabilities.",
   },
   {
@@ -36,12 +36,12 @@ export function HowItWorksBody() {
       <DocsPageHeader
         eyebrow="Documentation"
         title="How it works"
-        description="Your machines send readings; the platform watches them and shows you the live picture. Try it for yourself below."
+        description="Your machines send readings; Peaksoft EU watches them and shows you the live picture. Try it for yourself below."
         icon={LayersIcon}
       />
 
       <Callout variant="tip" title="In one sentence">
-        Think of it as a control room for your equipment — every machine reports in, and the platform
+        Think of it as a control room for your equipment — every machine reports in, and Peaksoft EU
         raises a hand the moment something looks off.
       </Callout>
 
@@ -72,7 +72,7 @@ export function HowItWorksBody() {
           <h2 className="font-heading text-xl font-semibold tracking-tight">See it in action</h2>
           <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
             A hands-on walkthrough of exactly that loop. Tap <strong>Send a reading</strong> and watch it travel
-            from a machine to the dashboard — then flip <strong>Inject fault</strong> to see the platform react.
+            from a machine to the dashboard — then flip <strong>Inject fault</strong> to see Peaksoft EU react.
             Nothing here touches a real machine; it&apos;s a safe sandbox.
           </p>
         </div>
@@ -93,7 +93,7 @@ export function HowItWorksBody() {
         <RiskCalculator />
 
         <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
-          The CVSS input above isn&apos;t guessed — the platform matches each machine&apos;s profile to known
+          The CVSS input above isn&apos;t guessed — Peaksoft EU matches each machine&apos;s profile to known
           vulnerabilities. Pick a machine to see its matches and how they feed the score:
         </p>
         <CveMatcher />

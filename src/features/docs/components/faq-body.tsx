@@ -17,7 +17,7 @@ const security = [
   {
     icon: ServerIcon,
     title: "Runs in your environment",
-    desc: "The platform ships as containers you run on your own infrastructure — your data stays with you.",
+    desc: "Peaksoft EU ships as containers you run on your own infrastructure — your data stays with you.",
   },
   {
     icon: KeyRoundIcon,
@@ -34,7 +34,7 @@ const security = [
 const faqs = [
   {
     q: "Is my data safe?",
-    a: "Yes. Telemetry is sent over an encrypted, authenticated connection, and the platform runs on infrastructure you control — nothing is shipped to a third party.",
+    a: "Yes. Telemetry is sent over an encrypted, authenticated connection, and Peaksoft EU runs on infrastructure you control — nothing is shipped to a third party.",
   },
   {
     q: "Does it run in the cloud or on-premises?",
@@ -50,7 +50,7 @@ const faqs = [
   },
   {
     q: "Will it disrupt my equipment?",
-    a: "No. The platform only reads telemetry — it observes and scores risk, it does not control your machines.",
+    a: "No. Peaksoft EU only reads telemetry — it observes and scores risk, it does not control your machines.",
   },
   {
     q: "Can I try it before connecting real machines?",
@@ -69,7 +69,7 @@ export function FaqBody() {
         eyebrow="Documentation"
         title="FAQ & security"
         icon={LockIcon}
-        description="Quick answers to the questions we hear most — and how the platform keeps your data safe."
+        description="Quick answers to the questions we hear most — and how Peaksoft EU keeps your data safe."
       />
 
       <section className="space-y-4">

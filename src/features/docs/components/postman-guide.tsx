@@ -60,14 +60,14 @@ const STEPS = [
     icon: VariableIcon,
     title: "Configure base_url (if needed)",
     description:
-      `The default base_url is ${LOCAL_BACKEND_BASE_URL}. If the platform runs elsewhere (for example behind ngrok or on a different port), click the environment quick-look icon (eye icon) next to the dropdown, then click "Edit" and change the value.`,
+      `The default base_url is ${LOCAL_BACKEND_BASE_URL}. If Peaksoft EU runs elsewhere (for example behind ngrok or on a different port), click the environment quick-look icon (eye icon) next to the dropdown, then click "Edit" and change the value.`,
   },
   {
     number: 5,
     icon: PlayIcon,
     title: "Send your first request",
     description:
-      'Expand the "Devices" folder in the collection sidebar, click "List devices", and hit Send. You should see the JSON response from the platform.',
+      'Expand the "Devices" folder in the collection sidebar, click "List devices", and hit Send. You should see the JSON response from Peaksoft EU.',
   },
 ] as const
 
@@ -108,7 +108,7 @@ export function PostmanGuide() {
             <p className="text-sm text-muted-foreground leading-relaxed">
               Pre-configures the{" "}
               <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">base_url</code> variable so every
-              request in the collection points to the platform API automatically.
+              request in the collection points to Peaksoft EU API automatically.
             </p>
             <Button asChild variant="outline" className="w-full gap-2">
               <a href={ENVIRONMENT_HREF} download={ENVIRONMENT_FILENAME}>
@@ -230,7 +230,7 @@ export function PostmanGuide() {
                 </td>
                 <td className="px-3 py-2 font-mono text-xs text-muted-foreground">{LOCAL_BACKEND_BASE_URL}</td>
                 <td className="px-3 py-2 text-xs text-muted-foreground">
-                  Root URL for the platform API. All request paths are appended to this. Set this to the base URL
+                  Root URL for Peaksoft EU API. All request paths are appended to this. Set this to the base URL
                   provided for your environment (demo, pilot, or production).
                 </td>
               </tr>
@@ -244,7 +244,7 @@ export function PostmanGuide() {
             <div className="space-y-1">
               <p className="text-sm font-medium text-foreground">Machine integration scope</p>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                This collection covers the platform APIs you need to verify telemetry ingestion, device state,
+                This collection covers Peaksoft EU APIs you need to verify telemetry ingestion, device state,
                 alerts, and live streams. It does not include internal operator-only services.
               </p>
             </div>
@@ -265,7 +265,7 @@ export function PostmanGuide() {
             },
             {
               title: "Use the Collection Runner",
-              body: 'Right-click the collection name and select "Run collection" to execute all requests in sequence — useful for a quick smoke test of the platform API.',
+              body: 'Right-click the collection name and select "Run collection" to execute all requests in sequence — useful for a quick smoke test of Peaksoft EU API.',
             },
             {
               title: "WebSocket requests",

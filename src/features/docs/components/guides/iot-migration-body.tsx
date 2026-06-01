@@ -28,11 +28,11 @@ export function IoTMigrationGuideBody() {
         title="Rolling out to real machines"
         badges={["Rollout"]}
         icon={RadioIcon}
-        description="Swap the demo data for your live machines — at a pace that suits you, with no disruption to the rest of the platform."
+        description="Swap the demo data for your live machines — at a pace that suits you, with no disruption to the rest of Peaksoft EU."
       />
 
       <Callout variant="tip" title="The big idea">
-        The demo is just a <strong>data source</strong>. When your real machines take over, the platform,
+        The demo is just a <strong>data source</strong>. When your real machines take over, Peaksoft EU,
         dashboard, and alerts stay exactly the same — only the source changes.
       </Callout>
 
@@ -64,7 +64,7 @@ export function IoTMigrationGuideBody() {
       <section className="space-y-4">
         <h2 className="font-heading text-xl font-semibold tracking-tight">Roll out in phases</h2>
         <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
-          Step through the phases below — watch the fleet switch from demo to live machines while the platform
+          Step through the phases below — watch the fleet switch from demo to live machines while Peaksoft EU
           keeps running throughout.
         </p>
         <MigrationPhaseExplorer />

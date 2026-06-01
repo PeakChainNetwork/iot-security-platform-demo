@@ -35,7 +35,7 @@ export function MqttPipelineDiagram({ compact = false }: { compact?: boolean }) 
     <DiagramSvg
       viewBox="0 0 700 130"
       title="MQTT integration path"
-      desc="Real machines through gateway and message hub to the platform and clients."
+      desc="Real machines through gateway and message hub to Peaksoft EU and clients."
     >
       <defs>
         <DiagramArrowMarker id={markerId} />

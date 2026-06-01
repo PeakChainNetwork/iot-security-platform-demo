@@ -150,7 +150,7 @@ export function DashboardTourBody() {
         eyebrow="Documentation"
         title="Tour the dashboard"
         icon={LayoutDashboardIcon}
-        description="A quick look at the live views the platform gives you once machines are connected."
+        description="A quick look at the live views Peaksoft EU gives you once machines are connected."
       >
         <Button asChild>
           <Link href="/">

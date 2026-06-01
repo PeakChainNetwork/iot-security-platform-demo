@@ -6,7 +6,7 @@ import { DocsPageHeader } from "@/features/docs/components/docs-page-header"
 import { BracesIcon, LayoutDashboardIcon, ShieldCheckIcon } from "lucide-react"
 
 const flowNodes: FlowNode[] = [
-  { icon: ShieldCheckIcon, title: "The platform", subtitle: "processed state", tile: "bg-primary/15 text-primary", emphasized: true },
+  { icon: ShieldCheckIcon, title: "Peaksoft EU", subtitle: "processed state", tile: "bg-primary/15 text-primary", emphasized: true },
   { icon: BracesIcon, title: "REST / WebSocket", subtitle: "endpoints & streams", tile: "bg-chart-1/15 text-chart-1" },
   { icon: LayoutDashboardIcon, title: "Your apps", subtitle: "dashboard · integrations", tile: "bg-chart-2/15 text-chart-2" },
 ]
@@ -18,7 +18,7 @@ export function PlatformApiBody() {
         eyebrow="Guides"
         title="What you can read back"
         icon={BracesIcon}
-        description="Once telemetry is flowing, the platform exposes it through simple REST and live WebSocket endpoints. Tap a capability to see what you get back."
+        description="Once telemetry is flowing, Peaksoft EU exposes it through simple REST and live WebSocket endpoints. Tap a capability to see what you get back."
       />
 
       <div className="rounded-2xl border bg-muted/20 p-5 sm:p-6">

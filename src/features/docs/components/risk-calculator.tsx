@@ -51,7 +51,7 @@ function SliderRow({
   )
 }
 
-/** Interactive risk-score calculator mirroring the platform's scoring formula. */
+/** Interactive risk-score calculator mirroring Peaksoft EU's scoring formula. */
 export function RiskCalculator() {
   const [cvss, setCvss] = React.useState(7.5)
   const [anomaly, setAnomaly] = React.useState(60)

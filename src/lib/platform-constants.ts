@@ -4,6 +4,12 @@ export const PLATFORM_GITHUB_REPO_URL =
 export const WEB_UI_GITHUB_REPO_URL =
   "https://github.com/PeakChainNetwork/iot-security-platform-demo"
 
+// Standalone telemetry simulator the user runs to feed the LIVE platform over
+// MQTT (it publishes to PeakSoft's exposed broker; it holds no platform logic).
+export const SIMULATOR_GITHUB_REPO_URL =
+  "https://github.com/PeakChainNetwork/iot-simulator"
+export const SIMULATOR_RUN_COMMAND = "uvicorn app.main:app --port 8001"
+
 export const BACKEND_BASE_URL_ENV_VAR = "NEXT_PUBLIC_BACKEND_URL"
 export const WS_BACKEND_URL_ENV_VAR = "NEXT_PUBLIC_WS_BACKEND_URL"
 

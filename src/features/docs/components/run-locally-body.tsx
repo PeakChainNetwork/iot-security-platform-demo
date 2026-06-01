@@ -5,56 +5,46 @@ import { DocsDetails } from "@/features/docs/components/docs-details"
 import { DocsPageHeader } from "@/features/docs/components/docs-page-header"
 import { DocsShellCommand } from "@/features/docs/components/docs-shell-command"
 import { DocsStep, DocsSteps } from "@/features/docs/components/docs-steps"
+import { Snippet } from "@/features/docs/components/snippet"
 import { SimulatedTerminal, type TerminalLine } from "@/features/docs/components/simulated-terminal"
-import { PLATFORM_GITHUB_REPO_URL } from "@/lib/platform-constants"
-import { BoxIcon, GitBranchIcon, RocketIcon } from "lucide-react"
+import {
+  BACKEND_BASE_URL_ENV_VAR,
+  SIMULATOR_GITHUB_REPO_URL,
+  SIMULATOR_RUN_COMMAND,
+  WEB_UI_GITHUB_REPO_URL,
+} from "@/lib/platform-constants"
+import { KeyRoundIcon, MonitorIcon, RadioTowerIcon, RocketIcon } from "lucide-react"
 
-const cloneCommand = `git clone --recurse-submodules ${PLATFORM_GITHUB_REPO_URL}.git && cd peaksoft-security-platform`;
+const dashboardClone = `git clone ${WEB_UI_GITHUB_REPO_URL}.git && cd iot-security-platform-demo`
+const dashboardEnv = `${BACKEND_BASE_URL_ENV_VAR}=https://<peaksoft-backend-url>`
+const simulatorClone = `git clone ${SIMULATOR_GITHUB_REPO_URL}.git && cd iot-simulator`
+const simulatorEnv = `MQTT_HOST=<broker-host>\nMQTT_PORT=443\nMQTT_TRANSPORT=websockets\nMQTT_TLS=true\nMQTT_USERNAME=iot_client\nMQTT_PASSWORD=<password-from-peaksoft>`
 
-const setupOutput: TerminalLine[] = [
-  { text: "🚀 Starting Peaksoft IoT Security setup....", tone: "header" },
-  { text: "🔍 Checking requirements...", tone: "muted" },
-  { text: "ℹ️  Using Docker Compose V2", tone: "muted" },
-  { text: "🔐 Generating SSL certificates...", tone: "muted" },
-  { text: "✅ Certificates generated.", tone: "success" },
-  { text: "📦 Building IoT Security backend...", tone: "muted" },
-  { text: "✅ Backend built.", tone: "success" },
-  { text: "🎨 Building dashboard (this can take a while)...", tone: "muted" },
-  { text: "✅ Dashboard built.", tone: "success" },
-  { text: "🚢 Launching the stack...", tone: "muted" },
-  { text: "⏳ Waiting for the database...", tone: "muted" },
-  { text: "✅ Database ready.", tone: "success" },
-  { text: "🔄 Running migrations...", tone: "muted" },
-  { text: "✅ Migrations applied.", tone: "success" },
-  { text: "🌱 Seeding demo devices...", tone: "muted" },
-  { text: "📡 Starting telemetry simulator...", tone: "muted" },
-  { text: "🧠 Training the anomaly model...", tone: "muted" },
-  { text: "", tone: "default" },
-  { text: "🎉 SETUP COMPLETE", tone: "header" },
-  { text: "🌐 Dashboard:  https://localhost", tone: "default" },
-  { text: "👤 admin / SecretPassword", tone: "muted" },
-  { text: "✨ All systems go!", tone: "success" },
+const dashboardRunOutput: TerminalLine[] = [
+  { text: "> next dev", tone: "muted" },
+  { text: "▲ Next.js 16.2.2 (Turbopack)", tone: "default" },
+  { text: "- Local:   http://localhost:3000", tone: "default" },
+  { text: "✓ Ready in 1.1s", tone: "success" },
 ]
 
-const dockerPsOutput: TerminalLine[] = [
-  { text: "NAMES                   STATUS", tone: "muted" },
-  { text: "iot-security-backend    Up (healthy)", tone: "success" },
-  { text: "iot-postgres            Up (healthy)", tone: "success" },
-  { text: "mosquitto               Up", tone: "default" },
-  { text: "kafka                   Up (healthy)", tone: "success" },
-  { text: "wazuh.manager           Up (healthy)", tone: "success" },
-  { text: "wazuh.dashboard         Up", tone: "default" },
+const simulatorRunOutput: TerminalLine[] = [
+  { text: "Connecting to broker over WSS...", tone: "muted" },
+  { text: "Connected to MQTT broker ✓", tone: "success" },
+  { text: "Publishing factory/dev-001/telemetry @ 1 Hz", tone: "default" },
+  { text: "Publishing factory/dev-002/telemetry @ 1 Hz", tone: "default" },
+  { text: "Publishing factory/dev-003/telemetry @ 1 Hz", tone: "default" },
+  { text: "(open the dashboard to watch it arrive)", tone: "muted" },
 ]
 
 const requirements = [
-  { icon: BoxIcon, title: "Docker Desktop", desc: "Installed and running. The whole platform ships as containers." },
-  { icon: GitBranchIcon, title: "Git", desc: "To download the project. About 8 GB of free memory is recommended." },
+  { icon: MonitorIcon, title: "Node.js 20+ and pnpm", desc: "To run the dashboard." },
+  { icon: RadioTowerIcon, title: "Python 3.10+", desc: "To run the simulator (no Docker)." },
+  { icon: KeyRoundIcon, title: "Access from PeakSoft", desc: "The backend URL for the dashboard, and broker credentials for the simulator." },
 ]
 
 const services = [
-  { label: "Dashboard", href: "https://localhost", note: "admin / SecretPassword" },
-  { label: "Backend API", href: "http://localhost:8000", note: "REST + WebSockets" },
-  { label: "API docs", href: "http://localhost:8000/docs", note: "Interactive Swagger" },
+  { label: "Dashboard", href: "http://localhost:3000", note: "the operator UI (live data)" },
+  { label: "Simulator control", href: "http://localhost:8001/health", note: "status + scenario API" },
 ]
 
 export function RunLocallyBody() {
@@ -64,12 +54,19 @@ export function RunLocallyBody() {
         eyebrow="Documentation"
         title="Run it locally"
         icon={RocketIcon}
-        description="Bring the whole platform up on your own machine with a single command — database, dashboard, backend, and a built-in telemetry demo."
+        description="Test the live platform with your own data. Run the dashboard and the simulator locally; PeakSoft hosts the platform itself — you don't run it."
       />
+
+      <Callout variant="tip" title="What you run vs. what we host">
+        You run two things — the <strong>dashboard</strong> and the <strong>simulator</strong>. The platform
+        (backend + security engine) stays <strong>hosted by PeakSoft</strong>. The simulator publishes
+        telemetry to PeakSoft&apos;s broker; the platform processes it live, and you watch it appear in the
+        dashboard. Ask your PeakSoft contact for the <strong>backend URL</strong> and <strong>broker credentials</strong>.
+      </Callout>
 
       <section className="space-y-3">
         <h2 className="font-heading text-xl font-semibold tracking-tight">Before you start</h2>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-3">
           {requirements.map((r) => {
             const Icon = r.icon
             return (
@@ -87,38 +84,86 @@ export function RunLocallyBody() {
         </div>
       </section>
 
+      {/* Track 1 — Dashboard */}
       <section className="space-y-4">
-        <h2 className="font-heading text-xl font-semibold tracking-tight">Three steps</h2>
+        <div className="flex items-center gap-2">
+          <div className="flex size-8 items-center justify-center rounded-lg bg-chart-2/15 text-chart-2">
+            <MonitorIcon className="size-4" aria-hidden />
+          </div>
+          <h2 className="font-heading text-xl font-semibold tracking-tight">1 · The dashboard</h2>
+        </div>
         <DocsSteps>
-          <DocsStep step={1} title="Get the code">
-            <p>Clone the project and move into the folder.</p>
-            <div className="mt-3">
-              <DocsShellCommand value={cloneCommand} label="In a terminal" />
+          <DocsStep step={1} title="Clone the dashboard repo">
+            <div className="mt-2">
+              <DocsShellCommand value={dashboardClone} label="In a terminal" />
             </div>
           </DocsStep>
-
-          <DocsStep step={2} title="Start everything">
-            <p>
-              One command builds the images, starts the stack, sets up the database, and turns on a demo
-              telemetry feed. The first run can take a few minutes while images download. Press{" "}
-              <strong>Run</strong> below to preview what you&apos;ll see.
-            </p>
-            <div className="mt-3">
-              <SimulatedTerminal command="bash scripts/setup.sh" lines={setupOutput} label="setup" />
+          <DocsStep step={2} title="Install dependencies">
+            <div className="mt-2">
+              <DocsShellCommand value="pnpm install" label="Install" />
             </div>
-            <p className="mt-2 text-xs text-muted-foreground">
-              On Windows, run this inside WSL or Git Bash (it&apos;s a Bash script).
+          </DocsStep>
+          <DocsStep step={3} title="Point it at the hosted platform">
+            <p>
+              Copy <code>.env.example</code> to <code>.env.local</code> and set the backend URL PeakSoft gave you:
+            </p>
+            <div className="mt-2">
+              <Snippet title=".env.local" value={dashboardEnv} type="env">
+                {dashboardEnv}
+              </Snippet>
+            </div>
+          </DocsStep>
+          <DocsStep step={4} title="Start it">
+            <div className="mt-2">
+              <SimulatedTerminal command="pnpm dev" lines={dashboardRunOutput} label="dashboard" />
+            </div>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Open <a href="http://localhost:3000" target="_blank" rel="noreferrer">http://localhost:3000</a>.
             </p>
           </DocsStep>
+        </DocsSteps>
+      </section>
 
-          <DocsStep step={3} title="Open the dashboard">
-            <p>
-              When it finishes, open{" "}
-              <a href="https://localhost" target="_blank" rel="noreferrer">
-                https://localhost
-              </a>{" "}
-              and sign in with <strong>admin</strong> / <strong>SecretPassword</strong>. You&apos;ll see live demo
-              machines straight away.
+      {/* Track 2 — Simulator */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2">
+          <div className="flex size-8 items-center justify-center rounded-lg bg-primary/15 text-primary">
+            <RadioTowerIcon className="size-4" aria-hidden />
+          </div>
+          <h2 className="font-heading text-xl font-semibold tracking-tight">2 · The simulator</h2>
+        </div>
+        <DocsSteps>
+          <DocsStep step={1} title="Clone the simulator repo">
+            <div className="mt-2">
+              <DocsShellCommand value={simulatorClone} label="In a terminal" />
+            </div>
+          </DocsStep>
+          <DocsStep step={2} title="Install dependencies">
+            <div className="mt-2 space-y-3">
+              <DocsShellCommand value="python -m venv .venv" label="Create a virtual environment" />
+              <p className="text-sm text-muted-foreground">
+                Activate it — <strong>Windows (PowerShell):</strong>{" "}
+                <code>.\.venv\Scripts\Activate.ps1</code> · <strong>macOS/Linux:</strong>{" "}
+                <code>source .venv/bin/activate</code>
+              </p>
+              <DocsShellCommand value="pip install -r requirements.txt" label="Install dependencies" />
+            </div>
+          </DocsStep>
+          <DocsStep step={3} title="Point it at PeakSoft's broker">
+            <p>Copy <code>.env.example</code> to <code>.env</code> and add the broker host + credentials:</p>
+            <div className="mt-2">
+              <Snippet title=".env" value={simulatorEnv} type="env">
+                {simulatorEnv}
+              </Snippet>
+            </div>
+          </DocsStep>
+          <DocsStep step={4} title="Start publishing">
+            <div className="mt-2">
+              <SimulatedTerminal command={SIMULATOR_RUN_COMMAND} lines={simulatorRunOutput} label="simulator" />
+            </div>
+            <p className="mt-2 text-sm text-muted-foreground">
+              It connects to the broker and streams telemetry — which flows through the live platform and shows
+              up in your dashboard.
             </p>
           </DocsStep>
         </DocsSteps>
@@ -126,7 +171,7 @@ export function RunLocallyBody() {
 
       <section className="space-y-3">
         <h2 className="font-heading text-xl font-semibold tracking-tight">What&apos;s now running</h2>
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2">
           {services.map((s) => (
             <a key={s.label} href={s.href} target="_blank" rel="noreferrer" className="group no-underline">
               <div className="h-full rounded-xl border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-muted/40">
@@ -139,33 +184,33 @@ export function RunLocallyBody() {
         </div>
       </section>
 
-      <Callout variant="tip" title="A couple of heads-ups">
-        Make sure Docker is running before you start. The dashboard uses a self-signed certificate, so your
-        browser will ask you to accept the security warning on first visit — that&apos;s expected for a local run.
-      </Callout>
-
-      <DocsDetails summary="Stop or reset the stack" description="When you're done, or want a clean restart.">
-        <DocsShellCommand value="cd wazuh-docker/multi-node && docker compose down" label="Stop all services" />
+      <DocsDetails summary="Trigger an anomaly" description="Drive a fault to see the platform detect it.">
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          Tell the simulator to misbehave, then watch an alert appear in the dashboard:
+        </p>
+        <DocsShellCommand
+          value={`curl -X POST http://localhost:8001/scenario -H "Content-Type: application/json" -d '{"global_":{"scenario":"spike","enabled":true}}'`}
+          label="Inject a spike"
+        />
+        <p className="text-xs text-muted-foreground">
+          Scenarios: <code>spike</code>, <code>drift</code>, <code>flood</code>, <code>bad_payload</code>, <code>impersonation</code>.
+        </p>
       </DocsDetails>
 
-      <DocsDetails summary="Troubleshooting" description="The most common first-run snags and how to clear them.">
+      <DocsDetails summary="Troubleshooting" description="The most common first-run snags.">
         <div className="space-y-2">
           {[
             {
-              problem: "“Cannot connect to the Docker daemon”",
-              solution: "Docker isn't running. Start Docker Desktop, wait until it reports running, then run the setup again.",
+              problem: "Dashboard loads but shows no data",
+              solution: `Check ${BACKEND_BASE_URL_ENV_VAR} points at PeakSoft's backend URL, and that the simulator is connected and publishing.`,
             },
             {
-              problem: "Port already in use (443 or 8000)",
-              solution: "Another app is using that port. Stop it (or the conflicting container) and re-run the setup.",
+              problem: "Simulator can't connect to the broker",
+              solution: "Confirm MQTT_HOST and credentials, and that MQTT_TRANSPORT=websockets with MQTT_TLS=true for a WSS broker on port 443.",
             },
             {
-              problem: "The browser says the dashboard isn't secure",
-              solution: "Expected on a local run — the dashboard uses a self-signed certificate. Choose “Advanced” and proceed to https://localhost.",
-            },
-            {
-              problem: "Pages don't load yet / services look down",
-              solution: "First boot downloads images and can take 2–3 minutes. Check progress with the commands below.",
+              problem: "Port 3000 or 8001 already in use",
+              solution: "Another app is using that port. Stop it, or change the port (pnpm dev -p / uvicorn --port).",
             },
           ].map((t) => (
             <div key={t.problem} className="rounded-lg border bg-card p-4">
@@ -174,16 +219,14 @@ export function RunLocallyBody() {
             </div>
           ))}
         </div>
-        <SimulatedTerminal command="docker ps" lines={dockerPsOutput} label="services" />
-        <DocsShellCommand value="docker logs iot-security-backend" label="Check the backend logs" />
       </DocsDetails>
 
       <p className="text-sm text-muted-foreground">
-        Up and running? Try the{" "}
-        <Link href="/docs/how-it-works#see-it-in-action" className="text-primary underline underline-offset-4">
-          interactive demo
-        </Link>
-        , then{" "}
+        New here? See{" "}
+        <Link href="/docs/how-it-works" className="text-primary underline underline-offset-4">
+          how it works
+        </Link>{" "}
+        or{" "}
         <Link href="/docs/connect" className="text-primary underline underline-offset-4">
           connect your own machines
         </Link>

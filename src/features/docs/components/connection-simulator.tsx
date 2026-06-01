@@ -87,7 +87,7 @@ function LogRow({ line }: { line: LogLine }) {
   )
 }
 
-/** A guided simulation of a machine establishing its connection to the platform. */
+/** A guided simulation of a machine establishing its connection to Peaksoft EU. */
 export function ConnectionSimulator() {
   const [phase, setPhase] = React.useState<"idle" | "running" | "done">("idle")
   const [doneCount, setDoneCount] = React.useState(0)
