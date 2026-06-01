@@ -8,17 +8,20 @@ import { DocsStep, DocsSteps } from "@/features/docs/components/docs-steps"
 import { Snippet } from "@/features/docs/components/snippet"
 import { SimulatedTerminal, type TerminalLine } from "@/features/docs/components/simulated-terminal"
 import {
+  API_BASE_URL_EXAMPLE,
+  API_WS_BASE_URL_EXAMPLE,
   BACKEND_BASE_URL_ENV_VAR,
   MQTT_HOST_PLACEHOLDER,
   MQTT_PASSWORD_PLACEHOLDER,
   MQTT_USERNAME_PLACEHOLDER,
   SIMULATOR_GITHUB_REPO_URL,
   WEB_UI_GITHUB_REPO_URL,
+  WS_BACKEND_URL_ENV_VAR,
 } from "@/lib/platform-constants"
 import { KeyRoundIcon, MonitorIcon, RadioTowerIcon, RocketIcon } from "lucide-react"
 
 const dashboardClone = `git clone ${WEB_UI_GITHUB_REPO_URL}.git && cd iot-security-platform-demo`
-const dashboardEnv = `${BACKEND_BASE_URL_ENV_VAR}=https://<peaksoft-backend-url>`
+const dashboardEnv = `${BACKEND_BASE_URL_ENV_VAR}=${API_BASE_URL_EXAMPLE}\n${WS_BACKEND_URL_ENV_VAR}=${API_WS_BASE_URL_EXAMPLE}`
 const simulatorClone = `git clone ${SIMULATOR_GITHUB_REPO_URL}.git && cd iot-simulator`
 const simulatorEnv = `MQTT_HOST=${MQTT_HOST_PLACEHOLDER}\nMQTT_PORT=443\nMQTT_TRANSPORT=websockets\nMQTT_TLS=true\nMQTT_USERNAME=${MQTT_USERNAME_PLACEHOLDER}\nMQTT_PASSWORD=${MQTT_PASSWORD_PLACEHOLDER}`
 
@@ -42,7 +45,7 @@ const simulatorRunOutput: TerminalLine[] = [
 const requirements = [
   { icon: MonitorIcon, title: "Node.js 20+ and pnpm", desc: "To run the dashboard." },
   { icon: RadioTowerIcon, title: "Python 3.10+", desc: "To run the simulator (no Docker)." },
-  { icon: KeyRoundIcon, title: "Access from PeakSoft", desc: "The backend URL for the dashboard, and broker credentials for the simulator." },
+  { icon: KeyRoundIcon, title: "Nothing else", desc: "The backend URL and broker are preset in each repo's .env.example — just clone and run." },
 ]
 
 const services = [
@@ -64,7 +67,8 @@ export function RunLocallyBody() {
         You run two things — the <strong>dashboard</strong> and the <strong>simulator</strong>. The platform
         (backend + security engine) stays <strong>hosted by PeakSoft</strong>. The simulator publishes
         telemetry to PeakSoft&apos;s broker; the platform processes it live, and you watch it appear in the
-        dashboard. Ask your PeakSoft contact for the <strong>backend URL</strong> and <strong>broker credentials</strong>.
+        dashboard. The <strong>backend URL</strong> and <strong>broker</strong> are already preset in each repo&apos;s
+        <code>.env.example</code> — just clone and run.
       </Callout>
 
       <section className="space-y-3">
@@ -108,7 +112,7 @@ export function RunLocallyBody() {
           </DocsStep>
           <DocsStep step={3} title="Point it at the hosted platform">
             <p>
-              Copy <code>.env.example</code> to <code>.env.local</code> and set the backend URL PeakSoft gave you:
+              Copy <code>.env.example</code> to <code>.env.local</code> — it already points at the hosted backend:
             </p>
             <div className="mt-2">
               <Snippet title=".env.local" value={dashboardEnv} type="env">
