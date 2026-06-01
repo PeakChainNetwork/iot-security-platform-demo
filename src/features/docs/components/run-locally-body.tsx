@@ -7,6 +7,7 @@ import { DocsShellCommand } from "@/features/docs/components/docs-shell-command"
 import { DocsStep, DocsSteps } from "@/features/docs/components/docs-steps"
 import { Snippet } from "@/features/docs/components/snippet"
 import { SimulatedTerminal, type TerminalLine } from "@/features/docs/components/simulated-terminal"
+import { FlowDiagram, type FlowNode } from "@/features/docs/components/diagrams/flow-diagram"
 import {
   API_BASE_URL_EXAMPLE,
   API_WS_BASE_URL_EXAMPLE,
@@ -18,12 +19,24 @@ import {
   WEB_UI_GITHUB_REPO_URL,
   WS_BACKEND_URL_ENV_VAR,
 } from "@/lib/platform-constants"
-import { KeyRoundIcon, MonitorIcon, RadioTowerIcon, RocketIcon } from "lucide-react"
+import {
+  KeyRoundIcon,
+  MonitorIcon,
+  RadioTowerIcon,
+  RocketIcon,
+  ShieldCheckIcon,
+} from "lucide-react"
 
 const dashboardClone = `git clone ${WEB_UI_GITHUB_REPO_URL}.git && cd iot-security-platform-demo`
 const dashboardEnv = `${BACKEND_BASE_URL_ENV_VAR}=${API_BASE_URL_EXAMPLE}\n${WS_BACKEND_URL_ENV_VAR}=${API_WS_BASE_URL_EXAMPLE}`
 const simulatorClone = `git clone ${SIMULATOR_GITHUB_REPO_URL}.git && cd iot-simulator`
 const simulatorEnv = `MQTT_HOST=${MQTT_HOST_PLACEHOLDER}\nMQTT_PORT=443\nMQTT_TRANSPORT=websockets\nMQTT_TLS=true\nMQTT_USERNAME=${MQTT_USERNAME_PLACEHOLDER}\nMQTT_PASSWORD=${MQTT_PASSWORD_PLACEHOLDER}`
+
+const runFlow: FlowNode[] = [
+  { icon: RadioTowerIcon, title: "Simulator", subtitle: "you run it", tile: "bg-primary/15 text-primary" },
+  { icon: ShieldCheckIcon, title: "PeakSoft platform", subtitle: "hosted · ingest · score · alert", tile: "bg-chart-4/15 text-chart-4", emphasized: true },
+  { icon: MonitorIcon, title: "Dashboard", subtitle: "you run it", tile: "bg-chart-2/15 text-chart-2" },
+]
 
 const dashboardRunOutput: TerminalLine[] = [
   { text: "> next dev", tone: "muted" },
@@ -45,13 +58,42 @@ const simulatorRunOutput: TerminalLine[] = [
 const requirements = [
   { icon: MonitorIcon, title: "Node.js 20+ and pnpm", desc: "To run the dashboard." },
   { icon: RadioTowerIcon, title: "Python 3.10+", desc: "To run the simulator (no Docker)." },
-  { icon: KeyRoundIcon, title: "Nothing else", desc: "The backend URL and broker are preset in each repo's .env.example — just clone and run." },
+  { icon: KeyRoundIcon, title: "Nothing else", desc: "Backend URL + broker are preset in each repo's .env.example — clone and run." },
 ]
 
 const services = [
   { label: "Dashboard", href: "http://localhost:3000", note: "the operator UI (live data)" },
   { label: "Simulator control", href: "http://localhost:8001/health", note: "status + scenario API" },
 ]
+
+function TrackHeader({
+  step,
+  title,
+  port,
+  icon: Icon,
+  tile,
+}: {
+  step: string
+  title: string
+  port: string
+  icon: typeof MonitorIcon
+  tile: string
+}) {
+  return (
+    <div className="flex items-center gap-3">
+      <div className={`flex size-9 shrink-0 items-center justify-center rounded-xl ${tile}`}>
+        <Icon className="size-5" aria-hidden />
+      </div>
+      <div className="min-w-0">
+        <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{step}</div>
+        <h2 className="font-heading text-xl font-semibold tracking-tight">{title}</h2>
+      </div>
+      <span className="ml-auto rounded-full border bg-background px-2.5 py-0.5 font-mono text-xs text-muted-foreground">
+        {port}
+      </span>
+    </div>
+  )
+}
 
 export function RunLocallyBody() {
   return (
@@ -60,16 +102,21 @@ export function RunLocallyBody() {
         eyebrow="Documentation"
         title="Run it locally"
         icon={RocketIcon}
-        description="Test the live platform with your own data. Run the dashboard and the simulator locally; PeakSoft hosts the platform itself — you don't run it."
+        description="Test the live platform with your own data. You run two small pieces — the dashboard and the simulator — and PeakSoft hosts the platform itself."
       />
 
-      <Callout variant="tip" title="What you run vs. what we host">
-        You run two things — the <strong>dashboard</strong> and the <strong>simulator</strong>. The platform
-        (backend + security engine) stays <strong>hosted by PeakSoft</strong>. The simulator publishes
-        telemetry to PeakSoft&apos;s broker; the platform processes it live, and you watch it appear in the
-        dashboard. The <strong>backend URL</strong> and <strong>broker</strong> are already preset in each repo&apos;s
-        <code>.env.example</code> — just clone and run.
-      </Callout>
+      {/* What runs where */}
+      <div className="rounded-2xl border bg-muted/20 p-5 sm:p-6">
+        <div className="mb-5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          What runs where
+        </div>
+        <FlowDiagram nodes={runFlow} connectorLabels={["MQTT", "HTTP / WS"]} />
+        <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
+          The simulator publishes telemetry to PeakSoft&apos;s broker; the hosted platform ingests and scores it;
+          the dashboard shows the result. The <strong>backend URL</strong> and <strong>broker</strong> are
+          already preset in each repo&apos;s <code>.env.example</code> — just clone and run.
+        </p>
+      </div>
 
       <section className="space-y-3">
         <h2 className="font-heading text-xl font-semibold tracking-tight">Before you start</h2>
@@ -92,13 +139,8 @@ export function RunLocallyBody() {
       </section>
 
       {/* Track 1 — Dashboard */}
-      <section className="space-y-4">
-        <div className="flex items-center gap-2">
-          <div className="flex size-8 items-center justify-center rounded-lg bg-chart-2/15 text-chart-2">
-            <MonitorIcon className="size-4" aria-hidden />
-          </div>
-          <h2 className="font-heading text-xl font-semibold tracking-tight">1 · The dashboard</h2>
-        </div>
+      <section className="space-y-4 rounded-2xl border bg-card/30 p-5 sm:p-6">
+        <TrackHeader step="Part 1" title="The dashboard" port=":3000" icon={MonitorIcon} tile="bg-chart-2/15 text-chart-2" />
         <DocsSteps>
           <DocsStep step={1} title="Clone the dashboard repo">
             <div className="mt-2">
@@ -132,13 +174,8 @@ export function RunLocallyBody() {
       </section>
 
       {/* Track 2 — Simulator */}
-      <section className="space-y-4">
-        <div className="flex items-center gap-2">
-          <div className="flex size-8 items-center justify-center rounded-lg bg-primary/15 text-primary">
-            <RadioTowerIcon className="size-4" aria-hidden />
-          </div>
-          <h2 className="font-heading text-xl font-semibold tracking-tight">2 · The simulator</h2>
-        </div>
+      <section className="space-y-4 rounded-2xl border bg-card/30 p-5 sm:p-6">
+        <TrackHeader step="Part 2" title="The simulator" port=":8001" icon={RadioTowerIcon} tile="bg-primary/15 text-primary" />
         <DocsSteps>
           <DocsStep step={1} title="Clone the simulator repo">
             <div className="mt-2">
@@ -158,8 +195,8 @@ export function RunLocallyBody() {
               <SimulatedTerminal command=".\run.bat" lines={simulatorRunOutput} label="simulator" />
             </div>
             <p className="mt-2 text-sm text-muted-foreground">
-              Telemetry now flows through the live platform and shows up in your dashboard. A control API runs
-              on <code>http://localhost:8001</code> (try <code>POST /scenario</code> to drive an anomaly).
+              Telemetry now flows through the live platform and into your dashboard. A control API runs on{" "}
+              <code>http://localhost:8001</code>.
             </p>
           </DocsStep>
         </DocsSteps>
@@ -182,8 +219,9 @@ export function RunLocallyBody() {
         </DocsDetails>
       </section>
 
+      {/* Now you're live */}
       <section className="space-y-3">
-        <h2 className="font-heading text-xl font-semibold tracking-tight">What&apos;s now running</h2>
+        <h2 className="font-heading text-xl font-semibold tracking-tight">You&apos;re live</h2>
         <div className="grid gap-3 sm:grid-cols-2">
           {services.map((s) => (
             <a key={s.label} href={s.href} target="_blank" rel="noreferrer" className="group no-underline">
@@ -195,20 +233,20 @@ export function RunLocallyBody() {
             </a>
           ))}
         </div>
-      </section>
 
-      <DocsDetails summary="Trigger an anomaly" description="Drive a fault to see the platform detect it.">
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          Tell the simulator to misbehave, then watch an alert appear in the dashboard:
-        </p>
-        <DocsShellCommand
-          value={`curl -X POST http://localhost:8001/scenario -H "Content-Type: application/json" -d '{"global_":{"scenario":"spike","enabled":true}}'`}
-          label="Inject a spike"
-        />
-        <p className="text-xs text-muted-foreground">
-          Scenarios: <code>spike</code>, <code>drift</code>, <code>flood</code>, <code>bad_payload</code>, <code>impersonation</code>.
-        </p>
-      </DocsDetails>
+        <Callout variant="tip" title="Now drive an anomaly">
+          With both running, tell the simulator to misbehave and watch the platform flag it in the dashboard:
+          <div className="mt-3">
+            <DocsShellCommand
+              value={`curl -X POST http://localhost:8001/scenario -H "Content-Type: application/json" -d '{"global_":{"scenario":"spike","enabled":true}}'`}
+              label="Inject a spike"
+            />
+          </div>
+          <span className="mt-2 block text-xs text-muted-foreground">
+            Scenarios: <code>spike</code>, <code>drift</code>, <code>flood</code>, <code>bad_payload</code>, <code>impersonation</code>.
+          </span>
+        </Callout>
+      </section>
 
       <DocsDetails summary="Troubleshooting" description="The most common first-run snags.">
         <div className="space-y-2">
