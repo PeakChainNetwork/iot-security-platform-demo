@@ -99,7 +99,9 @@ function TrackHeader({
       </div>
       <div className="min-w-0">
         <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{step}</div>
-        <h2 className="font-heading text-xl font-semibold tracking-tight">{title}</h2>
+        <div role="heading" aria-level={2} className="font-heading text-xl font-semibold tracking-tight text-foreground">
+          {title}
+        </div>
       </div>
       <span className="ml-auto rounded-full border bg-background px-2.5 py-0.5 font-mono text-xs text-muted-foreground">
         {port}
