@@ -20,7 +20,7 @@ import {
   WS_BACKEND_URL_ENV_VAR,
 } from "@/lib/platform-constants"
 import {
-  KeyRoundIcon,
+  ExternalLinkIcon,
   MonitorIcon,
   RadioTowerIcon,
   RocketIcon,
@@ -34,7 +34,7 @@ const simulatorEnv = `MQTT_HOST=${MQTT_HOST_PLACEHOLDER}\nMQTT_PORT=443\nMQTT_TR
 
 const runFlow: FlowNode[] = [
   { icon: RadioTowerIcon, title: "Simulator", subtitle: "you run it", tile: "bg-primary/15 text-primary" },
-  { icon: ShieldCheckIcon, title: "PeakSoft platform", subtitle: "hosted · ingest · score · alert", tile: "bg-chart-4/15 text-chart-4", emphasized: true },
+  { icon: ShieldCheckIcon, title: "PeakSoft EU", subtitle: "hosted · ingest · score · alert", tile: "bg-chart-4/15 text-chart-4", emphasized: true },
   { icon: MonitorIcon, title: "Dashboard", subtitle: "you run it", tile: "bg-chart-2/15 text-chart-2" },
 ]
 
@@ -56,9 +56,22 @@ const simulatorRunOutput: TerminalLine[] = [
 ]
 
 const requirements = [
-  { icon: MonitorIcon, title: "Node.js 20+ and pnpm", desc: "To run the dashboard." },
-  { icon: RadioTowerIcon, title: "Python 3.10+", desc: "To run the simulator (no Docker)." },
-  { icon: KeyRoundIcon, title: "Nothing else", desc: "Backend URL + broker are preset in each repo's .env.example — clone and run." },
+  {
+    icon: MonitorIcon,
+    title: "Node.js 20+ and pnpm",
+    desc: "To run the dashboard.",
+    links: [
+      { label: "Node.js", href: "https://nodejs.org/en/download" },
+      { label: "pnpm", href: "https://pnpm.io/installation" },
+    ],
+  },
+  {
+    icon: RadioTowerIcon,
+    title: "Python 3.10+",
+    desc: "To run the simulator (no Docker).",
+    links: [{ label: "Python", href: "https://www.python.org/downloads/" }],
+  },
+  // { icon: KeyRoundIcon, title: "Nothing else", desc: "Backend URL + broker are preset in each repo's .env.example — clone and run." },
 ]
 
 const services = [
@@ -112,15 +125,15 @@ export function RunLocallyBody() {
         </div>
         <FlowDiagram nodes={runFlow} connectorLabels={["MQTT", "HTTP / WS"]} />
         <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
-          The simulator publishes telemetry to PeakSoft&apos;s broker; the hosted platform ingests and scores it;
-          the dashboard shows the result. The <strong>backend URL</strong> and <strong>broker</strong> are
+          The simulator publishes telemetry to PeakSoft EU&apos;s broker; the hosted platform ingests and scores it;
+          the dashboard shows the result. The <strong>backend URL</strong> and <strong>broker </strong> are
           already preset in each repo&apos;s <code>.env.example</code> — just clone and run.
         </p>
       </div>
 
       <section className="space-y-3">
         <h2 className="font-heading text-xl font-semibold tracking-tight">Before you start</h2>
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2">
           {requirements.map((r) => {
             const Icon = r.icon
             return (
@@ -131,6 +144,20 @@ export function RunLocallyBody() {
                 <div className="min-w-0">
                   <div className="text-sm font-medium text-foreground">{r.title}</div>
                   <div className="mt-0.5 text-sm leading-relaxed text-muted-foreground">{r.desc}</div>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {r.links.map((l) => (
+                      <a
+                        key={l.href}
+                        href={l.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 rounded-md border bg-background px-2 py-0.5 text-xs font-medium text-primary transition-colors hover:bg-muted/40"
+                      >
+                        {l.label}
+                        <ExternalLinkIcon className="size-3" aria-hidden />
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
             )
