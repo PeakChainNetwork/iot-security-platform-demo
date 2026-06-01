@@ -1,4 +1,13 @@
 import Link from "next/link"
+import type { LucideIcon } from "lucide-react"
+import {
+  CpuIcon,
+  GaugeIcon,
+  LayersIcon,
+  PlayCircleIcon,
+  ShieldAlertIcon,
+  ShieldCheckIcon,
+} from "lucide-react"
 
 import { Callout } from "@/features/docs/components/callout"
 import { FlowDiagram, type FlowNode } from "@/features/docs/components/diagrams/flow-diagram"
@@ -6,8 +15,6 @@ import { DocsPageHeader } from "@/features/docs/components/docs-page-header"
 import { PlatformSimulator } from "@/features/docs/components/platform-simulator"
 import { RiskCalculator } from "@/features/docs/components/risk-calculator"
 import { CveMatcher } from "@/features/docs/components/cve-matcher"
-import { Separator } from "@/components/ui/separator"
-import { CpuIcon, GaugeIcon, LayersIcon, ShieldCheckIcon } from "lucide-react"
 
 const flowNodes: FlowNode[] = [
   { icon: CpuIcon, title: "Your machines", subtitle: "send readings", tile: "bg-chart-3/15 text-chart-3" },
@@ -29,6 +36,34 @@ const steps = [
     desc: "A live dashboard shows every machine's state, and alerts fire the moment something looks wrong.",
   },
 ]
+
+function SectionHeader({
+  icon: Icon,
+  title,
+  tile,
+  children,
+}: {
+  icon: LucideIcon
+  title: string
+  tile: string
+  children?: React.ReactNode
+}) {
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-3">
+        <div className={`flex size-9 shrink-0 items-center justify-center rounded-xl ${tile}`}>
+          <Icon className="size-5" aria-hidden />
+        </div>
+        <div role="heading" aria-level={2} className="font-heading text-xl font-semibold tracking-tight text-foreground">
+          {title}
+        </div>
+      </div>
+      {children ? (
+        <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">{children}</p>
+      ) : null}
+    </div>
+  )
+}
 
 export function HowItWorksBody() {
   return (
@@ -64,39 +99,41 @@ export function HowItWorksBody() {
         ))}
       </div>
 
-      <Separator />
-
       {/* See it in action — interactive sandbox */}
-      <section id="see-it-in-action" className="scroll-mt-24 space-y-4">
-        <div className="space-y-1">
-          <h2 className="font-heading text-xl font-semibold tracking-tight">See it in action</h2>
-          <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
-            A hands-on walkthrough of exactly that loop. Tap <strong>Send a reading</strong> and watch it travel
-            from a machine to the dashboard — then flip <strong>Inject fault</strong> to see Peaksoft EU react.
-            Nothing here touches a real machine; it&apos;s a safe sandbox.
-          </p>
-        </div>
-
+      <section id="see-it-in-action" className="scroll-mt-24 space-y-4 rounded-2xl border bg-card/30 p-5 sm:p-6">
+        <SectionHeader icon={PlayCircleIcon} title="See it in action" tile="bg-chart-2/15 text-chart-2">
+          A hands-on walkthrough of exactly that loop. Tap <strong>Send a reading</strong> and watch it travel
+          from a machine to the dashboard — then flip <strong>Inject fault</strong> to see Peaksoft EU react.
+          Nothing here touches a real machine; it&apos;s a safe sandbox.
+        </SectionHeader>
         <PlatformSimulator />
       </section>
 
-      <Separator />
+      {/* How risk is scored */}
+      <section id="risk-scoring" className="scroll-mt-24 space-y-5 rounded-2xl border bg-card/30 p-5 sm:p-6">
+        <SectionHeader icon={ShieldAlertIcon} title="How risk is scored" tile="bg-chart-4/15 text-chart-4">
+          Each machine gets a single risk score that blends three signals — known vulnerabilities, unusual
+          behaviour, and compliance.
+        </SectionHeader>
 
-      <section id="risk-scoring" className="scroll-mt-24 space-y-4">
-        <div className="space-y-1">
-          <h2 className="font-heading text-xl font-semibold tracking-tight">How risk is scored</h2>
-          <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
-            Each machine gets a single risk score that blends three signals — known vulnerabilities,
-            unusual behaviour, and compliance. Drag the sliders to see how the score reacts.
-          </p>
+        <div className="space-y-2">
+          <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Score = three signals
+          </div>
+          <p className="text-sm leading-relaxed text-muted-foreground">Drag the sliders to see how the score reacts.</p>
+          <RiskCalculator />
         </div>
-        <RiskCalculator />
 
-        <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
-          The CVSS input above isn&apos;t guessed — Peaksoft EU matches each machine&apos;s profile to known
-          vulnerabilities. Pick a machine to see its matches and how they feed the score:
-        </p>
-        <CveMatcher />
+        <div className="space-y-2">
+          <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Where the CVSS comes from
+          </div>
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            The CVSS input above isn&apos;t guessed — Peaksoft EU matches each machine&apos;s profile to known
+            vulnerabilities. Pick a machine to see its matches and how they feed the score:
+          </p>
+          <CveMatcher />
+        </div>
       </section>
 
       <p className="text-sm text-muted-foreground">
