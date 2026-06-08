@@ -1,33 +1,18 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
-import { locales, defaultLocale, isLocale, LOCALE_COOKIE, type Locale } from "@/lib/i18n/config"
+import { defaultLocale, isLocale, LOCALE_COOKIE, type Locale } from "@/lib/i18n/config"
 
 /**
- * Pick the best locale for a request: the `NEXT_LOCALE` cookie wins, otherwise
- * the first supported language from the `Accept-Language` header, otherwise the
- * default. Kept dependency-free (no negotiator) since we only have two locales.
+ * Pick the locale for a request: an explicit `NEXT_LOCALE` cookie (set by the
+ * language switcher) wins, otherwise everyone lands on the default locale
+ * (German). Browser `Accept-Language` is intentionally NOT used, so German is
+ * the consistent first impression; visitors who switch to English have their
+ * choice remembered via the cookie.
  */
 function detectLocale(request: NextRequest): Locale {
   const cookie = request.cookies.get(LOCALE_COOKIE)?.value
   if (isLocale(cookie)) return cookie
-
-  const header = request.headers.get("accept-language")
-  if (header) {
-    const ranked = header
-      .split(",")
-      .map((part) => {
-        const [tag, q] = part.trim().split(";q=")
-        return { tag: tag.toLowerCase(), q: q ? Number(q) : 1 }
-      })
-      .sort((a, b) => b.q - a.q)
-    for (const { tag } of ranked) {
-      const base = tag.split("-")[0]
-      const hit = locales.find((l) => l === base)
-      if (hit) return hit
-    }
-  }
-
   return defaultLocale
 }
 
@@ -42,13 +27,14 @@ export function proxy(request: NextRequest): NextResponse {
   }
 
   // Non-prefixed docs paths (`/docs`, `/docs/...`) → add the detected locale.
+  // The proxy only READS the cookie; it never writes one, so the default locale
+  // is never made "sticky". Only an explicit choice in the language switcher
+  // persists a cookie.
   if (pathname === "/docs" || pathname.startsWith("/docs/")) {
     const locale = detectLocale(request)
     const url = request.nextUrl.clone()
     url.pathname = `/${locale}${pathname}`
-    const response = NextResponse.redirect(url)
-    response.cookies.set(LOCALE_COOKIE, locale, { path: "/", maxAge: 60 * 60 * 24 * 365 })
-    return response
+    return NextResponse.redirect(url)
   }
 
   return NextResponse.next()

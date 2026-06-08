@@ -11,7 +11,7 @@ export const locales = ["en", "de"] as const
 
 export type Locale = (typeof locales)[number]
 
-export const defaultLocale: Locale = "en"
+export const defaultLocale: Locale = "de"
 
 /** Narrow an arbitrary string to a supported `Locale`. */
 export function isLocale(value: string | undefined | null): value is Locale {
