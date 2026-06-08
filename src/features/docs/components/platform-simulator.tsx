@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
 import { cn } from "@/lib/utils"
+import type { Locale } from "@/lib/i18n/config"
 
 type Status = "ok" | "critical"
 
@@ -24,24 +25,104 @@ type Reading = { temp: number; pressure: number; status: Status }
 
 type LogEntry = { id: number; time: string; text: string; level: "info" | "alert" }
 
-const STAGES = [
-  { title: "Your machine", subtitle: "press-01", Icon: CpuIcon },
-  { title: "Site gateway", subtitle: "forwards", Icon: RadioTowerIcon },
-  { title: "Platform", subtitle: "checks & scores", Icon: ActivityIcon },
-  { title: "Dashboard", subtitle: "you see it", Icon: GaugeIcon },
-] as const
+type Strings = {
+  stages: { title: string; subtitle: string }[]
+  high: string
+  medium: string
+  low: string
+  sendReading: string
+  injectFault: string
+  autoPlay: string
+  hintPrefix: string
+  hintSuffix: string
+  alert: (risk: number) => string
+  logAlert: (temp: number, risk: number) => string
+  logInfo: (temp: number, pressure: number, risk: number) => string
+  liveDashboard: string
+  statusCritical: string
+  statusOk: string
+  temperature: string
+  pressure: string
+  riskScore: string
+  eventLog: string
+  noEventsPrefix: string
+  noEventsSuffix: string
+}
+
+const strings: Record<Locale, Strings> = {
+  en: {
+    stages: [
+      { title: "Your machine", subtitle: "press-01" },
+      { title: "Site gateway", subtitle: "forwards" },
+      { title: "Platform", subtitle: "checks & scores" },
+      { title: "Dashboard", subtitle: "you see it" },
+    ],
+    high: "High",
+    medium: "Medium",
+    low: "Low",
+    sendReading: "Send a reading",
+    injectFault: "Inject fault",
+    autoPlay: "Auto-play",
+    hintPrefix: "Tap",
+    hintSuffix: "and watch it travel.",
+    alert: (risk) => `Anomaly detected on press-01 — risk ${risk}/100`,
+    logAlert: (temp, risk) => `ALERT · press-01 critical (${temp}°C) → risk ${risk}`,
+    logInfo: (temp, pressure, risk) => `Reading received · ${temp}°C, ${pressure} bar → risk ${risk}`,
+    liveDashboard: "Live dashboard · press-01",
+    statusCritical: "critical",
+    statusOk: "ok",
+    temperature: "Temperature",
+    pressure: "Pressure",
+    riskScore: "Risk score",
+    eventLog: "Event log",
+    noEventsPrefix: "No events yet — tap",
+    noEventsSuffix: "to begin.",
+  },
+  de: {
+    stages: [
+      { title: "Ihre Maschine", subtitle: "press-01" },
+      { title: "Standort-Gateway", subtitle: "leitet weiter" },
+      { title: "Plattform", subtitle: "prüft & bewertet" },
+      { title: "Dashboard", subtitle: "Sie sehen es" },
+    ],
+    high: "Hoch",
+    medium: "Mittel",
+    low: "Niedrig",
+    sendReading: "Messwert senden",
+    injectFault: "Fehler einschleusen",
+    autoPlay: "Automatisch",
+    hintPrefix: "Tippen Sie auf",
+    hintSuffix: "und sehen Sie zu, wie er wandert.",
+    alert: (risk) => `Anomalie auf press-01 erkannt — Risiko ${risk}/100`,
+    logAlert: (temp, risk) => `WARNUNG · press-01 kritisch (${temp}°C) → Risiko ${risk}`,
+    logInfo: (temp, pressure, risk) => `Messwert empfangen · ${temp}°C, ${pressure} bar → Risiko ${risk}`,
+    liveDashboard: "Live-Dashboard · press-01",
+    statusCritical: "kritisch",
+    statusOk: "ok",
+    temperature: "Temperatur",
+    pressure: "Druck",
+    riskScore: "Risikowert",
+    eventLog: "Ereignisprotokoll",
+    noEventsPrefix: "Noch keine Ereignisse — tippen Sie auf",
+    noEventsSuffix: "um zu beginnen.",
+  },
+}
+
+const STAGE_ICONS = [CpuIcon, RadioTowerIcon, ActivityIcon, GaugeIcon] as const
 
 const STEP_MS = 300
 
 const rand = (min: number, max: number) => min + Math.random() * (max - min)
 
-function riskTone(risk: number) {
-  if (risk >= 70) return { bar: "bg-destructive", text: "text-destructive", label: "High" }
-  if (risk >= 40) return { bar: "bg-chart-4", text: "text-chart-4", label: "Medium" }
-  return { bar: "bg-chart-2", text: "text-chart-2", label: "Low" }
+function riskTone(risk: number, s: Strings) {
+  if (risk >= 70) return { bar: "bg-destructive", text: "text-destructive", label: s.high }
+  if (risk >= 40) return { bar: "bg-chart-4", text: "text-chart-4", label: s.medium }
+  return { bar: "bg-chart-2", text: "text-chart-2", label: s.low }
 }
 
-export function PlatformSimulator() {
+export function PlatformSimulator({ lang }: { lang: Locale }) {
+  const s = strings[lang]
+  const stageCount = s.stages.length
   const [activeStage, setActiveStage] = React.useState<number | null>(null)
   const [sending, setSending] = React.useState(false)
   const [fault, setFault] = React.useState(false)
@@ -55,10 +136,15 @@ export function PlatformSimulator() {
   const busyRef = React.useRef(false)
   const timeoutsRef = React.useRef<ReturnType<typeof setTimeout>[]>([])
   const logIdRef = React.useRef(0)
+  const stringsRef = React.useRef(s)
 
   React.useEffect(() => {
     faultRef.current = fault
   }, [fault])
+
+  React.useEffect(() => {
+    stringsRef.current = s
+  }, [s])
 
   // Clear any pending timers on unmount.
   React.useEffect(() => {
@@ -81,10 +167,11 @@ export function PlatformSimulator() {
     busyRef.current = true
     setSending(true)
 
-    for (let stage = 0; stage < STAGES.length; stage += 1) {
+    for (let stage = 0; stage < stageCount; stage += 1) {
       const t = setTimeout(() => {
         setActiveStage(stage)
-        if (stage === STAGES.length - 1) {
+        if (stage === stageCount - 1) {
+          const str = stringsRef.current
           const isFault = faultRef.current
           const next: Reading = {
             temp: Number((isFault ? rand(86, 95) : rand(44, 47)).toFixed(1)),
@@ -95,11 +182,11 @@ export function PlatformSimulator() {
           setReading(next)
           setRisk(nextRisk)
           if (isFault) {
-            setAlert(`Anomaly detected on press-01 — risk ${nextRisk}/100`)
-            pushLog(`ALERT · press-01 critical (${next.temp}°C) → risk ${nextRisk}`, "alert")
+            setAlert(str.alert(nextRisk))
+            pushLog(str.logAlert(next.temp, nextRisk), "alert")
           } else {
             setAlert(null)
-            pushLog(`Reading received · ${next.temp}°C, ${next.pressure} bar → risk ${nextRisk}`, "info")
+            pushLog(str.logInfo(next.temp, next.pressure, nextRisk), "info")
           }
         }
       }, stage * STEP_MS)
@@ -110,9 +197,9 @@ export function PlatformSimulator() {
       setActiveStage(null)
       setSending(false)
       busyRef.current = false
-    }, STAGES.length * STEP_MS + 350)
+    }, stageCount * STEP_MS + 350)
     timeoutsRef.current.push(tEnd)
-  }, [pushLog])
+  }, [pushLog, stageCount])
 
   // Auto-play: send a reading every couple seconds while enabled.
   React.useEffect(() => {
@@ -123,7 +210,7 @@ export function PlatformSimulator() {
     return () => clearInterval(iv)
   }, [auto, send])
 
-  const tone = riskTone(risk)
+  const tone = riskTone(risk, s)
 
   return (
     <div className="space-y-5">
@@ -131,31 +218,31 @@ export function PlatformSimulator() {
       <div className="flex flex-wrap items-center gap-3 rounded-xl border bg-card p-3">
         <Button onClick={send} disabled={sending} className="gap-2">
           <SendIcon className="size-4" />
-          Send a reading
+          {s.sendReading}
         </Button>
 
         <label className="flex items-center gap-2 text-sm">
-          <Switch checked={fault} onCheckedChange={(v) => setFault(v)} aria-label="Inject fault" />
-          <span className="text-foreground">Inject fault</span>
+          <Switch checked={fault} onCheckedChange={(v) => setFault(v)} aria-label={s.injectFault} />
+          <span className="text-foreground">{s.injectFault}</span>
         </label>
 
         <label className="flex items-center gap-2 text-sm">
-          <Switch checked={auto} onCheckedChange={(v) => setAuto(v)} aria-label="Auto-play" />
-          <span className="text-muted-foreground">Auto-play</span>
+          <Switch checked={auto} onCheckedChange={(v) => setAuto(v)} aria-label={s.autoPlay} />
+          <span className="text-muted-foreground">{s.autoPlay}</span>
         </label>
 
         <span className="ml-auto text-xs text-muted-foreground">
-          Tap <span className="font-medium text-foreground">Send a reading</span> and watch it travel.
+          {s.hintPrefix} <span className="font-medium text-foreground">{s.sendReading}</span> {s.hintSuffix}
         </span>
       </div>
 
       {/* Flow */}
       <div className="rounded-xl border bg-muted/20 p-4 sm:p-6">
         <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
-          {STAGES.map((stage, i) => {
+          {s.stages.map((stage, i) => {
             const isActive = activeStage === i
             const isPast = activeStage !== null && activeStage > i
-            const StageIcon = stage.Icon
+            const StageIcon = STAGE_ICONS[i] ?? CpuIcon
             return (
               <React.Fragment key={stage.title}>
                 <div
@@ -179,7 +266,7 @@ export function PlatformSimulator() {
                   </div>
                 </div>
 
-                {i < STAGES.length - 1 ? (
+                {i < stageCount - 1 ? (
                   <ArrowRightIcon
                     className={cn(
                       "mx-auto size-4 shrink-0 rotate-90 text-muted-foreground/40 transition-colors duration-200 sm:rotate-0",
@@ -206,7 +293,7 @@ export function PlatformSimulator() {
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader className="flex-row items-center justify-between gap-2 space-y-0">
-            <CardTitle className="text-base">Live dashboard · press-01</CardTitle>
+            <CardTitle className="text-base">{s.liveDashboard}</CardTitle>
             <Badge
               variant={reading.status === "critical" ? "destructive" : "secondary"}
               className="gap-1"
@@ -216,24 +303,24 @@ export function PlatformSimulator() {
               ) : (
                 <CheckCircle2Icon className="size-3" />
               )}
-              {reading.status === "critical" ? "critical" : "ok"}
+              {reading.status === "critical" ? s.statusCritical : s.statusOk}
             </Badge>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-lg border bg-card p-3">
-                <div className="text-xs text-muted-foreground">Temperature</div>
+                <div className="text-xs text-muted-foreground">{s.temperature}</div>
                 <div className="mt-1 font-mono text-lg font-semibold text-foreground">{reading.temp}°C</div>
               </div>
               <div className="rounded-lg border bg-card p-3">
-                <div className="text-xs text-muted-foreground">Pressure</div>
+                <div className="text-xs text-muted-foreground">{s.pressure}</div>
                 <div className="mt-1 font-mono text-lg font-semibold text-foreground">{reading.pressure} bar</div>
               </div>
             </div>
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Risk score</span>
+                <span className="text-muted-foreground">{s.riskScore}</span>
                 <span className={cn("font-medium", tone.text)}>
                   {risk}/100 · {tone.label}
                 </span>
@@ -250,12 +337,12 @@ export function PlatformSimulator() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Event log</CardTitle>
+            <CardTitle className="text-base">{s.eventLog}</CardTitle>
           </CardHeader>
           <CardContent>
             {log.length === 0 ? (
               <p className="text-sm text-muted-foreground">
-                No events yet — tap <span className="font-medium text-foreground">Send a reading</span> to begin.
+                {s.noEventsPrefix} <span className="font-medium text-foreground">{s.sendReading}</span> {s.noEventsSuffix}
               </p>
             ) : (
               <ul className="space-y-2">

@@ -9,6 +9,8 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import { cn } from "@/lib/utils"
+import { getUiStrings } from "@/lib/i18n/ui"
+import { useLocale } from "@/lib/i18n/use-locale"
 
 /**
  * A collapsed-by-default "for developers" disclosure. Keeps the simple page
@@ -16,7 +18,7 @@ import { cn } from "@/lib/utils"
  * one layer down. Use for content that most readers can safely skip.
  */
 export function DocsDetails({
-  summary = "For developers",
+  summary,
   description,
   children,
   defaultOpen = false,
@@ -26,6 +28,8 @@ export function DocsDetails({
   children: React.ReactNode
   defaultOpen?: boolean
 }) {
+  const ui = getUiStrings(useLocale())
+  const resolvedSummary = summary ?? ui.forDevelopers
   return (
     <Collapsible
       defaultOpen={defaultOpen}
@@ -43,7 +47,7 @@ export function DocsDetails({
           aria-hidden
         />
         <span className="min-w-0">
-          <span className="block text-sm font-medium text-foreground">{summary}</span>
+          <span className="block text-sm font-medium text-foreground">{resolvedSummary}</span>
           {description ? (
             <span className="mt-0.5 block text-sm leading-relaxed text-muted-foreground">
               {description}

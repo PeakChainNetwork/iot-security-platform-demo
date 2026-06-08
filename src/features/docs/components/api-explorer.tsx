@@ -22,6 +22,8 @@ import {
 import { cn } from "@/lib/utils"
 import { CopyButton } from "@/components/common/copy-button"
 import { DocsShellCommand } from "@/features/docs/components/docs-shell-command"
+import { useLocale } from "@/lib/i18n/use-locale"
+import type { Locale } from "@/lib/i18n/config"
 import {
   ChevronDownIcon,
   ChevronRightIcon,
@@ -119,6 +121,177 @@ type WsContract = {
 }
 
 const HTTP_METHODS = new Set(["get", "post", "put", "patch", "delete", "options", "head"])
+
+type ApiStrings = {
+  copy: (label: string) => string
+  field: string
+  type: string
+  description: string
+  example: string
+  loadFailedTitle: string
+  retry: string
+  noMatchPrefix: string
+  noMatchSuffix: string
+  tryDifferent: string
+  clearFilter: string
+  parameters: string
+  name: string
+  in: string
+  defaultLabel: string
+  min: string
+  max: string
+  requestBody: string
+  exampleRequest: string
+  responses: string
+  responseSuffix: string
+  noResponseBody: string
+  errorResponses: string
+  exampleSuffix: string
+  noExampleBody: string
+  required: string
+  yes: string
+  no: string
+  messageSchema: string
+  examples: string
+  copyExampleSuffix: (label: string) => string
+  connectionUrl: string
+  copyWsUrl: string
+  queryParameters: string
+  connectionLifecycle: string
+  phase: string
+  behavior: string
+  closeCodes: string
+  noExamplePayload: string
+  jsExample: string
+  copyJsExample: string
+  endpoints: string
+  totalRestTooltip: string
+  tags: string
+  apiTagTooltip: string
+  websocket: (n: number) => string
+  wsStreamsTooltip: string
+  restApi: string
+  websockets: string
+  filterPlaceholder: string
+  ofEndpoints: (shown: number, total: number) => string
+  wsIntro: string
+  errorCount: (n: number) => string
+}
+
+const apiStrings: Record<Locale, ApiStrings> = {
+  en: {
+    copy: (label) => `Copy ${label}`,
+    field: "Field",
+    type: "Type",
+    description: "Description",
+    example: "Example",
+    loadFailedTitle: "Failed to load API specification",
+    retry: "Retry",
+    noMatchPrefix: "No endpoints match",
+    noMatchSuffix: "",
+    tryDifferent: "Try a different search term or clear the filter.",
+    clearFilter: "Clear filter",
+    parameters: "Parameters",
+    name: "Name",
+    in: "In",
+    defaultLabel: "Default:",
+    min: "Min:",
+    max: "Max:",
+    requestBody: "Request Body",
+    exampleRequest: "Example request",
+    responses: "Responses",
+    responseSuffix: "response",
+    noResponseBody: "No response body.",
+    errorResponses: "Error Responses",
+    exampleSuffix: "example",
+    noExampleBody: "No example body.",
+    required: "Required",
+    yes: "Yes",
+    no: "No",
+    messageSchema: "Message schema",
+    examples: "Examples",
+    copyExampleSuffix: (label) => `Copy ${label} example`,
+    connectionUrl: "Connection URL",
+    copyWsUrl: "Copy WebSocket URL",
+    queryParameters: "Query Parameters",
+    connectionLifecycle: "Connection Lifecycle",
+    phase: "Phase",
+    behavior: "Behavior",
+    closeCodes: "Close Codes / Errors",
+    noExamplePayload: "No example payload.",
+    jsExample: "JavaScript Example",
+    copyJsExample: "Copy JS example",
+    endpoints: "endpoints",
+    totalRestTooltip: "Total REST endpoints in spec",
+    tags: "tags",
+    apiTagTooltip: "API tag groups",
+    websocket: (n) => `WebSocket${n !== 1 ? "s" : ""}`,
+    wsStreamsTooltip: "WebSocket streams",
+    restApi: "REST API",
+    websockets: "WebSockets",
+    filterPlaceholder: "Filter by path or summary…",
+    ofEndpoints: (shown, total) => `${shown} of ${total} endpoints`,
+    wsIntro:
+      "Real-time data channels via persistent WebSocket connections. Each stream has its own message schema, error codes, and connection lifecycle details.",
+    errorCount: (n) => `${n} error${n > 1 ? "s" : ""}`,
+  },
+  de: {
+    copy: (label) => `${label} kopieren`,
+    field: "Feld",
+    type: "Typ",
+    description: "Beschreibung",
+    example: "Beispiel",
+    loadFailedTitle: "API-Spezifikation konnte nicht geladen werden",
+    retry: "Erneut versuchen",
+    noMatchPrefix: "Keine Endpunkte passen zu",
+    noMatchSuffix: "",
+    tryDifferent: "Versuchen Sie einen anderen Suchbegriff oder setzen Sie den Filter zurück.",
+    clearFilter: "Filter zurücksetzen",
+    parameters: "Parameter",
+    name: "Name",
+    in: "In",
+    defaultLabel: "Standard:",
+    min: "Min.:",
+    max: "Max.:",
+    requestBody: "Anfrage-Body",
+    exampleRequest: "Beispielanfrage",
+    responses: "Antworten",
+    responseSuffix: "Antwort",
+    noResponseBody: "Kein Antwort-Body.",
+    errorResponses: "Fehlerantworten",
+    exampleSuffix: "Beispiel",
+    noExampleBody: "Kein Beispiel-Body.",
+    required: "Erforderlich",
+    yes: "Ja",
+    no: "Nein",
+    messageSchema: "Nachrichtenschema",
+    examples: "Beispiele",
+    copyExampleSuffix: (label) => `Beispiel ${label} kopieren`,
+    connectionUrl: "Verbindungs-URL",
+    copyWsUrl: "WebSocket-URL kopieren",
+    queryParameters: "Query-Parameter",
+    connectionLifecycle: "Verbindungslebenszyklus",
+    phase: "Phase",
+    behavior: "Verhalten",
+    closeCodes: "Close-Codes / Fehler",
+    noExamplePayload: "Kein Beispiel-Payload.",
+    jsExample: "JavaScript-Beispiel",
+    copyJsExample: "JS-Beispiel kopieren",
+    endpoints: "Endpunkte",
+    totalRestTooltip: "Gesamtzahl der REST-Endpunkte in der Spezifikation",
+    tags: "Tags",
+    apiTagTooltip: "API-Tag-Gruppen",
+    websocket: (n) => `WebSocket${n !== 1 ? "s" : ""}`,
+    wsStreamsTooltip: "WebSocket-Streams",
+    restApi: "REST API",
+    websockets: "WebSockets",
+    filterPlaceholder: "Nach Pfad oder Zusammenfassung filtern…",
+    ofEndpoints: (shown, total) => `${shown} von ${total} Endpunkten`,
+    wsIntro:
+      "Echtzeit-Datenkanäle über persistente WebSocket-Verbindungen. Jeder Stream hat sein eigenes Nachrichtenschema, eigene Fehlercodes und eigene Details zum Verbindungslebenszyklus.",
+    errorCount: (n) => `${n} Fehler`,
+  },
+}
 
 function methodVariant(m: string): "default" | "secondary" | "destructive" | "outline" {
   const u = m.toUpperCase()
@@ -276,13 +449,13 @@ function flattenSchema(root: OpenApiDoc, schema: JsonSchema | undefined, depth: 
   return fields
 }
 
-function JsonBlock({ data, label }: { data: unknown; label: string }) {
+function JsonBlock({ data, label, s }: { data: unknown; label: string; s: ApiStrings }) {
   const json = JSON.stringify(data, null, 2)
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
         <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
-        <CopyButton value={json} label={`Copy ${label}`} />
+        <CopyButton value={json} label={s.copy(label)} />
       </div>
       <pre className="overflow-x-auto rounded-lg border bg-muted/30 p-4 font-mono text-xs leading-relaxed text-foreground">
         {json}
@@ -291,17 +464,17 @@ function JsonBlock({ data, label }: { data: unknown; label: string }) {
   )
 }
 
-function SchemaFieldTable({ fields }: { fields: FlatField[] }) {
+function SchemaFieldTable({ fields, s }: { fields: FlatField[]; s: ApiStrings }) {
   if (!fields.length) return null
   return (
     <div className="rounded-lg border">
       <table className="w-full border-collapse text-left text-sm">
         <thead>
           <tr className="border-b bg-muted/50">
-            <th className="px-3 py-2 text-xs font-medium text-muted-foreground">Field</th>
-            <th className="px-3 py-2 text-xs font-medium text-muted-foreground">Type</th>
-            <th className="px-3 py-2 text-xs font-medium text-muted-foreground">Description</th>
-            <th className="px-3 py-2 text-xs font-medium text-muted-foreground">Example</th>
+            <th className="px-3 py-2 text-xs font-medium text-muted-foreground">{s.field}</th>
+            <th className="px-3 py-2 text-xs font-medium text-muted-foreground">{s.type}</th>
+            <th className="px-3 py-2 text-xs font-medium text-muted-foreground">{s.description}</th>
+            <th className="px-3 py-2 text-xs font-medium text-muted-foreground">{s.example}</th>
           </tr>
         </thead>
         <tbody>
@@ -408,7 +581,7 @@ function LoadingSkeleton() {
   )
 }
 
-function ErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
+function ErrorState({ message, onRetry, s }: { message: string; onRetry: () => void; s: ApiStrings }) {
   return (
     <Card className="border-destructive/30">
       <CardContent className="flex flex-col items-center gap-4 py-12">
@@ -416,35 +589,35 @@ function ErrorState({ message, onRetry }: { message: string; onRetry: () => void
           <ZapIcon className="size-6 text-destructive" />
         </div>
         <div className="text-center">
-          <p className="font-medium text-foreground">Failed to load API specification</p>
+          <p className="font-medium text-foreground">{s.loadFailedTitle}</p>
           <p className="mt-1 text-sm text-muted-foreground">{message}</p>
         </div>
         <Button variant="outline" size="sm" onClick={onRetry} className="gap-2">
           <RefreshCwIcon className="size-3.5" />
-          Retry
+          {s.retry}
         </Button>
       </CardContent>
     </Card>
   )
 }
 
-function EmptyFilterState({ filter, onClear }: { filter: string; onClear: () => void }) {
+function EmptyFilterState({ filter, onClear, s }: { filter: string; onClear: () => void; s: ApiStrings }) {
   return (
     <div className="flex flex-col items-center gap-3 py-12 text-center">
       <SearchIcon className="size-8 text-muted-foreground/40" />
       <div>
-        <p className="text-sm font-medium text-foreground">No endpoints match &ldquo;{filter}&rdquo;</p>
-        <p className="mt-1 text-xs text-muted-foreground">Try a different search term or clear the filter.</p>
+        <p className="text-sm font-medium text-foreground">{s.noMatchPrefix} &ldquo;{filter}&rdquo;</p>
+        <p className="mt-1 text-xs text-muted-foreground">{s.tryDifferent}</p>
       </div>
       <Button variant="ghost" size="sm" onClick={onClear} className="gap-1.5 text-xs">
         <XIcon className="size-3" />
-        Clear filter
+        {s.clearFilter}
       </Button>
     </div>
   )
 }
 
-function EndpointDetail({ op, spec }: { op: OpRef; spec: OpenApiDoc }) {
+function EndpointDetail({ op, spec, s }: { op: OpRef; spec: OpenApiDoc; s: ApiStrings }) {
   const hasBody = !!op.operation.requestBody?.content?.["application/json"]
   const curl = buildCurlExample(op, hasBody)
 
@@ -471,16 +644,16 @@ function EndpointDetail({ op, spec }: { op: OpRef; spec: OpenApiDoc }) {
       {/* Parameters */}
       {op.operation.parameters?.length ? (
         <div className="space-y-3">
-          <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Parameters</h4>
+          <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{s.parameters}</h4>
           <div className="rounded-lg border">
             <table className="w-full border-collapse text-left text-sm">
               <thead>
                 <tr className="border-b bg-muted/50">
-                  <th className="px-3 py-2 text-xs font-medium text-muted-foreground">Name</th>
-                  <th className="px-3 py-2 text-xs font-medium text-muted-foreground">In</th>
-                  <th className="px-3 py-2 text-xs font-medium text-muted-foreground">Type</th>
-                  <th className="px-3 py-2 text-xs font-medium text-muted-foreground">Description</th>
-                  <th className="px-3 py-2 text-xs font-medium text-muted-foreground">Example</th>
+                  <th className="px-3 py-2 text-xs font-medium text-muted-foreground">{s.name}</th>
+                  <th className="px-3 py-2 text-xs font-medium text-muted-foreground">{s.in}</th>
+                  <th className="px-3 py-2 text-xs font-medium text-muted-foreground">{s.type}</th>
+                  <th className="px-3 py-2 text-xs font-medium text-muted-foreground">{s.description}</th>
+                  <th className="px-3 py-2 text-xs font-medium text-muted-foreground">{s.example}</th>
                 </tr>
               </thead>
               <tbody>
@@ -513,13 +686,13 @@ function EndpointDetail({ op, spec }: { op: OpRef; spec: OpenApiDoc }) {
                         {p.description ?? "—"}
                         {sch?.default !== undefined && (
                           <span className="mt-0.5 block text-[10px]">
-                            Default: <code className="font-mono">{String(sch.default)}</code>
+                            {s.defaultLabel} <code className="font-mono">{String(sch.default)}</code>
                           </span>
                         )}
                         {sch?.minimum !== undefined && (
                           <span className="mt-0.5 block text-[10px]">
-                            Min: <code className="font-mono">{String(sch.minimum)}</code>
-                            {sch.maximum !== undefined && <>, Max: <code className="font-mono">{String(sch.maximum)}</code></>}
+                            {s.min} <code className="font-mono">{String(sch.minimum)}</code>
+                            {sch.maximum !== undefined && <>, {s.max} <code className="font-mono">{String(sch.maximum)}</code></>}
                           </span>
                         )}
                       </td>
@@ -538,16 +711,16 @@ function EndpointDetail({ op, spec }: { op: OpRef; spec: OpenApiDoc }) {
       {/* Request Body */}
       {hasBody ? (
         <div className="space-y-3">
-          <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Request Body</h4>
-          {bodyFields.length > 0 && <SchemaFieldTable fields={bodyFields} />}
-          {bodyExample != null && <JsonBlock data={bodyExample} label="Example request" />}
+          <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{s.requestBody}</h4>
+          {bodyFields.length > 0 && <SchemaFieldTable fields={bodyFields} s={s} />}
+          {bodyExample != null && <JsonBlock data={bodyExample} label={s.exampleRequest} s={s} />}
         </div>
       ) : null}
 
       {/* Success Responses */}
       {successResponses.length > 0 && (
         <div className="space-y-3">
-          <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Responses</h4>
+          <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{s.responses}</h4>
           {successResponses.map(([code, res]) => {
             const content = res.content?.["application/json"]
             const example = content?.example ?? (content?.schema ? generateExample(spec, content.schema) : null)
@@ -558,10 +731,10 @@ function EndpointDetail({ op, spec }: { op: OpRef; spec: OpenApiDoc }) {
                   <Badge variant={statusVariant(code)} className="font-mono text-[10px]">{code}</Badge>
                   <span className="text-sm text-muted-foreground">{res.description}</span>
                 </div>
-                {fields.length > 0 && <SchemaFieldTable fields={fields} />}
-                {example != null && <JsonBlock data={example} label={`${code} response`} />}
+                {fields.length > 0 && <SchemaFieldTable fields={fields} s={s} />}
+                {example != null && <JsonBlock data={example} label={`${code} ${s.responseSuffix}`} s={s} />}
                 {!content && (
-                  <p className="text-xs text-muted-foreground">No response body.</p>
+                  <p className="text-xs text-muted-foreground">{s.noResponseBody}</p>
                 )}
               </div>
             )
@@ -574,7 +747,7 @@ function EndpointDetail({ op, spec }: { op: OpRef; spec: OpenApiDoc }) {
         <div className="space-y-3">
           <h4 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             <AlertTriangleIcon className="size-3" />
-            Error Responses
+            {s.errorResponses}
           </h4>
           <div className="space-y-2">
             {errorResponses.map(([code, res]) => {
@@ -590,10 +763,10 @@ function EndpointDetail({ op, spec }: { op: OpRef; spec: OpenApiDoc }) {
                   <CollapsibleContent>
                     {example != null ? (
                       <div className="mt-2 ml-1">
-                        <JsonBlock data={example} label={`${code} example`} />
+                        <JsonBlock data={example} label={`${code} ${s.exampleSuffix}`} s={s} />
                       </div>
                     ) : (
-                      <p className="mt-2 ml-1 text-xs text-muted-foreground">No example body.</p>
+                      <p className="mt-2 ml-1 text-xs text-muted-foreground">{s.noExampleBody}</p>
                     )}
                   </CollapsibleContent>
                 </Collapsible>
@@ -608,7 +781,7 @@ function EndpointDetail({ op, spec }: { op: OpRef; spec: OpenApiDoc }) {
   )
 }
 
-function EndpointRow({ item, spec }: { item: OpRef; spec: OpenApiDoc }) {
+function EndpointRow({ item, spec, s }: { item: OpRef; spec: OpenApiDoc; s: ApiStrings }) {
   const errorCount = Object.keys(item.operation.responses ?? {}).filter((c) => isErrorCode(c)).length
 
   return (
@@ -623,7 +796,7 @@ function EndpointRow({ item, spec }: { item: OpRef; spec: OpenApiDoc }) {
         )}
         {errorCount > 0 && (
           <Badge variant="outline" className="hidden h-5 gap-1 text-[10px] font-normal text-muted-foreground sm:flex">
-            {errorCount} error{errorCount > 1 ? "s" : ""}
+            {s.errorCount(errorCount)}
           </Badge>
         )}
         <ChevronDownIcon className="size-4 shrink-0 text-muted-foreground transition-transform group-data-[state=open]/endpoint:rotate-180" />
@@ -633,14 +806,14 @@ function EndpointRow({ item, spec }: { item: OpRef; spec: OpenApiDoc }) {
           {item.operation.summary && (
             <p className="pt-3 text-sm font-medium text-foreground sm:hidden">{item.operation.summary}</p>
           )}
-          <EndpointDetail op={item} spec={spec} />
+          <EndpointDetail op={item} spec={spec} s={s} />
         </div>
       </CollapsibleContent>
     </Collapsible>
   )
 }
 
-function WsSchemaFieldTable({ schema }: { schema: JsonSchema }) {
+function WsSchemaFieldTable({ schema, s }: { schema: JsonSchema; s: ApiStrings }) {
   const props = schema.properties as Record<string, JsonSchema> | undefined
   if (!props) return null
   const entries = Object.entries(props)
@@ -651,10 +824,10 @@ function WsSchemaFieldTable({ schema }: { schema: JsonSchema }) {
       <table className="w-full border-collapse text-left text-sm">
         <thead>
           <tr className="border-b bg-muted/50">
-            <th className="px-3 py-2 text-xs font-medium text-muted-foreground">Field</th>
-            <th className="px-3 py-2 text-xs font-medium text-muted-foreground">Type</th>
-            <th className="px-3 py-2 text-xs font-medium text-muted-foreground">Description</th>
-            <th className="px-3 py-2 text-xs font-medium text-muted-foreground">Example</th>
+            <th className="px-3 py-2 text-xs font-medium text-muted-foreground">{s.field}</th>
+            <th className="px-3 py-2 text-xs font-medium text-muted-foreground">{s.type}</th>
+            <th className="px-3 py-2 text-xs font-medium text-muted-foreground">{s.description}</th>
+            <th className="px-3 py-2 text-xs font-medium text-muted-foreground">{s.example}</th>
           </tr>
         </thead>
         <tbody>
@@ -688,7 +861,7 @@ function WsSchemaFieldTable({ schema }: { schema: JsonSchema }) {
   )
 }
 
-function WsMessageSection({ direction, label }: { direction: string | WsMessageDirection; label: string }) {
+function WsMessageSection({ direction, label, s }: { direction: string | WsMessageDirection; label: string; s: ApiStrings }) {
   if (typeof direction === "string") {
     return (
       <div className="space-y-2">
@@ -709,14 +882,14 @@ function WsMessageSection({ direction, label }: { direction: string | WsMessageD
 
       {dir.messageSchema && (
         <div className="space-y-2">
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Message schema</span>
-          <WsSchemaFieldTable schema={dir.messageSchema} />
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{s.messageSchema}</span>
+          <WsSchemaFieldTable schema={dir.messageSchema} s={s} />
         </div>
       )}
 
       {hasMultipleExamples ? (
         <div className="space-y-3">
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Examples</span>
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{s.examples}</span>
           {dir.examples!.map((ex) => {
             const exJson = JSON.stringify(ex.payload, null, 2)
             return (
@@ -729,7 +902,7 @@ function WsMessageSection({ direction, label }: { direction: string | WsMessageD
                 <CollapsibleContent>
                   <div className="mt-2 space-y-1.5">
                     <div className="flex items-center justify-end">
-                      <CopyButton value={exJson} label={`Copy ${ex.label} example`} />
+                      <CopyButton value={exJson} label={s.copyExampleSuffix(ex.label)} />
                     </div>
                     <pre className="overflow-x-auto rounded-lg border bg-muted/30 p-4 font-mono text-xs leading-relaxed text-foreground">
                       {exJson}
@@ -741,13 +914,13 @@ function WsMessageSection({ direction, label }: { direction: string | WsMessageD
           })}
         </div>
       ) : json != null ? (
-        <JsonBlock data={dir.example} label={`${label} example`} />
+        <JsonBlock data={dir.example} label={`${label} ${s.exampleSuffix}`} s={s} />
       ) : null}
     </div>
   )
 }
 
-function WsContractCard({ contract }: { contract: WsContract }) {
+function WsContractCard({ contract, s }: { contract: WsContract; s: ApiStrings }) {
   const lifecycle = contract.connectionLifecycle
   const lifecycleEntries = lifecycle ? Object.entries(lifecycle).filter(([, v]) => v) as [string, string][] : []
 
@@ -762,7 +935,7 @@ function WsContractCard({ contract }: { contract: WsContract }) {
         <span className="hidden text-xs text-foreground sm:block">{contract.summary}</span>
         {contract.errors && contract.errors.length > 0 && (
           <Badge variant="outline" className="hidden h-5 gap-1 text-[10px] font-normal text-muted-foreground sm:flex">
-            {contract.errors.length} error{contract.errors.length > 1 ? "s" : ""}
+            {s.errorCount(contract.errors.length)}
           </Badge>
         )}
         <ChevronDownIcon className="size-4 shrink-0 text-muted-foreground transition-transform group-data-[state=open]/ws:rotate-180" />
@@ -773,26 +946,26 @@ function WsContractCard({ contract }: { contract: WsContract }) {
 
           {/* Connection URL */}
           <div className="space-y-2">
-            <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Connection URL</h4>
+            <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{s.connectionUrl}</h4>
             <div className="flex items-center gap-2 rounded-lg border bg-muted/30 px-3 py-2 font-mono text-xs">
               <span className="min-w-0 flex-1 break-all text-foreground">{contract.exampleUrl}</span>
-              <CopyButton value={contract.exampleUrl} label="Copy WebSocket URL" />
+              <CopyButton value={contract.exampleUrl} label={s.copyWsUrl} />
             </div>
           </div>
 
           {/* Query Parameters */}
           {contract.queryParameters.length > 0 && (
             <div className="space-y-3">
-              <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Query Parameters</h4>
+              <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{s.queryParameters}</h4>
               <div className="rounded-lg border">
                 <table className="w-full border-collapse text-left text-sm">
                   <thead>
                     <tr className="border-b bg-muted/50">
-                      <th className="px-3 py-2 text-xs font-medium text-muted-foreground">Name</th>
-                      <th className="px-3 py-2 text-xs font-medium text-muted-foreground">Type</th>
-                      <th className="px-3 py-2 text-xs font-medium text-muted-foreground">Required</th>
-                      <th className="px-3 py-2 text-xs font-medium text-muted-foreground">Description</th>
-                      <th className="px-3 py-2 text-xs font-medium text-muted-foreground">Example</th>
+                      <th className="px-3 py-2 text-xs font-medium text-muted-foreground">{s.name}</th>
+                      <th className="px-3 py-2 text-xs font-medium text-muted-foreground">{s.type}</th>
+                      <th className="px-3 py-2 text-xs font-medium text-muted-foreground">{s.required}</th>
+                      <th className="px-3 py-2 text-xs font-medium text-muted-foreground">{s.description}</th>
+                      <th className="px-3 py-2 text-xs font-medium text-muted-foreground">{s.example}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -804,7 +977,7 @@ function WsContractCard({ contract }: { contract: WsContract }) {
                           <td className="px-3 py-2">
                             <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] text-foreground">{t}</code>
                           </td>
-                          <td className="px-3 py-2 text-xs text-muted-foreground">{p.required ? "Yes" : "No"}</td>
+                          <td className="px-3 py-2 text-xs text-muted-foreground">{p.required ? s.yes : s.no}</td>
                           <td className="px-3 py-2 text-xs text-muted-foreground">{p.description ?? "—"}</td>
                           <td className="px-3 py-2 font-mono text-[11px] text-muted-foreground">
                             {p.example !== undefined ? String(p.example) : "—"}
@@ -819,19 +992,19 @@ function WsContractCard({ contract }: { contract: WsContract }) {
           )}
 
           {/* Message directions */}
-          <WsMessageSection direction={contract.clientToServer} label="Client → Server" />
-          <WsMessageSection direction={contract.serverToClient} label="Server → Client" />
+          <WsMessageSection direction={contract.clientToServer} label="Client → Server" s={s} />
+          <WsMessageSection direction={contract.serverToClient} label="Server → Client" s={s} />
 
           {/* Connection Lifecycle */}
           {lifecycleEntries.length > 0 && (
             <div className="space-y-3">
-              <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Connection Lifecycle</h4>
+              <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{s.connectionLifecycle}</h4>
               <div className="rounded-lg border">
                 <table className="w-full border-collapse text-left text-sm">
                   <thead>
                     <tr className="border-b bg-muted/50">
-                      <th className="px-3 py-2 text-xs font-medium text-muted-foreground">Phase</th>
-                      <th className="px-3 py-2 text-xs font-medium text-muted-foreground">Behavior</th>
+                      <th className="px-3 py-2 text-xs font-medium text-muted-foreground">{s.phase}</th>
+                      <th className="px-3 py-2 text-xs font-medium text-muted-foreground">{s.behavior}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -852,7 +1025,7 @@ function WsContractCard({ contract }: { contract: WsContract }) {
             <div className="space-y-3">
               <h4 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 <AlertTriangleIcon className="size-3" />
-                Close Codes / Errors
+                {s.closeCodes}
               </h4>
               <div className="space-y-2">
                 {contract.errors.map((err) => (
@@ -866,10 +1039,10 @@ function WsContractCard({ contract }: { contract: WsContract }) {
                     <CollapsibleContent>
                       {err.example != null ? (
                         <div className="mt-2 ml-1">
-                          <JsonBlock data={err.example} label={`${err.code} example`} />
+                          <JsonBlock data={err.example} label={`${err.code} ${s.exampleSuffix}`} s={s} />
                         </div>
                       ) : (
-                        <p className="mt-2 ml-1 text-xs text-muted-foreground">No example payload.</p>
+                        <p className="mt-2 ml-1 text-xs text-muted-foreground">{s.noExamplePayload}</p>
                       )}
                     </CollapsibleContent>
                   </Collapsible>
@@ -884,9 +1057,9 @@ function WsContractCard({ contract }: { contract: WsContract }) {
               <div className="flex items-center justify-between">
                 <h4 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   <TerminalIcon className="size-3" />
-                  JavaScript Example
+                  {s.jsExample}
                 </h4>
-                <CopyButton value={contract.jsExample} label="Copy JS example" />
+                <CopyButton value={contract.jsExample} label={s.copyJsExample} />
               </div>
               <pre className="overflow-x-auto rounded-lg border bg-muted/30 p-4 font-mono text-xs leading-relaxed text-foreground">
                 {contract.jsExample}
@@ -900,6 +1073,8 @@ function WsContractCard({ contract }: { contract: WsContract }) {
 }
 
 export function ApiExplorer() {
+  const lang = useLocale()
+  const s = apiStrings[lang]
   const [spec, setSpec] = React.useState<OpenApiDoc | null>(null)
   const [wsList, setWsList] = React.useState<WsContract[]>([])
   const [filter, setFilter] = React.useState("")
@@ -961,7 +1136,7 @@ export function ApiExplorer() {
   }, [ops])
 
   if (loading) return <LoadingSkeleton />
-  if (err) return <ErrorState message={err} onRetry={loadSpec} />
+  if (err) return <ErrorState message={err} onRetry={loadSpec} s={s} />
   if (!spec) return <LoadingSkeleton />
 
   return (
@@ -971,29 +1146,29 @@ export function ApiExplorer() {
           <TooltipTrigger asChild>
             <Badge variant="outline" className="gap-1.5 font-normal">
               <GlobeIcon className="size-3" />
-              {ops.length} endpoints
+              {ops.length} {s.endpoints}
             </Badge>
           </TooltipTrigger>
-          <TooltipContent>Total REST endpoints in spec</TooltipContent>
+          <TooltipContent>{s.totalRestTooltip}</TooltipContent>
         </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
             <Badge variant="outline" className="gap-1.5 font-normal">
               <HashIcon className="size-3" />
-              {tagCount} tags
+              {tagCount} {s.tags}
             </Badge>
           </TooltipTrigger>
-          <TooltipContent>API tag groups</TooltipContent>
+          <TooltipContent>{s.apiTagTooltip}</TooltipContent>
         </Tooltip>
         {wsList.length > 0 && (
           <Tooltip>
             <TooltipTrigger asChild>
               <Badge variant="outline" className="gap-1.5 font-normal">
                 <WifiIcon className="size-3" />
-                {wsList.length} WebSocket{wsList.length !== 1 ? "s" : ""}
+                {wsList.length} {s.websocket(wsList.length)}
               </Badge>
             </TooltipTrigger>
-            <TooltipContent>WebSocket streams</TooltipContent>
+            <TooltipContent>{s.wsStreamsTooltip}</TooltipContent>
           </Tooltip>
         )}
         {spec.info?.version && (
@@ -1012,13 +1187,13 @@ export function ApiExplorer() {
         <TabsList>
           <TabsTrigger value="rest" className="gap-1.5">
             <TerminalIcon className="size-3.5" />
-            REST API
+            {s.restApi}
             <Badge variant="secondary" className="ml-1 h-4 px-1.5 text-[10px]">{ops.length}</Badge>
           </TabsTrigger>
           {wsList.length > 0 && (
             <TabsTrigger value="websocket" className="gap-1.5">
               <WifiIcon className="size-3.5" />
-              WebSockets
+              {s.websockets}
               <Badge variant="secondary" className="ml-1 h-4 px-1.5 text-[10px]">{wsList.length}</Badge>
             </TabsTrigger>
           )}
@@ -1031,7 +1206,7 @@ export function ApiExplorer() {
               <Input
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                placeholder="Filter by path or summary…"
+                placeholder={s.filterPlaceholder}
                 className="h-9 pl-8"
               />
               {filter && (
@@ -1046,13 +1221,13 @@ export function ApiExplorer() {
             </div>
             {filter && (
               <span className="text-xs text-muted-foreground">
-                {totalFiltered} of {ops.length} endpoints
+                {s.ofEndpoints(totalFiltered, ops.length)}
               </span>
             )}
           </div>
 
           {totalFiltered === 0 && filter ? (
-            <EmptyFilterState filter={filter} onClear={() => setFilter("")} />
+            <EmptyFilterState filter={filter} onClear={() => setFilter("")} s={s} />
           ) : (
             <div className="space-y-8">
               {grouped.map(([tag, list]) => (
@@ -1064,7 +1239,7 @@ export function ApiExplorer() {
                   </div>
                   <div className="space-y-2">
                     {list.map((item) => (
-                      <EndpointRow key={`${item.method}:${item.path}`} item={item} spec={spec} />
+                      <EndpointRow key={`${item.method}:${item.path}`} item={item} spec={spec} s={s} />
                     ))}
                   </div>
                 </section>
@@ -1076,11 +1251,11 @@ export function ApiExplorer() {
         {wsList.length > 0 && (
           <TabsContent value="websocket" className="mt-6 space-y-6">
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Real-time data channels via persistent WebSocket connections. Each stream has its own message schema, error codes, and connection lifecycle details.
+              {s.wsIntro}
             </p>
             <div className="space-y-2">
               {wsList.map((w) => (
-                <WsContractCard key={w.id} contract={w} />
+                <WsContractCard key={w.id} contract={w} s={s} />
               ))}
             </div>
           </TabsContent>

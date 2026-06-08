@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
 import { CopyButton } from "@/components/common/copy-button"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n/use-locale"
+import type { Locale } from "@/lib/i18n/config"
 
 const METRICS = [
   { key: "temperature", value: 45.8 },
@@ -18,8 +20,29 @@ const METRICS = [
 
 const STATUSES = ["ok", "warning", "critical"] as const
 
+type Strings = {
+  pickFields: string
+  alwaysRequired: string
+  copyMessage: string
+}
+
+const content: Record<Locale, Strings> = {
+  en: {
+    pickFields: "Pick the fields to send",
+    alwaysRequired: "always required",
+    copyMessage: "Copy message",
+  },
+  de: {
+    pickFields: "Wählen Sie die zu sendenden Felder",
+    alwaysRequired: "immer erforderlich",
+    copyMessage: "Nachricht kopieren",
+  },
+}
+
 /** Interactive telemetry message builder — toggle fields and see the live JSON. */
 export function PayloadBuilder() {
+  const lang = useLocale()
+  const t = content[lang]
   const [enabled, setEnabled] = React.useState<Record<string, boolean>>({
     temperature: true,
     pressure: true,
@@ -40,7 +63,7 @@ export function PayloadBuilder() {
       {/* Controls */}
       <div className="space-y-1 rounded-xl border bg-card p-4">
         <div className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          Pick the fields to send
+          {t.pickFields}
         </div>
 
         <div className="flex items-center justify-between gap-3 rounded-lg border bg-muted/30 px-3 py-2">
@@ -48,7 +71,7 @@ export function PayloadBuilder() {
             <LockIcon className="size-3.5 text-muted-foreground" aria-hidden />
             <code className="font-mono text-xs text-foreground">timestamp</code>
           </div>
-          <Badge variant="secondary" className="text-[10px]">always required</Badge>
+          <Badge variant="secondary" className="text-[10px]">{t.alwaysRequired}</Badge>
         </div>
 
         {METRICS.map((m) => (
@@ -100,7 +123,7 @@ export function PayloadBuilder() {
             <span className="truncate text-sm font-medium text-foreground">message.json</span>
             <Badge variant="outline" className="font-mono text-[11px] text-muted-foreground">JSON</Badge>
           </div>
-          <CopyButton value={json} label="Copy message" />
+          <CopyButton value={json} label={t.copyMessage} />
         </div>
         <pre className="overflow-x-auto px-4 py-3 font-mono text-xs leading-relaxed text-foreground">
           <code>{json}</code>

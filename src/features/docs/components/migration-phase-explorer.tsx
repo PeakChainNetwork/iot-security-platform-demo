@@ -5,18 +5,60 @@ import { ChevronLeftIcon, ChevronRightIcon, CpuIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n/use-locale"
+import type { Locale } from "@/lib/i18n/config"
 
 const FLEET = ["press-01", "motor-02", "pump-03", "mixer-04", "valve-05", "fan-06"]
 
-const PHASES = [
-  { phase: "Phase 0", title: "Keep the demo", desc: "Demo telemetry runs everywhere. Nothing in production changes yet.", real: 0 },
-  { phase: "Phase 1", title: "Pilot one machine", desc: "One real machine is onboarded and validated end to end.", real: 1 },
-  { phase: "Phase 2", title: "Parallel run", desc: "Real telemetry for the pilots; the demo fills the rest so the dashboard stays complete.", real: 3 },
-  { phase: "Phase 3", title: "Scale out", desc: "The remaining machines are onboarded in batches.", real: 5 },
-  { phase: "Phase 4", title: "Retire the demo", desc: "Every machine is real. The demo is switched off (kept only for training).", real: 6 },
-] as const
+type Phase = { phase: string; title: string; desc: string; real: number }
+
+type Strings = {
+  prevPhase: string
+  nextPhase: string
+  realMachines: string
+  demoTelemetry: string
+  liveMachine: string
+  demo: string
+  phases: Phase[]
+}
+
+const strings: Record<Locale, Strings> = {
+  en: {
+    prevPhase: "Previous phase",
+    nextPhase: "Next phase",
+    realMachines: "Real machines",
+    demoTelemetry: "Demo telemetry",
+    liveMachine: "live machine",
+    demo: "demo",
+    phases: [
+      { phase: "Phase 0", title: "Keep the demo", desc: "Demo telemetry runs everywhere. Nothing in production changes yet.", real: 0 },
+      { phase: "Phase 1", title: "Pilot one machine", desc: "One real machine is onboarded and validated end to end.", real: 1 },
+      { phase: "Phase 2", title: "Parallel run", desc: "Real telemetry for the pilots; the demo fills the rest so the dashboard stays complete.", real: 3 },
+      { phase: "Phase 3", title: "Scale out", desc: "The remaining machines are onboarded in batches.", real: 5 },
+      { phase: "Phase 4", title: "Retire the demo", desc: "Every machine is real. The demo is switched off (kept only for training).", real: 6 },
+    ],
+  },
+  de: {
+    prevPhase: "Vorherige Phase",
+    nextPhase: "Nächste Phase",
+    realMachines: "Echte Maschinen",
+    demoTelemetry: "Demo-Telemetrie",
+    liveMachine: "Live-Maschine",
+    demo: "Demo",
+    phases: [
+      { phase: "Phase 0", title: "Demo behalten", desc: "Demo-Telemetrie läuft überall. In der Produktion ändert sich noch nichts.", real: 0 },
+      { phase: "Phase 1", title: "Eine Maschine als Pilot", desc: "Eine echte Maschine wird angebunden und durchgängig validiert.", real: 1 },
+      { phase: "Phase 2", title: "Parallelbetrieb", desc: "Echte Telemetrie für die Piloten; die Demo füllt den Rest, damit das Dashboard vollständig bleibt.", real: 3 },
+      { phase: "Phase 3", title: "Skalieren", desc: "Die verbleibenden Maschinen werden in Chargen angebunden.", real: 5 },
+      { phase: "Phase 4", title: "Demo abschalten", desc: "Jede Maschine ist echt. Die Demo wird abgeschaltet (nur für Schulungen behalten).", real: 6 },
+    ],
+  },
+}
 
 export function MigrationPhaseExplorer() {
+  const lang = useLocale()
+  const s = strings[lang]
+  const PHASES = s.phases
   const [phase, setPhase] = React.useState(0)
   const current = PHASES[phase]!
   const realPct = Math.round((current.real / FLEET.length) * 100)
@@ -30,7 +72,7 @@ export function MigrationPhaseExplorer() {
           size="icon"
           onClick={() => setPhase((p) => Math.max(0, p - 1))}
           disabled={phase === 0}
-          aria-label="Previous phase"
+          aria-label={s.prevPhase}
         >
           <ChevronLeftIcon className="size-4" />
         </Button>
@@ -57,7 +99,7 @@ export function MigrationPhaseExplorer() {
           size="icon"
           onClick={() => setPhase((p) => Math.min(PHASES.length - 1, p + 1))}
           disabled={phase === PHASES.length - 1}
-          aria-label="Next phase"
+          aria-label={s.nextPhase}
         >
           <ChevronRightIcon className="size-4" />
         </Button>
@@ -96,7 +138,7 @@ export function MigrationPhaseExplorer() {
                 <div className="min-w-0">
                   <div className="truncate font-mono text-xs font-medium text-foreground">{name}</div>
                   <div className={cn("text-[11px] font-medium", isReal ? "text-chart-2" : "text-muted-foreground")}>
-                    {isReal ? "live machine" : "demo"}
+                    {isReal ? s.liveMachine : s.demo}
                   </div>
                 </div>
               </div>
@@ -109,7 +151,7 @@ export function MigrationPhaseExplorer() {
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="rounded-xl border bg-card p-4">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground">Real machines</span>
+            <span className="text-muted-foreground">{s.realMachines}</span>
             <span className="font-medium text-chart-2">{realPct}%</span>
           </div>
           <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
@@ -118,7 +160,7 @@ export function MigrationPhaseExplorer() {
         </div>
         <div className="rounded-xl border bg-card p-4">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground">Demo telemetry</span>
+            <span className="text-muted-foreground">{s.demoTelemetry}</span>
             <span className="font-medium text-muted-foreground">{100 - realPct}%</span>
           </div>
           <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">

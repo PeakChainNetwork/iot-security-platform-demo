@@ -4,10 +4,41 @@ import * as React from "react"
 import { CheckIcon, CopyIcon, PlayIcon, RotateCcwIcon, TerminalIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n/use-locale"
+import type { Locale } from "@/lib/i18n/config"
 
 export type TerminalLine = {
   text: string
   tone?: "default" | "muted" | "success" | "header" | "warn"
+}
+
+const CHROME: Record<Locale, {
+  copyAria: string
+  copied: string
+  copy: string
+  run: string
+  running: string
+  runAgain: string
+  idleHint: string
+}> = {
+  en: {
+    copyAria: "Copy command",
+    copied: "Copied",
+    copy: "Copy",
+    run: "Run",
+    running: "Running…",
+    runAgain: "Run again",
+    idleHint: "Press Run to preview the output (simulation — nothing is executed).",
+  },
+  de: {
+    copyAria: "Befehl kopieren",
+    copied: "Kopiert",
+    copy: "Kopieren",
+    run: "Ausführen",
+    running: "Wird ausgeführt…",
+    runAgain: "Erneut ausführen",
+    idleHint: "Klicken Sie auf Ausführen, um die Ausgabe anzuzeigen (Simulation — es wird nichts ausgeführt).",
+  },
 }
 
 const TONE: Record<NonNullable<TerminalLine["tone"]>, string> = {
@@ -33,6 +64,8 @@ export function SimulatedTerminal({
   label?: string
   stepMs?: number
 }) {
+  const lang = useLocale()
+  const chrome = CHROME[lang]
   const [shown, setShown] = React.useState(0)
   const [status, setStatus] = React.useState<"idle" | "running" | "done">("idle")
   const [copied, setCopied] = React.useState(false)
@@ -92,10 +125,10 @@ export function SimulatedTerminal({
             type="button"
             onClick={copy}
             className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-zinc-400 transition-colors hover:bg-white/10 hover:text-zinc-100"
-            aria-label="Copy command"
+            aria-label={chrome.copyAria}
           >
             {copied ? <CheckIcon className="size-3.5" /> : <CopyIcon className="size-3.5" />}
-            {copied ? "Copied" : "Copy"}
+            {copied ? chrome.copied : chrome.copy}
           </button>
           <button
             type="button"
@@ -105,13 +138,13 @@ export function SimulatedTerminal({
           >
             {status === "idle" ? (
               <>
-                <PlayIcon className="size-3.5" /> Run
+                <PlayIcon className="size-3.5" /> {chrome.run}
               </>
             ) : status === "running" ? (
-              "Running…"
+              chrome.running
             ) : (
               <>
-                <RotateCcwIcon className="size-3.5" /> Run again
+                <RotateCcwIcon className="size-3.5" /> {chrome.runAgain}
               </>
             )}
           </button>
@@ -138,7 +171,7 @@ export function SimulatedTerminal({
             ) : null}
           </div>
         ) : (
-          <div className="mt-2 text-zinc-500">Press Run to preview the output (simulation — nothing is executed).</div>
+          <div className="mt-2 text-zinc-500">{chrome.idleHint}</div>
         )}
       </div>
     </div>

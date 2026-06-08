@@ -3,7 +3,9 @@
 import * as React from "react"
 import { useRouter } from "next/navigation"
 
-import { docsNav } from "@/features/docs/lib/docs-nav"
+import { getDocsNav } from "@/features/docs/lib/docs-nav"
+import { getUiStrings } from "@/lib/i18n/ui"
+import { useLocale } from "@/lib/i18n/use-locale"
 import {
   Command,
   CommandDialog,
@@ -31,6 +33,9 @@ export function useDocsSearch(): DocsSearchContextValue {
 
 export function DocsSearchProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()
+  const lang = useLocale()
+  const ui = getUiStrings(lang)
+  const docsNav = React.useMemo(() => getDocsNav(lang), [lang])
   const [open, setOpenState] = React.useState(false)
   const [paletteKey, setPaletteKey] = React.useState(0)
 
@@ -78,8 +83,8 @@ export function DocsSearchProvider({ children }: { children: React.ReactNode }) 
       <CommandDialog
         open={open}
         onOpenChange={setOpen}
-        title="Search documentation"
-        description="Fuzzy search across all documentation pages by title or path. Use arrow keys and Enter to open a page."
+        title={ui.searchTitle}
+        description={ui.searchDescription}
         showCloseButton={false}
         className="top-[32%] w-[calc(100vw-2.5rem)] max-w-2xl gap-0 p-4 sm:top-[34%] sm:w-[calc(100vw-3rem)] sm:p-6"
       >
@@ -89,11 +94,11 @@ export function DocsSearchProvider({ children }: { children: React.ReactNode }) 
           vimBindings={false}
           className="gap-1 p-2 sm:gap-2 sm:p-3"
         >
-          <CommandInput placeholder="Search documentation…" />
+          <CommandInput placeholder={ui.searchPlaceholder} />
           <CommandList>
-            <CommandEmpty>No pages found.</CommandEmpty>
+            <CommandEmpty>{ui.searchEmpty}</CommandEmpty>
             {docsNav.map((section) => (
-              <CommandGroup key={section.title} heading={section.title}>
+              <CommandGroup key={section.key} heading={section.title}>
                 {section.items.map((item) => (
                   <CommandItem
                     key={item.href}

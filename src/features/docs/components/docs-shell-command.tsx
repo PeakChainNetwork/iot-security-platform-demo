@@ -5,6 +5,8 @@ import { CheckIcon, CopyIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { getUiStrings } from "@/lib/i18n/ui"
+import { useLocale } from "@/lib/i18n/use-locale"
 
 export function formatBashDisplay(text: string): string[] {
   const lines = text.trim().replace(/^\$\s*/, "").split("\n")
@@ -25,13 +27,15 @@ function ShellSectionLabel({ children }: { children: React.ReactNode }) {
 
 export function DocsShellCommand({
   value,
-  label = "Run this command",
+  label,
   className,
 }: {
   value: string
   label?: string
   className?: string
 }) {
+  const ui = getUiStrings(useLocale())
+  const resolvedLabel = label ?? ui.runThisCommand
   const [copied, setCopied] = React.useState(false)
   const lines = formatBashDisplay(value)
   const copyValue = stripShellPrompt(value)
@@ -48,7 +52,7 @@ export function DocsShellCommand({
 
   return (
     <section className={cn("space-y-3", className)}>
-      {label ? <ShellSectionLabel>{label}</ShellSectionLabel> : null}
+      {resolvedLabel ? <ShellSectionLabel>{resolvedLabel}</ShellSectionLabel> : null}
       <div className="flex items-center justify-between gap-3 rounded-lg border bg-muted/50 px-3 py-2.5 sm:px-4">
         <pre className="min-w-0 flex-1 overflow-x-auto font-mono text-xs leading-relaxed sm:text-sm">
           <code className="whitespace-pre text-foreground">
@@ -62,10 +66,10 @@ export function DocsShellCommand({
           size="sm"
           className="h-8 shrink-0 gap-1.5 px-2.5 text-xs"
           onClick={onCopy}
-          aria-label="Copy command"
+          aria-label={ui.copyCommand}
         >
           {copied ? <CheckIcon className="size-3.5" /> : <CopyIcon className="size-3.5" />}
-          {copied ? "Copied" : "Copy"}
+          {copied ? ui.copied : ui.copy}
         </Button>
       </div>
     </section>

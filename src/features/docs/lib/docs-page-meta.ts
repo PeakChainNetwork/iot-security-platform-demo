@@ -1,4 +1,5 @@
-import { docsNav } from "@/features/docs/lib/docs-nav"
+import { getDocsFlatNav, type DocsNavItem } from "@/features/docs/lib/docs-nav"
+import type { Locale } from "@/lib/i18n/config"
 
 export type DocsPageMeta = {
   title: string
@@ -6,15 +7,13 @@ export type DocsPageMeta = {
   section?: string
 }
 
-/** Flat nav order for prev/next pager */
-export const docsFlatNav = docsNav.flatMap((s) =>
-  s.items.map((item) => ({ ...item, section: s.title }))
-)
+type FlatNavItem = DocsNavItem & { section: string }
 
-export function getDocsPageMeta(pathname: string): DocsPageMeta | null {
-  const normalized = pathname.replace(/\/+$/, "") || "/docs"
-  const match = docsFlatNav.find((item) => {
-    const href = item.href.replace(/\/+$/, "") || "/docs"
+export function getDocsPageMeta(pathname: string, lang: Locale): DocsPageMeta | null {
+  const flat = getDocsFlatNav(lang)
+  const normalized = pathname.replace(/\/+$/, "") || `/${lang}/docs`
+  const match = flat.find((item) => {
+    const href = item.href.replace(/\/+$/, "")
     return normalized === href || normalized.startsWith(`${href}/`)
   })
   if (!match) return null
@@ -24,18 +23,22 @@ export function getDocsPageMeta(pathname: string): DocsPageMeta | null {
   }
 }
 
-export function getDocsPager(pathname: string): {
-  prev: (typeof docsFlatNav)[0] | null
-  next: (typeof docsFlatNav)[0] | null
+export function getDocsPager(
+  pathname: string,
+  lang: Locale
+): {
+  prev: FlatNavItem | null
+  next: FlatNavItem | null
 } {
-  const normalized = pathname.replace(/\/+$/, "") || "/docs"
-  const idx = docsFlatNav.findIndex((item) => {
-    const href = item.href.replace(/\/+$/, "") || "/docs"
+  const flat = getDocsFlatNav(lang)
+  const normalized = pathname.replace(/\/+$/, "")
+  const idx = flat.findIndex((item) => {
+    const href = item.href.replace(/\/+$/, "")
     return normalized === href
   })
   if (idx < 0) return { prev: null, next: null }
   return {
-    prev: idx > 0 ? docsFlatNav[idx - 1]! : null,
-    next: idx < docsFlatNav.length - 1 ? docsFlatNav[idx + 1]! : null,
+    prev: idx > 0 ? flat[idx - 1]! : null,
+    next: idx < flat.length - 1 ? flat[idx + 1]! : null,
   }
 }

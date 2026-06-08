@@ -1,9 +1,12 @@
 import type { Metadata } from "next"
+import { notFound } from "next/navigation"
 
 import { DocsInsetHeader } from "@/features/docs/components/docs-inset-header"
 import { DocsPageFooter } from "@/features/docs/components/docs-page-footer"
 import { DocsSearchProvider } from "@/features/docs/components/docs-search-provider"
 import { DocsSidebar } from "@/features/docs/components/docs-sidebar"
+import { getUiStrings } from "@/lib/i18n/ui"
+import { isLocale, locales } from "@/lib/i18n/config"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -26,9 +29,23 @@ export const metadata: Metadata = {
   },
 }
 
-export default function DocsLayout({ children }: { children: React.ReactNode }) {
+export function generateStaticParams() {
+  return locales.map((lang) => ({ lang }))
+}
+
+export default async function DocsLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode
+  params: Promise<{ lang: string }>
+}) {
+  const { lang } = await params
+  if (!isLocale(lang)) notFound()
+  const ui = getUiStrings(lang)
+
   return (
-    <div className="docs-shell flex h-dvh max-h-dvh min-h-0 w-full flex-col overflow-hidden bg-background">
+    <div lang={lang} className="docs-shell flex h-dvh max-h-dvh min-h-0 w-full flex-col overflow-hidden bg-background">
       <SidebarProvider className="group/sidebar-wrapper flex h-full min-h-0 w-full flex-1 overflow-hidden has-data-[variant=inset]:bg-sidebar">
         <DocsSearchProvider>
           <DocsSidebar />
@@ -42,12 +59,12 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
               <Breadcrumb className="min-w-0">
                 <BreadcrumbList>
                   <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink href="/docs">Documentation</BreadcrumbLink>
+                    <BreadcrumbLink href={`/${lang}/docs`}>{ui.breadcrumbDocs}</BreadcrumbLink>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator className="hidden md:block" />
                   <BreadcrumbItem className="min-w-0">
                     <BreadcrumbPage className="truncate font-normal text-muted-foreground">
-                      IoT Security Platform
+                      {ui.breadcrumbProduct}
                     </BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>

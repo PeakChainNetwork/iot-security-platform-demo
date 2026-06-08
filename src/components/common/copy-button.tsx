@@ -10,14 +10,18 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { getUiStrings } from "@/lib/i18n/ui"
+import { useLocale } from "@/lib/i18n/use-locale"
 
 export function CopyButton({
   value,
-  label = "Copy",
+  label,
 }: {
   value: string
   label?: string
 }) {
+  const ui = getUiStrings(useLocale())
+  const resolvedLabel = label ?? ui.copy
   const [copied, setCopied] = React.useState(false)
 
   const onCopy = async () => {
@@ -39,12 +43,12 @@ export function CopyButton({
             variant="ghost"
             size="icon-sm"
             onClick={onCopy}
-            aria-label={label}
+            aria-label={resolvedLabel}
           >
             {copied ? <CheckIcon /> : <CopyIcon />}
           </Button>
         </TooltipTrigger>
-        <TooltipContent sideOffset={6}>{copied ? "Copied" : label}</TooltipContent>
+        <TooltipContent sideOffset={6}>{copied ? ui.copied : resolvedLabel}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
   )

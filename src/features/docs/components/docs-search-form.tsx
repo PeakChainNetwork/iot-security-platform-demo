@@ -4,6 +4,8 @@ import * as React from "react"
 import { SearchIcon } from "lucide-react"
 
 import { useDocsSearch } from "@/features/docs/components/docs-search-provider"
+import { getUiStrings } from "@/lib/i18n/ui"
+import { useLocale } from "@/lib/i18n/use-locale"
 import { cn } from "@/lib/utils"
 import { Kbd } from "@/components/ui/kbd"
 
@@ -24,6 +26,7 @@ export function DocsSearchForm({
 }: Omit<React.ComponentProps<"button">, "type" | "onClick">) {
   const { setOpen } = useDocsSearch()
   const mod = useModKeyLabel()
+  const ui = getUiStrings(useLocale())
 
   return (
     <button
@@ -37,7 +40,7 @@ export function DocsSearchForm({
       )}
     >
       <SearchIcon className="size-4 shrink-0 opacity-60" aria-hidden />
-      <span className="min-w-0 flex-1 truncate">Search documentation…</span>
+      <span className="min-w-0 flex-1 truncate">{ui.searchPlaceholder}</span>
       <span
         className="pointer-events-none hidden shrink-0 items-center gap-0.5 sm:inline-flex"
         aria-hidden

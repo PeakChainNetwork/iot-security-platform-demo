@@ -12,7 +12,9 @@ import {
 } from "lucide-react"
 
 import { VersionSwitcher } from "@/features/docs/components/version-switcher"
-import { docsNav, DOCS_VERSION, DOCS_VERSIONS, getActiveDocsNavHref } from "@/features/docs/lib/docs-nav"
+import { LanguageSwitcher } from "@/features/docs/components/language-switcher"
+import { getDocsNav, DOCS_VERSION, DOCS_VERSIONS, getActiveDocsNavHref } from "@/features/docs/lib/docs-nav"
+import { useLocale } from "@/lib/i18n/use-locale"
 import { cn } from "@/lib/utils"
 import {
   Collapsible,
@@ -40,12 +42,14 @@ const sectionIcons: Record<string, LucideIcon> = {
 
 export function DocsSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname() ?? ""
-  const activeHref = React.useMemo(() => getActiveDocsNavHref(pathname), [pathname])
+  const lang = useLocale()
+  const docsNav = React.useMemo(() => getDocsNav(lang), [lang])
+  const activeHref = React.useMemo(() => getActiveDocsNavHref(pathname, lang), [pathname, lang])
   const activeSectionIndex = React.useMemo(() => {
     if (!activeHref) return 0
     const idx = docsNav.findIndex((s) => s.items.some((item) => item.href === activeHref))
     return idx >= 0 ? idx : 0
-  }, [activeHref])
+  }, [activeHref, docsNav])
 
   return (
     <Sidebar {...props} variant="floating">
@@ -53,13 +57,16 @@ export function DocsSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) 
         <div className="px-2">
           <VersionSwitcher versions={DOCS_VERSIONS} defaultVersion={DOCS_VERSION} />
         </div>
+        <div className="px-2">
+          <LanguageSwitcher />
+        </div>
       </SidebarHeader>
       <SidebarContent className="gap-0">
         {docsNav.map((section, i) => {
-          const SectionIcon = sectionIcons[section.title] ?? BookMarkedIcon
+          const SectionIcon = sectionIcons[section.key] ?? BookMarkedIcon
           return (
             <Collapsible
-              key={section.title}
+              key={section.key}
               title={section.title}
               defaultOpen={activeSectionIndex === i}
               className="group/collapsible"
@@ -91,7 +98,9 @@ export function DocsSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) 
                                   "data-active:!bg-sidebar-accent data-active:!text-sidebar-accent-foreground data-active:hover:!bg-sidebar-accent data-active:font-medium"
                               )}
                             >
-                              <Link href={item.href}>{item.title}</Link>
+                              <Link href={item.href} title={item.title}>
+                                <span className="truncate">{item.title}</span>
+                              </Link>
                             </SidebarMenuButton>
                           </SidebarMenuItem>
                         )
