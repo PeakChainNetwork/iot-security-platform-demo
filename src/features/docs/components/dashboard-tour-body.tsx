@@ -144,7 +144,7 @@ const content: Record<Locale, Content> = {
       title: "This is the real thing",
       body: (runLocallyHref) => (
         <>
-          The dashboard is part of this app — the panels below mirror it. It shows live data once it&apos;s
+          The dashboard is part of this app, the panels below mirror it. It shows live data once it&apos;s
           pointed at a running backend (see{" "}
           <Link href={runLocallyHref} className="font-medium text-primary underline underline-offset-4">
             run it locally
@@ -164,7 +164,7 @@ const content: Record<Locale, Content> = {
       {
         icon: GaugeIcon,
         title: "Dashboard overview",
-        desc: "The home screen: live KPIs (threats, devices monitored, uptime, response time) above pipeline health, alerts, top vulnerabilities, and recent anomalies — the whole fleet at a glance.",
+        desc: "The home screen: live KPIs (threats, devices monitored, uptime, response time) above pipeline health, alerts, top vulnerabilities, and recent anomalies, the whole fleet at a glance.",
         preview: null,
         href: "/",
         cta: "Open the dashboard",
@@ -180,7 +180,7 @@ const content: Record<Locale, Content> = {
       {
         icon: LayoutDashboardIcon,
         title: "Device detail",
-        desc: "Open a machine to see its live telemetry, current risk score, and recent history — the full picture for one asset.",
+        desc: "Open a machine to see its live telemetry, current risk score, and recent history, the full picture for one asset.",
         preview: null,
         href: "/devices",
         cta: "Browse devices",
@@ -216,7 +216,7 @@ const content: Record<Locale, Content> = {
       title: "Das ist die echte Anwendung",
       body: (runLocallyHref) => (
         <>
-          Das Dashboard ist Teil dieser App — die Panels unten spiegeln es wider. Es zeigt Live-Daten, sobald es
+          Das Dashboard ist Teil dieser App, die Panels unten spiegeln es wider. Es zeigt Live-Daten, sobald es
           auf ein laufendes Backend verweist (siehe{" "}
           <Link href={runLocallyHref} className="font-medium text-primary underline underline-offset-4">
             lokal ausführen
@@ -236,7 +236,7 @@ const content: Record<Locale, Content> = {
       {
         icon: GaugeIcon,
         title: "Dashboard-Übersicht",
-        desc: "Der Startbildschirm: Live-KPIs (Bedrohungen, überwachte Geräte, Verfügbarkeit, Antwortzeit) über dem Zustand der Pipeline, Warnungen, den wichtigsten Schwachstellen und den jüngsten Anomalien — die gesamte Flotte auf einen Blick.",
+        desc: "Der Startbildschirm: Live-KPIs (Bedrohungen, überwachte Geräte, Verfügbarkeit, Antwortzeit) über dem Zustand der Pipeline, Warnungen, den wichtigsten Schwachstellen und den jüngsten Anomalien, die gesamte Flotte auf einen Blick.",
         preview: null,
         href: "/",
         cta: "Dashboard öffnen",
@@ -252,7 +252,7 @@ const content: Record<Locale, Content> = {
       {
         icon: LayoutDashboardIcon,
         title: "Gerätedetails",
-        desc: "Öffnen Sie eine Maschine, um ihre Live-Telemetrie, den aktuellen Risikowert und den jüngsten Verlauf zu sehen — das vollständige Bild für eine einzelne Anlage.",
+        desc: "Öffnen Sie eine Maschine, um ihre Live-Telemetrie, den aktuellen Risikowert und den jüngsten Verlauf zu sehen, das vollständige Bild für eine einzelne Anlage.",
         preview: null,
         href: "/devices",
         cta: "Geräte durchsuchen",

@@ -70,7 +70,7 @@ const strings: Record<Locale, Strings> = {
     whatYouGetBack: "What you get back",
     online: "online",
     blurbs: {
-      devices: "Every machine with its latest readings and state — plus a live stream per device.",
+      devices: "Every machine with its latest readings and state, plus a live stream per device.",
       alerts: "Active and historical alerts when a machine behaves unusually.",
       vulnerabilities: "Known CVEs matched to each device, with severity and a fleet-wide summary.",
       dashboard: "Fleet-wide KPIs for your overview widgets, with a live update stream.",
@@ -94,7 +94,7 @@ const strings: Record<Locale, Strings> = {
     whatYouGetBack: "Was Sie zurückerhalten",
     online: "online",
     blurbs: {
-      devices: "Jede Maschine mit ihren neuesten Messwerten und ihrem Zustand — plus einem Live-Stream pro Gerät.",
+      devices: "Jede Maschine mit ihren neuesten Messwerten und ihrem Zustand, plus einem Live-Stream pro Gerät.",
       alerts: "Aktive und historische Warnungen, wenn sich eine Maschine ungewöhnlich verhält.",
       vulnerabilities: "Bekannte CVEs, die jedem Gerät zugeordnet sind, mit Schweregrad und einer flottenweiten Zusammenfassung.",
       dashboard: "Flottenweite KPIs für Ihre Übersichts-Widgets, mit einem Live-Aktualisierungs-Stream.",

@@ -32,14 +32,14 @@ const content: Record<Locale, Content> = {
       title: "Rolling out to real machines",
       badges: ["Rollout"],
       description:
-        "Swap the demo data for your live machines — at a pace that suits you, with no disruption to the rest of Peaksoft EU.",
+        "Swap the demo data for your live machines, at a pace that suits you, with no disruption to the rest of Peaksoft EU.",
     },
     bigIdea: {
       title: "The big idea",
       body: (
         <>
           The demo is just a <strong>data source</strong>. When your real machines take over, Peaksoft EU,
-          dashboard, and alerts stay exactly the same — only the source changes.
+          dashboard, and alerts stay exactly the same, only the source changes.
         </>
       ),
     },
@@ -62,7 +62,7 @@ const content: Record<Locale, Content> = {
     phases: {
       title: "Roll out in phases",
       intro:
-        "Step through the phases below — watch the fleet switch from demo to live machines while Peaksoft EU keeps running throughout.",
+        "Step through the phases below, watch the fleet switch from demo to live machines while Peaksoft EU keeps running throughout.",
     },
     details: {
       summary: "Rollout checklist & success criteria",
@@ -77,7 +77,7 @@ const content: Record<Locale, Content> = {
       doneLabel: "Done when…",
       successCriteria: [
         "The dashboard reflects real machine behaviour.",
-        "Machine names are stable — no duplicates or resets.",
+        "Machine names are stable, no duplicates or resets.",
         "Units and naming are consistent across the fleet.",
         "Turning off the demo doesn't affect real telemetry.",
       ],
@@ -98,14 +98,14 @@ const content: Record<Locale, Content> = {
       title: "Ausrollen auf echte Maschinen",
       badges: ["Ausrollen"],
       description:
-        "Tauschen Sie die Demo-Daten gegen Ihre Live-Maschinen aus — in einem Tempo, das zu Ihnen passt, ohne Störung des übrigen Peaksoft EU.",
+        "Tauschen Sie die Demo-Daten gegen Ihre Live-Maschinen aus, in einem Tempo, das zu Ihnen passt, ohne Störung des übrigen Peaksoft EU.",
     },
     bigIdea: {
       title: "Die Grundidee",
       body: (
         <>
           Die Demo ist nur eine <strong>Datenquelle</strong>. Wenn Ihre echten Maschinen übernehmen, bleiben
-          Peaksoft EU, Dashboard und Warnungen genau gleich — nur die Quelle ändert sich.
+          Peaksoft EU, Dashboard und Warnungen genau gleich, nur die Quelle ändert sich.
         </>
       ),
     },
@@ -128,7 +128,7 @@ const content: Record<Locale, Content> = {
     phases: {
       title: "In Phasen ausrollen",
       intro:
-        "Gehen Sie die Phasen unten durch — beobachten Sie, wie die Flotte von der Demo auf Live-Maschinen umschaltet, während Peaksoft EU durchgehend weiterläuft.",
+        "Gehen Sie die Phasen unten durch, beobachten Sie, wie die Flotte von der Demo auf Live-Maschinen umschaltet, während Peaksoft EU durchgehend weiterläuft.",
     },
     details: {
       summary: "Checkliste & Erfolgskriterien für das Ausrollen",
@@ -143,7 +143,7 @@ const content: Record<Locale, Content> = {
       doneLabel: "Fertig, wenn …",
       successCriteria: [
         "Das Dashboard spiegelt das echte Maschinenverhalten wider.",
-        "Maschinennamen sind stabil — keine Duplikate oder Zurücksetzungen.",
+        "Maschinennamen sind stabil, keine Duplikate oder Zurücksetzungen.",
         "Einheiten und Benennung sind über die gesamte Flotte konsistent.",
         "Das Abschalten der Demo beeinflusst die echte Telemetrie nicht.",
       ],

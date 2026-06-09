@@ -90,7 +90,7 @@ const strings: Record<Locale, Strings> = {
         icon: ImportIcon,
         title: "Open Postman and import",
         description:
-          'Open the Postman app, click the "Import" button in the top-left corner (or press Ctrl+O / Cmd+O). Drag both downloaded JSON files onto the import dialog — or click "Upload Files" and select them.',
+          'Open the Postman app, click the "Import" button in the top-left corner (or press Ctrl+O / Cmd+O). Drag both downloaded JSON files onto the import dialog, or click "Upload Files" and select them.',
       },
       {
         number: 3,
@@ -118,7 +118,7 @@ const strings: Record<Locale, Strings> = {
       "The collection mirrors the API Reference docs and is organized into folders by domain. Every request includes:",
     includes: [
       "Pre-filled request bodies (POST/PUT)",
-      "Query params disabled by default — enable what you need",
+      "Query params disabled by default, enable what you need",
       "Path variables with realistic example values",
       "Saved example responses for every documented status code",
       "Descriptions pulled from the OpenAPI spec",
@@ -145,7 +145,7 @@ const strings: Record<Locale, Strings> = {
       },
       {
         title: "Use the Collection Runner",
-        body: 'Right-click the collection name and select "Run collection" to execute all requests in sequence — useful for a quick smoke test of Peaksoft EU API.',
+        body: 'Right-click the collection name and select "Run collection" to execute all requests in sequence, useful for a quick smoke test of Peaksoft EU API.',
       },
       {
         title: "WebSocket requests",
@@ -181,7 +181,7 @@ const strings: Record<Locale, Strings> = {
         icon: ImportIcon,
         title: "Postman öffnen und importieren",
         description:
-          'Öffnen Sie die Postman-App und klicken Sie oben links auf die Schaltfläche "Import" (oder drücken Sie Strg+O / Cmd+O). Ziehen Sie beide heruntergeladenen JSON-Dateien auf den Import-Dialog — oder klicken Sie auf "Upload Files" und wählen Sie sie aus.',
+          'Öffnen Sie die Postman-App und klicken Sie oben links auf die Schaltfläche "Import" (oder drücken Sie Strg+O / Cmd+O). Ziehen Sie beide heruntergeladenen JSON-Dateien auf den Import-Dialog, oder klicken Sie auf "Upload Files" und wählen Sie sie aus.',
       },
       {
         number: 3,
@@ -209,7 +209,7 @@ const strings: Record<Locale, Strings> = {
       "Die Collection spiegelt die API-Referenz-Dokumentation wider und ist nach Domäne in Ordner gegliedert. Jede Anfrage enthält:",
     includes: [
       "Vorausgefüllte Anfrage-Bodys (POST/PUT)",
-      "Query-Parameter standardmäßig deaktiviert — aktivieren Sie, was Sie benötigen",
+      "Query-Parameter standardmäßig deaktiviert, aktivieren Sie, was Sie benötigen",
       "Pfadvariablen mit realistischen Beispielwerten",
       "Gespeicherte Beispielantworten für jeden dokumentierten Statuscode",
       "Aus der OpenAPI-Spezifikation übernommene Beschreibungen",
@@ -236,7 +236,7 @@ const strings: Record<Locale, Strings> = {
       },
       {
         title: "Den Collection Runner verwenden",
-        body: 'Klicken Sie mit der rechten Maustaste auf den Collection-Namen und wählen Sie "Run collection", um alle Anfragen nacheinander auszuführen — nützlich für einen schnellen Smoke-Test der Peaksoft EU API.',
+        body: 'Klicken Sie mit der rechten Maustaste auf den Collection-Namen und wählen Sie "Run collection", um alle Anfragen nacheinander auszuführen, nützlich für einen schnellen Smoke-Test der Peaksoft EU API.',
       },
       {
         title: "WebSocket-Anfragen",

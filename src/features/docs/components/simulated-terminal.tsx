@@ -28,7 +28,7 @@ const CHROME: Record<Locale, {
     run: "Run",
     running: "Running…",
     runAgain: "Run again",
-    idleHint: "Press Run to preview the output (simulation — nothing is executed).",
+    idleHint: "Press Run to preview the output (simulation, nothing is executed).",
   },
   de: {
     copyAria: "Befehl kopieren",
@@ -37,7 +37,7 @@ const CHROME: Record<Locale, {
     run: "Ausführen",
     running: "Wird ausgeführt…",
     runAgain: "Erneut ausführen",
-    idleHint: "Klicken Sie auf Ausführen, um die Ausgabe anzuzeigen (Simulation — es wird nichts ausgeführt).",
+    idleHint: "Klicken Sie auf Ausführen, um die Ausgabe anzuzeigen (Simulation, es wird nichts ausgeführt).",
   },
 }
 

@@ -39,7 +39,7 @@ const content: Record<Locale, Content> = {
       eyebrow: "Documentation",
       title: "Overview",
       description:
-        "Keep an eye on your industrial machines. Each one reports in, Peaksoft EU watches for trouble and scores risk in real time, and you see the live picture — so problems surface before they become downtime.",
+        "Keep an eye on your industrial machines. Each one reports in, Peaksoft EU watches for trouble and scores risk in real time, and you see the live picture, so problems surface before they become downtime.",
     },
     flowNodes: {
       machines: { title: "Your machines", subtitle: "send readings" },
@@ -65,7 +65,7 @@ const content: Record<Locale, Content> = {
     glanceLabel: "Peaksoft EU at a glance",
     startHereTitle: "Start here",
     startHere: [
-      { eyebrow: "How it works", title: "The flow in one picture — plus a hands-on sandbox to try.", href: "/docs/how-it-works" },
+      { eyebrow: "How it works", title: "The flow in one picture, plus a hands-on sandbox to try.", href: "/docs/how-it-works" },
       // Temporarily hidden — re-enable when ready:
       // { eyebrow: "Tour the dashboard", title: "See the live views you get once machines are connected.", href: "/docs/dashboard-tour" },
       { eyebrow: "Run it locally", title: "Bring the whole platform up with one command.", href: "/docs/run-locally" },
@@ -90,7 +90,7 @@ const content: Record<Locale, Content> = {
       eyebrow: "Dokumentation",
       title: "Überblick",
       description:
-        "Behalten Sie Ihre Industriemaschinen im Blick. Jede meldet sich, Peaksoft EU achtet auf Probleme und bewertet das Risiko in Echtzeit, und Sie sehen das Live-Bild — so treten Probleme zutage, bevor sie zu Ausfallzeiten werden.",
+        "Behalten Sie Ihre Industriemaschinen im Blick. Jede meldet sich, Peaksoft EU achtet auf Probleme und bewertet das Risiko in Echtzeit, und Sie sehen das Live-Bild, so treten Probleme zutage, bevor sie zu Ausfallzeiten werden.",
     },
     flowNodes: {
       machines: { title: "Ihre Maschinen", subtitle: "senden Messwerte" },
@@ -116,7 +116,7 @@ const content: Record<Locale, Content> = {
     glanceLabel: "Peaksoft EU auf einen Blick",
     startHereTitle: "Hier starten",
     startHere: [
-      { eyebrow: "So funktioniert es", title: "Der Ablauf in einem Bild — plus eine praktische Sandbox zum Ausprobieren.", href: "/docs/how-it-works" },
+      { eyebrow: "So funktioniert es", title: "Der Ablauf in einem Bild, plus eine praktische Sandbox zum Ausprobieren.", href: "/docs/how-it-works" },
       // Temporarily hidden — re-enable when ready:
       // { eyebrow: "Rundgang durchs Dashboard", title: "Sehen Sie die Live-Ansichten, die Sie erhalten, sobald Maschinen angebunden sind.", href: "/docs/dashboard-tour" },
       { eyebrow: "Lokal ausführen", title: "Bringen Sie die gesamte Plattform mit einem Befehl zum Laufen.", href: "/docs/run-locally" },

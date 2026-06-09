@@ -50,7 +50,7 @@ const content: Record<Locale, Content> = {
     },
     callout: {
       title: "In one sentence",
-      body: "Think of it as a control room for your equipment — every machine reports in, and Peaksoft EU raises a hand the moment something looks off.",
+      body: "Think of it as a control room for your equipment, every machine reports in, and Peaksoft EU raises a hand the moment something looks off.",
     },
     flowLabel: "From your machines to your dashboard",
     flowNodes: {
@@ -61,7 +61,7 @@ const content: Record<Locale, Content> = {
     steps: [
       {
         title: "Your machines send readings",
-        desc: "Each machine reports its measurements — temperature, pressure, and so on — every few seconds.",
+        desc: "Each machine reports its measurements, temperature, pressure, and so on, every few seconds.",
       },
       {
         title: "Peaksoft EU watches them",
@@ -77,19 +77,19 @@ const content: Record<Locale, Content> = {
       desc: (
         <>
           A hands-on walkthrough of exactly that loop. Tap <strong>Send a reading</strong> and watch it travel
-          from a machine to the dashboard — then flip <strong>Inject fault</strong> to see Peaksoft EU react.
+          from a machine to the dashboard, then flip <strong>Inject fault</strong> to see Peaksoft EU react.
           Nothing here touches a real machine; it&apos;s a safe sandbox.
         </>
       ),
     },
     risk: {
       title: "How risk is scored",
-      desc: "Each machine gets a single risk score that blends three signals — known vulnerabilities, unusual behaviour, and compliance.",
+      desc: "Each machine gets a single risk score that blends three signals, known vulnerabilities, unusual behaviour, and compliance.",
       signalsLabel: "Score = three signals",
       signalsHint: "Drag the sliders to see how the score reacts.",
       cvssLabel: "Where the CVSS comes from",
       cvssIntro:
-        "The CVSS input above isn't guessed — Peaksoft EU matches each machine's profile to known vulnerabilities. Pick a machine to see its matches and how they feed the score:",
+        "The CVSS input above isn't guessed, Peaksoft EU matches each machine's profile to known vulnerabilities. Pick a machine to see its matches and how they feed the score:",
     },
     ready: (connectHref) => (
       <>
@@ -110,7 +110,7 @@ const content: Record<Locale, Content> = {
     },
     callout: {
       title: "In einem Satz",
-      body: "Stellen Sie es sich wie einen Leitstand für Ihre Anlagen vor — jede Maschine meldet sich, und Peaksoft EU schlägt Alarm, sobald etwas nicht stimmt.",
+      body: "Stellen Sie es sich wie einen Leitstand für Ihre Anlagen vor, jede Maschine meldet sich, und Peaksoft EU schlägt Alarm, sobald etwas nicht stimmt.",
     },
     flowLabel: "Von Ihren Maschinen bis zu Ihrem Dashboard",
     flowNodes: {
@@ -121,7 +121,7 @@ const content: Record<Locale, Content> = {
     steps: [
       {
         title: "Ihre Maschinen senden Messwerte",
-        desc: "Jede Maschine meldet ihre Messwerte — Temperatur, Druck und so weiter — alle paar Sekunden.",
+        desc: "Jede Maschine meldet ihre Messwerte, Temperatur, Druck und so weiter, alle paar Sekunden.",
       },
       {
         title: "Peaksoft EU überwacht sie",
@@ -137,7 +137,7 @@ const content: Record<Locale, Content> = {
       desc: (
         <>
           Eine praktische Durchführung genau dieses Ablaufs. Tippen Sie auf <strong>Messwert senden</strong> und
-          sehen Sie zu, wie er von einer Maschine zum Dashboard wandert — schalten Sie dann{" "}
+          sehen Sie zu, wie er von einer Maschine zum Dashboard wandert, schalten Sie dann{" "}
           <strong>Fehler einschleusen</strong> ein, um zu sehen, wie Peaksoft EU reagiert. Nichts davon berührt
           eine echte Maschine; es ist eine sichere Sandbox.
         </>
@@ -145,12 +145,12 @@ const content: Record<Locale, Content> = {
     },
     risk: {
       title: "Wie das Risiko bewertet wird",
-      desc: "Jede Maschine erhält einen einzigen Risikowert, der drei Signale vereint — bekannte Schwachstellen, ungewöhnliches Verhalten und Compliance.",
+      desc: "Jede Maschine erhält einen einzigen Risikowert, der drei Signale vereint, bekannte Schwachstellen, ungewöhnliches Verhalten und Compliance.",
       signalsLabel: "Wert = drei Signale",
       signalsHint: "Verschieben Sie die Regler, um zu sehen, wie der Wert reagiert.",
       cvssLabel: "Woher der CVSS-Wert kommt",
       cvssIntro:
-        "Der CVSS-Wert oben ist nicht geraten — Peaksoft EU gleicht das Profil jeder Maschine mit bekannten Schwachstellen ab. Wählen Sie eine Maschine, um ihre Treffer zu sehen und wie sie in den Wert einfließen:",
+        "Der CVSS-Wert oben ist nicht geraten, Peaksoft EU gleicht das Profil jeder Maschine mit bekannten Schwachstellen ab. Wählen Sie eine Maschine, um ihre Treffer zu sehen und wie sie in den Wert einfließen:",
     },
     ready: (connectHref) => (
       <>

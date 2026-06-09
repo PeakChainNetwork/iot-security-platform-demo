@@ -32,7 +32,7 @@ export function TroubleshootingTreeDiagram() {
       <DiagramNode x={230} y={10} width={260} height={42} variant="alert" title="No data on the dashboard?" />
       <DiagramArrow x1={360} y1={52} x2={360} y2={72} markerId={markerId} />
 
-      <DiagramNode x={230} y={74} width={260} height={42} chart={1} title="Run mosquitto_sub — messages?" />
+      <DiagramNode x={230} y={74} width={260} height={42} chart={1} title="Run mosquitto_sub, messages?" />
 
       <DiagramArrow x1={490} y1={95} x2={560} y2={95} markerId={markerId} />
       <BranchLabel x={525} y={86} text="No" />

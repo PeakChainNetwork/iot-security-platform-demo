@@ -32,7 +32,7 @@ const publisherRunOutput: TerminalLine[] = [
   { text: `Published → site/${DEVICE_ID_PLACEHOLDER}/telemetry  {"temperature": 45.8, "pressure": 124.8, "status": "ok"}`, tone: "default" },
   { text: `Published → site/${DEVICE_ID_PLACEHOLDER}/telemetry  {"temperature": 45.9, "pressure": 124.6, "status": "ok"}`, tone: "default" },
   { text: `Published → site/${DEVICE_ID_PLACEHOLDER}/telemetry  {"temperature": 46.1, "pressure": 125.0, "status": "ok"}`, tone: "default" },
-  { text: "(publishing every 10s — press Ctrl+C to stop)", tone: "muted" },
+  { text: "(publishing every 10s, press Ctrl+C to stop)", tone: "muted" },
 ]
 
 const examplePayload = `{

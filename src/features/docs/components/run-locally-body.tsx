@@ -108,7 +108,7 @@ const content: Record<Locale, Content> = {
       eyebrow: "Documentation",
       title: "Run it locally",
       description:
-        "Test the live platform with your own data. You run two small pieces — the dashboard and the simulator — and PeakSoft hosts the platform itself.",
+        "Test the live platform with your own data. You run two small pieces, the dashboard and the simulator, and PeakSoft hosts the platform itself.",
     },
     whatRunsWhere: {
       label: "What runs where",
@@ -116,7 +116,7 @@ const content: Record<Locale, Content> = {
         <>
           The simulator publishes telemetry to PeakSoft EU&apos;s broker; the hosted platform ingests and scores it;
           the dashboard shows the result. The <strong>backend URL</strong> and <strong>broker </strong> are
-          already preset in each repo&apos;s <code>.env.example</code> — just clone and run.
+          already preset in each repo&apos;s <code>.env.example</code>, just clone and run.
         </>
       ),
     },
@@ -170,7 +170,7 @@ const content: Record<Locale, Content> = {
       step3Title: "Point it at the hosted platform",
       step3Body: (
         <>
-          Copy <code>.env.example</code> to <code>.env.local</code> — it already points at the hosted backend:
+          Copy <code>.env.example</code> to <code>.env.local</code>, it already points at the hosted backend:
         </>
       ),
       step4Title: "Start it",
@@ -185,11 +185,11 @@ const content: Record<Locale, Content> = {
       title: "The simulator",
       cloneLabel: "In a terminal",
       step1Title: "Clone the simulator repo",
-      step2Title: "Run it — one command",
+      step2Title: "Run it, one command",
       step2Body: (
         <>
           The script sets up Python, installs everything, configures the broker (the demo broker is the
-          default), and starts publishing — no other setup needed.
+          default), and starts publishing, no other setup needed.
         </>
       ),
       step2WindowsLabel: "Windows",
@@ -206,7 +206,7 @@ const content: Record<Locale, Content> = {
         venvLabel: "1 · Create a virtual environment",
         activate: (
           <>
-            Activate — <strong>Windows (PowerShell):</strong> <code>.\.venv\Scripts\Activate.ps1</code> ·{" "}
+            Activate, <strong>Windows (PowerShell):</strong> <code>.\.venv\Scripts\Activate.ps1</code> ·{" "}
             <strong>macOS/Linux:</strong> <code>source .venv/bin/activate</code>
           </>
         ),
@@ -275,7 +275,7 @@ const content: Record<Locale, Content> = {
       eyebrow: "Dokumentation",
       title: "Lokal ausführen",
       description:
-        "Testen Sie die Live-Plattform mit Ihren eigenen Daten. Sie führen zwei kleine Teile aus — das Dashboard und den Simulator — und PeakSoft hostet die Plattform selbst.",
+        "Testen Sie die Live-Plattform mit Ihren eigenen Daten. Sie führen zwei kleine Teile aus, das Dashboard und den Simulator, und PeakSoft hostet die Plattform selbst.",
     },
     whatRunsWhere: {
       label: "Was läuft wo",
@@ -338,7 +338,7 @@ const content: Record<Locale, Content> = {
       step3Title: "Auf die gehostete Plattform ausrichten",
       step3Body: (
         <>
-          Kopieren Sie <code>.env.example</code> nach <code>.env.local</code> — sie verweist bereits auf das
+          Kopieren Sie <code>.env.example</code> nach <code>.env.local</code>, sie verweist bereits auf das
           gehostete Backend:
         </>
       ),
@@ -354,11 +354,11 @@ const content: Record<Locale, Content> = {
       title: "Der Simulator",
       cloneLabel: "In einem Terminal",
       step1Title: "Simulator-Repository klonen",
-      step2Title: "Ausführen — ein Befehl",
+      step2Title: "Ausführen, ein Befehl",
       step2Body: (
         <>
           Das Skript richtet Python ein, installiert alles, konfiguriert den Broker (der Demo-Broker ist die
-          Standardeinstellung) und beginnt mit dem Veröffentlichen — keine weitere Einrichtung nötig.
+          Standardeinstellung) und beginnt mit dem Veröffentlichen, keine weitere Einrichtung nötig.
         </>
       ),
       step2WindowsLabel: "Windows",
@@ -375,7 +375,7 @@ const content: Record<Locale, Content> = {
         venvLabel: "1 · Virtuelle Umgebung erstellen",
         activate: (
           <>
-            Aktivieren — <strong>Windows (PowerShell):</strong> <code>.\.venv\Scripts\Activate.ps1</code> ·{" "}
+            Aktivieren, <strong>Windows (PowerShell):</strong> <code>.\.venv\Scripts\Activate.ps1</code> ·{" "}
             <strong>macOS/Linux:</strong> <code>source .venv/bin/activate</code>
           </>
         ),

@@ -39,7 +39,7 @@ export function IntegrationPatternDiagram() {
         <text x={180} y={84} textAnchor="middle" fontSize={10} fill="var(--muted-foreground)">
           Native MQTT / HTTP
         </text>
-        <DiagramNode x={20} y={102} width={200} height={52} chart={3} title="Direct feed" subtitle="rare — simplest path" />
+        <DiagramNode x={20} y={102} width={200} height={52} chart={3} title="Direct feed" subtitle="rare, simplest path" />
         <DiagramArrow x1={120} y1={154} x2={120} y2={180} markerId={markerId} />
         <DiagramNode
           x={10}

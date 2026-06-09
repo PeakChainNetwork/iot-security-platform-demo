@@ -23,7 +23,7 @@ const content: Record<Locale, Content> = {
       eyebrow: "Documentation",
       title: "FAQ & security",
       description:
-        "Quick answers to the questions we hear most — and how Peaksoft EU keeps your data safe.",
+        "Quick answers to the questions we hear most, and how Peaksoft EU keeps your data safe.",
     },
     securityTitle: "How your data is protected",
     security: [
@@ -33,7 +33,7 @@ const content: Record<Locale, Content> = {
       },
       {
         title: "Runs in your environment",
-        desc: "Peaksoft EU ships as containers you run on your own infrastructure — your data stays with you.",
+        desc: "Peaksoft EU ships as containers you run on your own infrastructure, your data stays with you.",
       },
       {
         title: "Access controlled",
@@ -48,7 +48,7 @@ const content: Record<Locale, Content> = {
     faqs: [
       {
         q: "Is my data safe?",
-        a: "Yes. Telemetry is sent over an encrypted, authenticated connection, and Peaksoft EU runs on infrastructure you control — nothing is shipped to a third party.",
+        a: "Yes. Telemetry is sent over an encrypted, authenticated connection, and Peaksoft EU runs on infrastructure you control, nothing is shipped to a third party.",
       },
       {
         q: "Does it run in the cloud or on-premises?",
@@ -56,7 +56,7 @@ const content: Record<Locale, Content> = {
       },
       {
         q: "Which machines are supported?",
-        a: "Any machine that can send readings can be connected — directly if it speaks MQTT, or through a small site gateway that forwards readings for machines that don't. See the connecting your machines guide.",
+        a: "Any machine that can send readings can be connected, directly if it speaks MQTT, or through a small site gateway that forwards readings for machines that don't. See the connecting your machines guide.",
       },
       {
         q: "How much effort is it to connect a machine?",
@@ -64,7 +64,7 @@ const content: Record<Locale, Content> = {
       },
       {
         q: "Will it disrupt my equipment?",
-        a: "No. Peaksoft EU only reads telemetry — it observes and scores risk, it does not control your machines.",
+        a: "No. Peaksoft EU only reads telemetry, it observes and scores risk, it does not control your machines.",
       },
       {
         q: "Can I try it before connecting real machines?",
@@ -81,7 +81,7 @@ const content: Record<Locale, Content> = {
       eyebrow: "Dokumentation",
       title: "FAQ & Sicherheit",
       description:
-        "Schnelle Antworten auf die häufigsten Fragen — und wie Peaksoft EU Ihre Daten schützt.",
+        "Schnelle Antworten auf die häufigsten Fragen, und wie Peaksoft EU Ihre Daten schützt.",
     },
     securityTitle: "Wie Ihre Daten geschützt werden",
     security: [
@@ -91,7 +91,7 @@ const content: Record<Locale, Content> = {
       },
       {
         title: "Läuft in Ihrer Umgebung",
-        desc: "Peaksoft EU wird als Container ausgeliefert, die Sie auf Ihrer eigenen Infrastruktur betreiben — Ihre Daten bleiben bei Ihnen.",
+        desc: "Peaksoft EU wird als Container ausgeliefert, die Sie auf Ihrer eigenen Infrastruktur betreiben, Ihre Daten bleiben bei Ihnen.",
       },
       {
         title: "Zugriffskontrolliert",
@@ -106,7 +106,7 @@ const content: Record<Locale, Content> = {
     faqs: [
       {
         q: "Sind meine Daten sicher?",
-        a: "Ja. Telemetrie wird über eine verschlüsselte, authentifizierte Verbindung gesendet, und Peaksoft EU läuft auf einer Infrastruktur, die Sie kontrollieren — nichts wird an Dritte weitergegeben.",
+        a: "Ja. Telemetrie wird über eine verschlüsselte, authentifizierte Verbindung gesendet, und Peaksoft EU läuft auf einer Infrastruktur, die Sie kontrollieren, nichts wird an Dritte weitergegeben.",
       },
       {
         q: "Läuft es in der Cloud oder On-Premises?",
@@ -114,7 +114,7 @@ const content: Record<Locale, Content> = {
       },
       {
         q: "Welche Maschinen werden unterstützt?",
-        a: "Jede Maschine, die Messwerte senden kann, lässt sich anbinden — direkt, wenn sie MQTT spricht, oder über ein kleines Standort-Gateway, das Messwerte für Maschinen weiterleitet, die das nicht können. Siehe die Anleitung Maschinen anbinden.",
+        a: "Jede Maschine, die Messwerte senden kann, lässt sich anbinden, direkt, wenn sie MQTT spricht, oder über ein kleines Standort-Gateway, das Messwerte für Maschinen weiterleitet, die das nicht können. Siehe die Anleitung Maschinen anbinden.",
       },
       {
         q: "Wie viel Aufwand ist es, eine Maschine anzubinden?",
@@ -122,7 +122,7 @@ const content: Record<Locale, Content> = {
       },
       {
         q: "Wird es meine Anlagen stören?",
-        a: "Nein. Peaksoft EU liest nur Telemetrie — es beobachtet und bewertet das Risiko, es steuert Ihre Maschinen nicht.",
+        a: "Nein. Peaksoft EU liest nur Telemetrie, es beobachtet und bewertet das Risiko, es steuert Ihre Maschinen nicht.",
       },
       {
         q: "Kann ich es ausprobieren, bevor ich echte Maschinen anbinde?",

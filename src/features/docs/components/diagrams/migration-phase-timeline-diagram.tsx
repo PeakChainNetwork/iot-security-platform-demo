@@ -40,7 +40,7 @@ export function MigrationPhaseTimelineDiagram() {
         strokeDasharray="4 3"
       />
       <text x={360} y={48} textAnchor="middle" dominantBaseline="middle" fontSize={10} fontWeight={600} fill="var(--foreground)">
-        Phase 0 — simulator active
+        Phase 0, simulator active
       </text>
       <text x={650} y={48} textAnchor="middle" dominantBaseline="middle" fontSize={9} fill="var(--muted-foreground)">
         retiring
@@ -48,17 +48,17 @@ export function MigrationPhaseTimelineDiagram() {
 
       <rect x={260} y={80} width={120} height={32} rx={8} fill="var(--chart-3)" fillOpacity={0.18} stroke="var(--chart-3)" strokeWidth={1} />
       <text x={320} y={96} textAnchor="middle" dominantBaseline="middle" fontSize={10} fontWeight={600} fill="var(--foreground)">
-        Phase 1 — pilot
+        Phase 1, pilot
       </text>
 
       <rect x={380} y={80} width={120} height={32} rx={8} fill="var(--chart-3)" fillOpacity={0.24} stroke="var(--chart-3)" strokeWidth={1} />
       <text x={440} y={96} textAnchor="middle" dominantBaseline="middle" fontSize={10} fontWeight={600} fill="var(--foreground)">
-        Phase 2 — parallel
+        Phase 2, parallel
       </text>
 
       <rect x={500} y={80} width={120} height={32} rx={8} fill="var(--chart-3)" fillOpacity={0.3} stroke="var(--chart-3)" strokeWidth={1} />
       <text x={560} y={96} textAnchor="middle" dominantBaseline="middle" fontSize={10} fontWeight={600} fill="var(--foreground)">
-        Phase 3 — scale
+        Phase 3, scale
       </text>
 
       <rect x={620} y={80} width={80} height={32} rx={8} fill="var(--chart-3)" fillOpacity={0.36} stroke="var(--chart-3)" strokeWidth={1} />

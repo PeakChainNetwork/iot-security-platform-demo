@@ -172,7 +172,7 @@ const content: Record<Locale, Content> = {
       title: "Connecting your machines",
       badges: ["MQTT over WSS", "JSON"],
       description:
-        "Your machines send a small message every few seconds. Here's what they send and where it goes — your IT team can wire it up in an afternoon.",
+        "Your machines send a small message every few seconds. Here's what they send and where it goes, your IT team can wire it up in an afternoon.",
     },
     wholeIdea: "The whole idea",
     connectorLabels: ["publish", "over WSS"],
@@ -194,7 +194,7 @@ const content: Record<Locale, Content> = {
     topic: {
       heading: "Topic",
       snippetTitle: "Publish to",
-      desc: "One stable name per machine — letters, numbers, dashes, underscores. Reuse it forever.",
+      desc: "One stable name per machine, letters, numbers, dashes, underscores. Reuse it forever.",
     },
     message: {
       heading: "What each machine sends",
@@ -205,7 +205,7 @@ const content: Record<Locale, Content> = {
         </>
       ),
       fieldTableTitle: "telemetry payload",
-      builderPrompt: "Build a message — toggle fields and watch the JSON update:",
+      builderPrompt: "Build a message, toggle fields and watch the JSON update:",
       schemaSummary: "Full JSON Schema",
       schemaDescription: "The exact contract for schema validation.",
       schemaSnippetTitle: "JSON Schema",
@@ -227,7 +227,7 @@ const content: Record<Locale, Content> = {
     ],
     exampleCode: {
       summary: "Example code",
-      description: "Connect and publish every 10 seconds — Python, JavaScript, or C#.",
+      description: "Connect and publish every 10 seconds, Python, JavaScript, or C#.",
       installLabel: "Install",
     },
     checkIt: {
@@ -246,7 +246,7 @@ const content: Record<Locale, Content> = {
         <Link href={howItWorksHref} className="text-primary underline underline-offset-4">
           how it works
         </Link>
-        . For the full technical reference — broker settings, multi-language code, troubleshooting — see{" "}
+        . For the full technical reference, broker settings, multi-language code, troubleshooting, see{" "}
         <Link href={mqttHref} className="text-primary underline underline-offset-4">
           MQTT integration
         </Link>
@@ -264,7 +264,7 @@ const content: Record<Locale, Content> = {
       title: "Maschinen anbinden",
       badges: ["MQTT über WSS", "JSON"],
       description:
-        "Ihre Maschinen senden alle paar Sekunden eine kleine Nachricht. Hier sehen Sie, was sie senden und wohin es geht — Ihr IT-Team kann es an einem Nachmittag einrichten.",
+        "Ihre Maschinen senden alle paar Sekunden eine kleine Nachricht. Hier sehen Sie, was sie senden und wohin es geht, Ihr IT-Team kann es an einem Nachmittag einrichten.",
     },
     wholeIdea: "Die ganze Idee",
     connectorLabels: ["veröffentlichen", "über WSS"],
@@ -287,7 +287,7 @@ const content: Record<Locale, Content> = {
     topic: {
       heading: "Topic",
       snippetTitle: "Veröffentlichen an",
-      desc: "Ein stabiler Name pro Maschine — Buchstaben, Zahlen, Bindestriche, Unterstriche. Verwenden Sie ihn für immer wieder.",
+      desc: "Ein stabiler Name pro Maschine, Buchstaben, Zahlen, Bindestriche, Unterstriche. Verwenden Sie ihn für immer wieder.",
     },
     message: {
       heading: "Was jede Maschine sendet",
@@ -298,7 +298,7 @@ const content: Record<Locale, Content> = {
         </>
       ),
       fieldTableTitle: "Telemetrie-Payload",
-      builderPrompt: "Erstellen Sie eine Nachricht — schalten Sie Felder um und sehen Sie zu, wie sich das JSON aktualisiert:",
+      builderPrompt: "Erstellen Sie eine Nachricht, schalten Sie Felder um und sehen Sie zu, wie sich das JSON aktualisiert:",
       schemaSummary: "Vollständiges JSON Schema",
       schemaDescription: "Der genaue Vertrag für die Schema-Validierung.",
       schemaSnippetTitle: "JSON Schema",
@@ -320,7 +320,7 @@ const content: Record<Locale, Content> = {
     ],
     exampleCode: {
       summary: "Beispielcode",
-      description: "Verbinden und alle 10 Sekunden veröffentlichen — Python, JavaScript oder C#.",
+      description: "Verbinden und alle 10 Sekunden veröffentlichen, Python, JavaScript oder C#.",
       installLabel: "Installieren",
     },
     checkIt: {
@@ -339,7 +339,7 @@ const content: Record<Locale, Content> = {
         <Link href={howItWorksHref} className="text-primary underline underline-offset-4">
           So funktioniert es
         </Link>
-        . Für die vollständige technische Referenz — Broker-Einstellungen, mehrsprachiger Code, Fehlerbehebung — siehe{" "}
+        . Für die vollständige technische Referenz, Broker-Einstellungen, mehrsprachiger Code, Fehlerbehebung, siehe{" "}
         <Link href={mqttHref} className="text-primary underline underline-offset-4">
           MQTT-Integration
         </Link>
