@@ -26,28 +26,28 @@ export function WazuhLayout({ children }: { children: React.ReactNode }) {
       {/* Top Header */}
       <header className="flex h-12 shrink-0 items-center justify-between bg-wazuh-header px-4 text-wazuh-header-foreground z-50">
         <div className="flex items-center gap-4">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-8 w-8 text-wazuh-header-foreground hover:bg-white/20 hover:text-white" 
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-wazuh-header-foreground hover:bg-white/20 hover:text-white"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
             <Menu className="h-4 w-4" />
           </Button>
           <Link href="/" className="font-semibold tracking-wide flex items-center gap-2 text-white hover:opacity-90">
             <div className="flex h-6 w-6 items-center justify-center rounded bg-white/20">
-              <span className="text-xs font-bold text-white">W</span>
+              <span className="text-xs font-bold text-white"></span>
             </div>
-            Wazuh IoT
+            IoT Security
           </Link>
         </div>
-        
+
         <div className="flex-1 max-w-xl mx-4 hidden md:flex items-center">
           <div className="relative w-full">
             <Search className="absolute left-2.5 top-1.5 h-4 w-4 text-white/60" />
-            <input 
-              type="text" 
-              placeholder="Search..." 
+            <input
+              type="text"
+              placeholder="Search..."
               className="h-8 w-full rounded-md bg-white/10 pl-9 pr-4 text-sm text-white placeholder:text-white/60 focus:bg-white/20 focus:outline-none focus:ring-1 focus:ring-white/30"
             />
           </div>
@@ -67,7 +67,7 @@ export function WazuhLayout({ children }: { children: React.ReactNode }) {
       {/* Main Content Area */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <aside 
+        <aside
           className={cn(
             "flex flex-col bg-wazuh-sidebar text-wazuh-sidebar-foreground border-r border-wazuh-border transition-all duration-300 z-40 relative",
             sidebarOpen ? "w-64" : "w-0 overflow-hidden md:w-[50px] md:overflow-visible"
@@ -82,8 +82,8 @@ export function WazuhLayout({ children }: { children: React.ReactNode }) {
                   href={item.href}
                   className={cn(
                     "flex items-center gap-3 rounded-md px-2 py-2 text-sm transition-colors whitespace-nowrap",
-                    active 
-                      ? "bg-muted text-foreground font-semibold" 
+                    active
+                      ? "bg-muted text-foreground font-semibold"
                       : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                   )}
                   title={!sidebarOpen ? item.label : undefined}
@@ -94,7 +94,7 @@ export function WazuhLayout({ children }: { children: React.ReactNode }) {
               )
             })}
           </nav>
-          
+
           <div className="p-2 border-t border-wazuh-border">
             <Link
               href="/docs"
