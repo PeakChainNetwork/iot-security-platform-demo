@@ -1,9 +1,9 @@
-import { AppShell } from "@/components/common/app-shell"
+import { WazuhLayout } from "@/components/common/wazuh-layout"
 
 export default function AppGroupLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  return <AppShell>{children}</AppShell>
+  return <WazuhLayout>{children}</WazuhLayout>
 }

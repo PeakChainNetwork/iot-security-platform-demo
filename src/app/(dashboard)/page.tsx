@@ -115,166 +115,173 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">
-        <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="font-heading text-2xl font-semibold tracking-tight">
-              Industrial IoT Cybersecurity Dashboard
-            </h1>
-            <p className="text-muted-foreground">
-              Real-time monitoring across pipeline stages, devices, and detections.
-            </p>
+      {/* Wazuh sub-header / Query Bar */}
+      <div className="bg-wazuh-card border-b border-wazuh-border p-3 flex flex-col sm:flex-row gap-3 items-center justify-between sticky top-0 z-30">
+        <div className="flex w-full sm:w-2/3 items-center">
+          <div className="flex-1 flex items-center border border-wazuh-border rounded-sm bg-background px-3 h-9">
+            <span className="text-muted-foreground text-sm flex-1">Search... (e.g. status: "critical")</span>
+            <span className="text-xs font-mono bg-muted px-1.5 py-0.5 rounded text-muted-foreground">KQL</span>
           </div>
-          <Button asChild variant="outline">
-            <Link href="/devices">Open devices</Link>
+          <Button variant="outline" size="sm" className="ml-2 h-9 rounded-sm border-wazuh-border">
+            Update
           </Button>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" className="h-9 rounded-sm border-wazuh-border whitespace-nowrap">
+            Last 24 hours
+          </Button>
+        </div>
+      </div>
+
+      <div className="mx-auto w-full flex-1 p-4 sm:p-6 space-y-4">
+        <div className="flex items-center justify-between mb-2">
+          <h1 className="text-xl font-semibold tracking-tight text-foreground">
+            Security events
+          </h1>
         </div>
 
         <div className="grid gap-4 lg:grid-cols-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Threats detected</CardTitle>
+          <Card className="rounded-sm shadow-sm border-wazuh-border bg-wazuh-card">
+            <CardHeader className="py-3 px-4 border-b border-wazuh-border/50">
+              <CardTitle className="text-xs font-semibold uppercase text-muted-foreground">Threats detected</CardTitle>
             </CardHeader>
-            <CardContent className="text-3xl font-semibold tabular-nums">
+            <CardContent className="p-4 text-3xl font-semibold tabular-nums text-foreground">
               {kpis?.threats_detected ?? "—"}
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Devices monitored</CardTitle>
+          <Card className="rounded-sm shadow-sm border-wazuh-border bg-wazuh-card">
+            <CardHeader className="py-3 px-4 border-b border-wazuh-border/50">
+              <CardTitle className="text-xs font-semibold uppercase text-muted-foreground">Devices monitored</CardTitle>
             </CardHeader>
-            <CardContent className="text-3xl font-semibold tabular-nums">
+            <CardContent className="p-4 text-3xl font-semibold tabular-nums text-foreground">
               {kpis?.devices_monitored ?? devices.length ?? "—"}
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>System uptime</CardTitle>
+          <Card className="rounded-sm shadow-sm border-wazuh-border bg-wazuh-card">
+            <CardHeader className="py-3 px-4 border-b border-wazuh-border/50">
+              <CardTitle className="text-xs font-semibold uppercase text-muted-foreground">System uptime</CardTitle>
             </CardHeader>
-            <CardContent className="text-3xl font-semibold tabular-nums">
+            <CardContent className="p-4 text-3xl font-semibold tabular-nums text-foreground">
               {kpis ? `${kpis.system_uptime_pct.toFixed(1)}%` : "—"}
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Response time</CardTitle>
+          <Card className="rounded-sm shadow-sm border-wazuh-border bg-wazuh-card">
+            <CardHeader className="py-3 px-4 border-b border-wazuh-border/50">
+              <CardTitle className="text-xs font-semibold uppercase text-muted-foreground">Response time</CardTitle>
             </CardHeader>
-            <CardContent className="text-3xl font-semibold tabular-nums">
+            <CardContent className="p-4 text-3xl font-semibold tabular-nums text-foreground">
               {kpis ? `${kpis.avg_response_time_ms}ms` : "—"}
             </CardContent>
           </Card>
         </div>
 
-        <div className="mt-6 grid gap-4 lg:grid-cols-5">
-          <Card className="lg:col-span-3">
-            <CardHeader>
-              <CardTitle>Data pipeline</CardTitle>
+        <div className="grid gap-4 lg:grid-cols-5">
+          <Card className="lg:col-span-3 rounded-sm shadow-sm border-wazuh-border bg-wazuh-card flex flex-col">
+            <CardHeader className="py-3 px-4 border-b border-wazuh-border/50">
+              <CardTitle className="text-sm font-semibold">Data pipeline</CardTitle>
             </CardHeader>
-            <CardContent className="grid gap-3 sm:grid-cols-2">
-              {pipeline.length === 0 ? (
-                <Empty className="bg-card sm:col-span-2">
-                  <EmptyHeader>
-                    <EmptyTitle>No pipeline metrics yet</EmptyTitle>
-                    <EmptyDescription>
-                      Start the backend stack and telemetry simulator to populate live pipeline health.
-                    </EmptyDescription>
-                  </EmptyHeader>
-                  <EmptyContent />
-                </Empty>
-              ) : (
-                pipeline.map((s) => (
-                  <div key={s.name} className="rounded-2xl border bg-card p-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="font-medium">{s.name}</div>
-                      <Badge variant={statusBadge(s.status)}>{s.status}</Badge>
+            <CardContent className="p-4 flex-1">
+              <div className="grid gap-3 sm:grid-cols-2">
+                {pipeline.length === 0 ? (
+                  <Empty className="bg-wazuh-card sm:col-span-2">
+                    <EmptyHeader>
+                      <EmptyTitle>No pipeline metrics yet</EmptyTitle>
+                      <EmptyDescription>
+                        Start the backend stack and telemetry simulator.
+                      </EmptyDescription>
+                    </EmptyHeader>
+                  </Empty>
+                ) : (
+                  pipeline.map((s) => (
+                    <div key={s.name} className="rounded-sm border border-wazuh-border bg-background p-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="text-sm font-semibold">{s.name}</div>
+                        <Badge variant={statusBadge(s.status)} className="rounded-sm text-[10px] uppercase">{s.status}</Badge>
+                      </div>
+                      <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+                        <div>
+                          <div className="text-muted-foreground mb-1">Throughput</div>
+                          <div className="font-mono tabular-nums">{s.throughput}</div>
+                        </div>
+                        <div>
+                          <div className="text-muted-foreground mb-1">Success</div>
+                          <div className="font-mono tabular-nums">{s.success_rate}%</div>
+                        </div>
+                        <div>
+                          <div className="text-muted-foreground mb-1">Latency</div>
+                          <div className="font-mono tabular-nums">{s.avg_latency_ms}ms</div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="mt-3 grid grid-cols-3 gap-3 text-sm">
-                      <div>
-                        <div className="text-xs text-muted-foreground">Throughput</div>
-                        <div className="font-mono tabular-nums">{s.throughput}</div>
-                      </div>
-                      <div>
-                        <div className="text-xs text-muted-foreground">Success</div>
-                        <div className="font-mono tabular-nums">{s.success_rate}%</div>
-                      </div>
-                      <div>
-                        <div className="text-xs text-muted-foreground">Latency</div>
-                        <div className="font-mono tabular-nums">{s.avg_latency_ms}ms</div>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              )}
+                  ))
+                )}
+              </div>
             </CardContent>
           </Card>
 
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Data streams</CardTitle>
+          <Card className="lg:col-span-2 rounded-sm shadow-sm border-wazuh-border bg-wazuh-card flex flex-col">
+            <CardHeader className="py-3 px-4 border-b border-wazuh-border/50">
+              <CardTitle className="text-sm font-semibold">Data streams</CardTitle>
             </CardHeader>
-            <CardContent className="grid gap-3">
-              {streams.length === 0 ? (
-                <Empty className="bg-card">
-                  <EmptyHeader>
-                    <EmptyTitle>No streams available</EmptyTitle>
-                    <EmptyDescription>
-                      Stream cards appear once telemetry and pipeline aggregation starts.
-                    </EmptyDescription>
-                  </EmptyHeader>
-                  <EmptyContent />
-                </Empty>
-              ) : (
-                streams.map((st) => (
-                  <div key={st.key} className="rounded-2xl border bg-card p-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="font-medium">{st.name}</div>
-                      <Badge variant={statusBadge(st.status)}>{st.status}</Badge>
+            <CardContent className="p-4 flex-1">
+              <div className="grid gap-3">
+                {streams.length === 0 ? (
+                  <Empty className="bg-wazuh-card">
+                    <EmptyHeader>
+                      <EmptyTitle>No streams available</EmptyTitle>
+                    </EmptyHeader>
+                  </Empty>
+                ) : (
+                  streams.map((st) => (
+                    <div key={st.key} className="rounded-sm border border-wazuh-border bg-background p-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="text-sm font-semibold">{st.name}</div>
+                        <Badge variant={statusBadge(st.status)} className="rounded-sm text-[10px] uppercase">{st.status}</Badge>
+                      </div>
+                      <div className="mt-2 text-xl font-semibold tabular-nums">
+                        {st.current_value}{" "}
+                        <span className="text-xs text-muted-foreground">{st.unit}</span>
+                      </div>
                     </div>
-                    <div className="mt-2 text-2xl font-semibold tabular-nums">
-                      {st.current_value}{" "}
-                      <span className="text-sm text-muted-foreground">{st.unit}</span>
-                    </div>
-                  </div>
-                ))
-              )}
+                  ))
+                )}
+              </div>
             </CardContent>
           </Card>
         </div>
 
-        <div className="mt-6 grid gap-4 lg:grid-cols-3">
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Alerts</CardTitle>
+        <div className="grid gap-4 lg:grid-cols-3">
+          <Card className="lg:col-span-2 rounded-sm shadow-sm border-wazuh-border bg-wazuh-card">
+            <CardHeader className="py-3 px-4 border-b border-wazuh-border/50">
+              <CardTitle className="text-sm font-semibold">Alerts</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-0">
               <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Severity</TableHead>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Source</TableHead>
-                    <TableHead>Status</TableHead>
+                <TableHeader className="bg-muted/30">
+                  <TableRow className="hover:bg-transparent border-wazuh-border">
+                    <TableHead className="h-9 text-xs font-semibold text-muted-foreground">Severity</TableHead>
+                    <TableHead className="h-9 text-xs font-semibold text-muted-foreground">Title</TableHead>
+                    <TableHead className="h-9 text-xs font-semibold text-muted-foreground">Source</TableHead>
+                    <TableHead className="h-9 text-xs font-semibold text-muted-foreground">Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {alerts.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={4} className="py-8">
-                        <div className="text-sm text-muted-foreground">
-                          No alerts yet. This section will populate when the backend detects anomalies or DPI events.
-                        </div>
+                      <TableCell colSpan={4} className="py-8 text-center text-sm text-muted-foreground">
+                        No alerts match your search.
                       </TableCell>
                     </TableRow>
                   ) : (
                     alerts.slice(0, 8).map((a) => (
-                      <TableRow key={a.id}>
-                        <TableCell>
-                          <Badge variant={sevBadge(a.severity)}>{a.severity}</Badge>
+                      <TableRow key={a.id} className="border-wazuh-border hover:bg-muted/10">
+                        <TableCell className="py-2">
+                          <Badge variant={sevBadge(a.severity)} className="rounded-sm text-[10px] uppercase">{a.severity}</Badge>
                         </TableCell>
-                        <TableCell className="whitespace-normal">{a.title}</TableCell>
-                        <TableCell>{a.source}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{a.status}</Badge>
+                        <TableCell className="py-2 text-sm">{a.title}</TableCell>
+                        <TableCell className="py-2 text-sm">{a.source}</TableCell>
+                        <TableCell className="py-2">
+                          <Badge variant="outline" className="rounded-sm text-[10px] uppercase bg-background">{a.status}</Badge>
                         </TableCell>
                       </TableRow>
                     ))
@@ -284,28 +291,24 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Vulnerabilities</CardTitle>
+          <Card className="rounded-sm shadow-sm border-wazuh-border bg-wazuh-card">
+            <CardHeader className="py-3 px-4 border-b border-wazuh-border/50">
+              <CardTitle className="text-sm font-semibold">Vulnerabilities</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="text-sm text-muted-foreground">
-                Top CVEs by severity/score.
-              </div>
-              <Separator />
+            <CardContent className="p-4 space-y-3">
               <div className="space-y-2">
                 {vulnSummary?.top_10?.length ? (
                   vulnSummary.top_10.slice(0, 5).map((v) => (
-                    <div key={v.cve_id} className="flex items-center justify-between gap-3">
-                      <div className="font-mono text-xs">{v.cve_id}</div>
-                      <Badge variant="outline">
+                    <div key={v.cve_id} className="flex items-center justify-between gap-3 text-sm border-b border-wazuh-border pb-2 last:border-0 last:pb-0">
+                      <div className="font-mono text-xs text-primary">{v.cve_id}</div>
+                      <Badge variant="outline" className="rounded-sm bg-background">
                         {v.cvss_score != null ? v.cvss_score.toFixed(1) : "—"}
                       </Badge>
                     </div>
                   ))
                 ) : (
-                  <div className="text-sm text-muted-foreground">
-                    No vulnerability summary available yet.
+                  <div className="text-sm text-muted-foreground text-center py-4">
+                    No vulnerabilities found.
                   </div>
                 )}
               </div>
@@ -313,30 +316,26 @@ export default function DashboardPage() {
           </Card>
         </div>
 
-        <div className="mt-6 grid gap-4 lg:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <CardTitle>Anomaly detector</CardTitle>
+        <div className="grid gap-4 lg:grid-cols-3">
+          <Card className="rounded-sm shadow-sm border-wazuh-border bg-wazuh-card">
+            <CardHeader className="py-3 px-4 border-b border-wazuh-border/50">
+              <CardTitle className="text-sm font-semibold">Anomaly detector</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="text-sm text-muted-foreground">
-                Recent anomalies detected by the pipeline.
-              </div>
-              <Separator />
+            <CardContent className="p-4 space-y-3">
               <div className="space-y-2">
                 {anomalies.length === 0 ? (
-                  <div className="rounded-xl border bg-card p-4 text-sm text-muted-foreground">
-                    No anomalies detected yet.
+                  <div className="text-sm text-muted-foreground text-center py-4">
+                    No anomalies detected.
                   </div>
                 ) : (
                   anomalies.slice(0, 6).map((a) => (
-                    <div key={a.id} className="rounded-xl border bg-card p-3">
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="font-medium">{a.device_id}</div>
-                        <Badge variant={sevBadge(a.severity)}>{a.severity}</Badge>
+                    <div key={a.id} className="border-b border-wazuh-border pb-3 last:border-0 last:pb-0">
+                      <div className="flex items-center justify-between gap-3 mb-1">
+                        <div className="text-sm font-medium">{a.device_id}</div>
+                        <Badge variant={sevBadge(a.severity)} className="rounded-sm text-[10px] uppercase">{a.severity}</Badge>
                       </div>
-                      <div className="mt-1 text-sm text-muted-foreground">
-                        Score <span className="font-mono tabular-nums">{a.score.toFixed(2)}</span>
+                      <div className="text-xs text-muted-foreground">
+                        Score: <span className="font-mono tabular-nums">{a.score.toFixed(2)}</span>
                       </div>
                     </div>
                   ))
@@ -345,40 +344,46 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Devices</CardTitle>
+          <Card className="lg:col-span-2 rounded-sm shadow-sm border-wazuh-border bg-wazuh-card flex flex-col">
+            <CardHeader className="py-3 px-4 border-b border-wazuh-border/50 flex flex-row items-center justify-between">
+              <CardTitle className="text-sm font-semibold">Agents</CardTitle>
+              <Button asChild variant="ghost" size="sm" className="h-6 text-xs text-primary hover:text-primary/80">
+                <Link href="/devices">View all</Link>
+              </Button>
             </CardHeader>
-            <CardContent className="grid gap-3 sm:grid-cols-2">
-              {devices.length === 0 ? (
-                <Empty className="bg-card sm:col-span-2">
-                  <EmptyHeader>
-                    <EmptyTitle>No devices found</EmptyTitle>
-                    <EmptyDescription>
-                      Once devices are seeded/registered, they’ll appear here.
-                    </EmptyDescription>
-                  </EmptyHeader>
-                  <EmptyContent />
-                </Empty>
-              ) : (
-                devices.slice(0, 6).map((d) => (
-                  <Link key={d.id} href={`/devices/${encodeURIComponent(d.id)}`} className="block">
-                    <div className="rounded-2xl border bg-card p-4 hover:bg-muted/20 transition-colors">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <div className="font-medium truncate">{d.name}</div>
-                          <div className="text-sm text-muted-foreground truncate">{d.device_type}</div>
-                        </div>
-                        <Badge variant="outline">{d.status}</Badge>
-                      </div>
-                      <div className="mt-3 flex gap-2">
-                        <Badge variant="outline">Risk {d.risk_score}</Badge>
-                        <Badge variant="outline">Comp {d.compliance_score}</Badge>
-                      </div>
-                    </div>
-                  </Link>
-                ))
-              )}
+            <CardContent className="p-0 flex-1">
+              <Table>
+                <TableHeader className="bg-muted/30">
+                  <TableRow className="hover:bg-transparent border-wazuh-border">
+                    <TableHead className="h-9 text-xs font-semibold text-muted-foreground">Name</TableHead>
+                    <TableHead className="h-9 text-xs font-semibold text-muted-foreground">Type</TableHead>
+                    <TableHead className="h-9 text-xs font-semibold text-muted-foreground">Status</TableHead>
+                    <TableHead className="h-9 text-xs font-semibold text-muted-foreground">Risk</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {devices.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="py-8 text-center text-sm text-muted-foreground">
+                        No agents registered.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    devices.slice(0, 6).map((d) => (
+                      <TableRow key={d.id} className="border-wazuh-border hover:bg-muted/10 cursor-pointer" onClick={() => window.location.href=`/devices/${encodeURIComponent(d.id)}`}>
+                        <TableCell className="py-2 text-sm font-medium text-primary">{d.name}</TableCell>
+                        <TableCell className="py-2 text-sm">{d.device_type}</TableCell>
+                        <TableCell className="py-2">
+                          <Badge variant="outline" className="rounded-sm text-[10px] uppercase bg-background">{d.status}</Badge>
+                        </TableCell>
+                        <TableCell className="py-2">
+                          <div className="text-xs font-mono">{d.risk_score}</div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         </div>

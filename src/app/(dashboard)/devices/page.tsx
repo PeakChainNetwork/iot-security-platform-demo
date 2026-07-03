@@ -1,8 +1,11 @@
 import Link from "next/link"
 import { formatDistanceToNowStrict } from "date-fns"
+import { Search, Filter, RefreshCw, Download, Columns } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
   Empty,
   EmptyContent,
@@ -54,65 +57,9 @@ function telemetryMode(device: DeviceRead): TelemetryMode {
 }
 
 function telemetryBadge(mode: TelemetryMode) {
-  if (mode === "on") return <Badge variant="default">Live telemetry</Badge>
-  if (mode === "off") return <Badge variant="secondary">Telemetry off</Badge>
-  return <Badge variant="outline">Telemetry stale</Badge>
-}
-
-function scoreTone(score: number) {
-  if (score >= 80) return "text-destructive"
-  if (score >= 50) return "text-foreground"
-  return "text-muted-foreground"
-}
-
-function DeviceCard({ device }: { device: DeviceRead }) {
-  const tm = telemetryMode(device)
-  return (
-    <Link
-      href={`/devices/${encodeURIComponent(device.id)}`}
-      className="block focus:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-xl"
-    >
-      <Card className="h-full transition-colors hover:bg-muted/20">
-        <CardHeader>
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <CardTitle className="truncate">{device.name}</CardTitle>
-              <CardDescription className="truncate">
-                {device.device_type} • {device.id}
-              </CardDescription>
-            </div>
-            <div className="flex flex-col items-end gap-2 shrink-0">
-              <Badge variant={statusBadgeVariant(device.status)}>{device.status}</Badge>
-              {telemetryBadge(tm)}
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <div className="space-y-1">
-              <div className="text-xs text-muted-foreground">Risk score</div>
-              <div className={`font-medium tabular-nums ${scoreTone(device.risk_score)}`}>
-                {device.risk_score}/100
-              </div>
-            </div>
-            <div className="space-y-1">
-              <div className="text-xs text-muted-foreground">Compliance</div>
-              <div className="flex items-center gap-2">
-                <div className="font-medium tabular-nums">{device.compliance_score}/100</div>
-                <Badge variant={complianceBadgeVariant(device.compliance_status)}>
-                  {device.compliance_status}
-                </Badge>
-              </div>
-            </div>
-          </div>
-
-          <div className="text-xs text-muted-foreground">
-            Last seen: <span className="text-foreground">{timeAgo(device.last_seen)}</span>
-          </div>
-        </CardContent>
-      </Card>
-    </Link>
-  )
+  if (mode === "on") return <Badge variant="default" className="rounded-sm text-[10px] uppercase">Live</Badge>
+  if (mode === "off") return <Badge variant="secondary" className="rounded-sm text-[10px] uppercase">Off</Badge>
+  return <Badge variant="outline" className="rounded-sm text-[10px] uppercase">Stale</Badge>
 }
 
 export default async function DevicesPage() {
@@ -131,20 +78,39 @@ export default async function DevicesPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">
-        <div className="mb-8 space-y-2">
-          <h1 className="font-heading text-2xl font-semibold tracking-tight">
-            Devices
+      {/* Wazuh sub-header / Query Bar */}
+      <div className="bg-wazuh-card border-b border-wazuh-border p-3 flex flex-col sm:flex-row gap-3 items-center justify-between sticky top-0 z-30">
+        <div className="flex w-full sm:w-2/3 items-center">
+          <div className="flex-1 flex items-center border border-wazuh-border rounded-sm bg-background px-3 h-9">
+            <span className="text-muted-foreground text-sm flex-1">Search... (e.g. status: "online")</span>
+            <span className="text-xs font-mono bg-muted px-1.5 py-0.5 rounded text-muted-foreground">KQL</span>
+          </div>
+          <Button variant="outline" size="sm" className="ml-2 h-9 rounded-sm border-wazuh-border">
+            Update
+          </Button>
+        </div>
+      </div>
+
+      <div className="mx-auto w-full flex-1 p-4 sm:p-6 space-y-4">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-xl font-semibold tracking-tight text-foreground">
+            Agents
           </h1>
-          <p className="text-muted-foreground">
-            All registered IoT devices from the security backend.
-          </p>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="h-8 rounded-sm border-wazuh-border text-muted-foreground hidden sm:flex">
+              <RefreshCw className="h-3 w-3 mr-2" />
+              Refresh
+            </Button>
+            <Button variant="default" size="sm" className="h-8 rounded-sm bg-wazuh-header text-white hover:bg-wazuh-header/90 hidden sm:flex">
+              Deploy new agent
+            </Button>
+          </div>
         </div>
 
         {error ? (
-          <Empty className="bg-card">
+          <Empty className="bg-wazuh-card border-wazuh-border">
             <EmptyHeader>
-              <EmptyTitle>Couldn&apos;t load devices</EmptyTitle>
+              <EmptyTitle>Couldn&apos;t load agents</EmptyTitle>
               <EmptyDescription>{error}</EmptyDescription>
               <EmptyDescription>
                 Check that the backend is running and{" "}
@@ -154,27 +120,87 @@ export default async function DevicesPage() {
             </EmptyHeader>
             <EmptyContent>
               <Link href="/devices">
-                <Badge variant="outline">Retry</Badge>
+                <Button variant="outline" className="rounded-sm">Retry</Button>
               </Link>
             </EmptyContent>
           </Empty>
         ) : devices.length === 0 ? (
-          <Empty className="bg-card">
+          <Empty className="bg-wazuh-card border-wazuh-border">
             <EmptyHeader>
-              <EmptyTitle>No devices found</EmptyTitle>
+              <EmptyTitle>No agents found</EmptyTitle>
               <EmptyDescription>
-                The backend returned an empty list. Register devices or start the
+                The backend returned an empty list. Register agents or start the
                 simulator pipeline.
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent />
           </Empty>
         ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {devices.map((device) => (
-              <DeviceCard key={device.id} device={device} />
-            ))}
-          </div>
+          <Card className="rounded-sm shadow-sm border-wazuh-border bg-wazuh-card">
+            <div className="border-b border-wazuh-border/50 p-2 flex items-center justify-between bg-muted/10">
+              <div className="text-sm text-muted-foreground pl-2">{devices.length} agents matching the search</div>
+              <div className="flex items-center gap-1">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+                  <Filter className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+                  <Columns className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+                  <Download className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader className="bg-muted/30">
+                  <TableRow className="hover:bg-transparent border-wazuh-border">
+                    <TableHead className="h-10 text-xs font-semibold text-muted-foreground uppercase">Name</TableHead>
+                    <TableHead className="h-10 text-xs font-semibold text-muted-foreground uppercase">ID</TableHead>
+                    <TableHead className="h-10 text-xs font-semibold text-muted-foreground uppercase">Status</TableHead>
+                    <TableHead className="h-10 text-xs font-semibold text-muted-foreground uppercase">Type</TableHead>
+                    <TableHead className="h-10 text-xs font-semibold text-muted-foreground uppercase">Risk</TableHead>
+                    <TableHead className="h-10 text-xs font-semibold text-muted-foreground uppercase">Compliance</TableHead>
+                    <TableHead className="h-10 text-xs font-semibold text-muted-foreground uppercase">Telemetry</TableHead>
+                    <TableHead className="h-10 text-xs font-semibold text-muted-foreground uppercase text-right pr-4">Last Seen</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {devices.map((device) => {
+                    const tm = telemetryMode(device)
+                    return (
+                      <TableRow key={device.id} className="border-wazuh-border hover:bg-muted/10 cursor-pointer" onClick={() => window.location.href=`/devices/${encodeURIComponent(device.id)}`}>
+                        <TableCell className="py-2.5 text-sm font-medium text-primary">
+                          <Link href={`/devices/${encodeURIComponent(device.id)}`} className="hover:underline">
+                            {device.name}
+                          </Link>
+                        </TableCell>
+                        <TableCell className="py-2.5 text-xs text-muted-foreground font-mono">{device.id.substring(0, 8)}...</TableCell>
+                        <TableCell className="py-2.5">
+                          <Badge variant={statusBadgeVariant(device.status)} className="rounded-sm text-[10px] uppercase">
+                            {device.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="py-2.5 text-sm">{device.device_type}</TableCell>
+                        <TableCell className="py-2.5 font-mono text-xs">{device.risk_score}</TableCell>
+                        <TableCell className="py-2.5">
+                          <Badge variant={complianceBadgeVariant(device.compliance_status)} className="rounded-sm text-[10px] uppercase bg-background">
+                            {device.compliance_status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="py-2.5">
+                          {telemetryBadge(tm)}
+                        </TableCell>
+                        <TableCell className="py-2.5 text-right text-xs text-muted-foreground pr-4 whitespace-nowrap">
+                          {timeAgo(device.last_seen)}
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>

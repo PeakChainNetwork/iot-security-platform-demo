@@ -59,7 +59,8 @@ function complianceBadgeVariant(complianceStatus: string) {
 
 function sevBadge(sev: string) {
   if (sev === "critical") return "destructive"
-  if (sev === "high") return "secondary"
+  if (sev === "high") return "warning"
+  if (sev === "medium") return "secondary"
   return "outline"
 }
 
@@ -84,7 +85,7 @@ function telemetryMode(status: string, lastSeenIso: string): TelemetryMode {
 
 function scoreVariant(score: number) {
   if (score >= 80) return "destructive"
-  if (score >= 50) return "secondary"
+  if (score >= 50) return "warning"
   return "outline"
 }
 
@@ -111,113 +112,117 @@ export default async function DeviceDetailsPage({
 
   return (
     <div className="flex flex-1 flex-col">
-      <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">
-        <Breadcrumb className="mb-6">
-          <BreadcrumbList>
+      <div className="bg-wazuh-card border-b border-wazuh-border p-3 flex items-center sticky top-0 z-30">
+        <Breadcrumb>
+          <BreadcrumbList className="text-sm">
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/devices">Devices</Link>
+                <Link href="/devices" className="text-muted-foreground hover:text-foreground">Agents</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage className="max-w-[45ch] truncate">
+              <BreadcrumbPage className="max-w-[45ch] truncate font-medium text-foreground">
                 {device.name}
               </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
+      </div>
 
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="mx-auto w-full flex-1 p-4 sm:p-6 space-y-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="font-heading text-2xl font-semibold tracking-tight truncate">
-                {device.name}
+              <h1 className="text-xl font-semibold tracking-tight text-foreground truncate">
+                Agent: {device.name}
               </h1>
-              <Badge variant={statusBadgeVariant(device.status)}>{device.status}</Badge>
+              <Badge variant={statusBadgeVariant(device.status)} className="rounded-sm text-[10px] uppercase">{device.status}</Badge>
             </div>
             <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
               <span>{device.device_type}</span>
               <span aria-hidden="true">•</span>
-              <span className="text-xs">Internal ID</span>
+              <span className="text-xs">ID</span>
               <span className="font-mono text-xs text-foreground/80">{device.id}</span>
-              <CopyButton value={device.id} label="Copy internal ID" />
-            </div>
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <Badge variant={scoreVariant(device.risk_score)}>
-                Risk {device.risk_score}/100
-              </Badge>
-              <Badge variant={complianceBadgeVariant(device.compliance_status)}>
-                Compliance {device.compliance_score}/100 • {device.compliance_status}
-              </Badge>
-              <Badge variant="outline">Last seen {formatDateTime(device.last_seen)}</Badge>
-              {tm === "on" ? (
-                <Badge variant="default">Live telemetry on</Badge>
-              ) : tm === "off" ? (
-                <Badge variant="secondary">Telemetry off</Badge>
-              ) : (
-                <Badge variant="outline">Telemetry stale</Badge>
-              )}
+              <CopyButton value={device.id} label="Copy ID" />
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button asChild variant="outline">
-              <Link href="/devices">Back</Link>
-            </Button>
+          <div className="flex flex-col items-end gap-2 shrink-0">
+             <div className="flex gap-2">
+              <Badge variant={scoreVariant(device.risk_score)} className="rounded-sm">
+                Risk: {device.risk_score}
+              </Badge>
+              <Badge variant={complianceBadgeVariant(device.compliance_status)} className="rounded-sm">
+                Comp: {device.compliance_score}
+              </Badge>
+              {tm === "on" ? (
+                <Badge variant="default" className="rounded-sm text-[10px] uppercase">Live</Badge>
+              ) : tm === "off" ? (
+                <Badge variant="secondary" className="rounded-sm text-[10px] uppercase">Offline</Badge>
+              ) : (
+                <Badge variant="outline" className="rounded-sm text-[10px] uppercase">Stale</Badge>
+              )}
+             </div>
           </div>
         </div>
 
         <div className="grid gap-4 lg:grid-2">
             <div className="space-y-4">
               <div className="grid grid-cols-4 gap-3">
-                <div className="rounded-xl border bg-card p-4">
-                  <div className="text-xs text-muted-foreground">Deployment</div>
-                  <div className="mt-2 text-lg font-semibold leading-tight">
-                    {formatField(device.location)}
-                  </div>
-                  <div className="mt-1 text-sm text-muted-foreground">
-                    Location
-                  </div>
-                </div>
-                <div className="rounded-xl border bg-card p-4">
-                  <div className="text-xs text-muted-foreground">Asset</div>
-                  <div className="mt-2 text-lg font-semibold leading-tight truncate">
-                    {formatField(device.manufacturer)}
-                  </div>
-                  <div className="mt-1 text-sm text-muted-foreground">
-                    Firmware {formatField(device.firmware_version)}
-                  </div>
-                </div>
-                <div className="rounded-xl border bg-card p-4">
-                  <div className="text-xs text-muted-foreground">Network</div>
-                  <dl className="mt-3 space-y-2 text-sm">
-                    <div className="flex items-center justify-between gap-3">
-                      <dt className="text-muted-foreground">IP address</dt>
-                      <dd className="font-mono text-xs">{formatField(device.ip_address)}</dd>
+                <Card className="rounded-sm shadow-sm border-wazuh-border bg-wazuh-card">
+                  <CardContent className="p-4">
+                    <div className="text-xs font-semibold uppercase text-muted-foreground">Deployment</div>
+                    <div className="mt-2 text-lg font-semibold leading-tight">
+                      {formatField(device.location)}
                     </div>
-                    <div className="flex items-center justify-between gap-3">
-                      <dt className="text-muted-foreground">MAC address</dt>
-                      <dd className="font-mono text-xs">{formatField(device.mac_address)}</dd>
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      Location
                     </div>
-                  </dl>
-                </div>
-                <div className="rounded-xl border bg-card p-4">
-                  <div className="text-xs text-muted-foreground">Lifecycle</div>
-                  <dl className="mt-3 space-y-2 text-sm">
-                    <div className="flex items-center justify-between gap-3">
-                      <dt className="text-muted-foreground">Last seen</dt>
-                      <dd className="font-mono text-xs">{formatDateTime(device.last_seen)}</dd>
+                  </CardContent>
+                </Card>
+                <Card className="rounded-sm shadow-sm border-wazuh-border bg-wazuh-card">
+                  <CardContent className="p-4">
+                    <div className="text-xs font-semibold uppercase text-muted-foreground">Asset</div>
+                    <div className="mt-2 text-lg font-semibold leading-tight truncate">
+                      {formatField(device.manufacturer)}
                     </div>
-                    <div className="flex items-center justify-between gap-3">
-                      <dt className="text-muted-foreground">Registered</dt>
-                      <dd className="font-mono text-xs">{formatDateTime(device.registered_at)}</dd>
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      Firmware {formatField(device.firmware_version)}
                     </div>
-                  </dl>
-                </div>
+                  </CardContent>
+                </Card>
+                <Card className="rounded-sm shadow-sm border-wazuh-border bg-wazuh-card">
+                  <CardContent className="p-4">
+                    <div className="text-xs font-semibold uppercase text-muted-foreground mb-3">Network</div>
+                    <dl className="space-y-2 text-sm">
+                      <div className="flex items-center justify-between gap-3">
+                        <dt className="text-muted-foreground text-xs">IP address</dt>
+                        <dd className="font-mono text-xs">{formatField(device.ip_address)}</dd>
+                      </div>
+                      <div className="flex items-center justify-between gap-3">
+                        <dt className="text-muted-foreground text-xs">MAC address</dt>
+                        <dd className="font-mono text-xs">{formatField(device.mac_address)}</dd>
+                      </div>
+                    </dl>
+                  </CardContent>
+                </Card>
+                <Card className="rounded-sm shadow-sm border-wazuh-border bg-wazuh-card">
+                  <CardContent className="p-4">
+                    <div className="text-xs font-semibold uppercase text-muted-foreground mb-3">Lifecycle</div>
+                    <dl className="space-y-2 text-sm">
+                      <div className="flex items-center justify-between gap-3">
+                        <dt className="text-muted-foreground text-xs">Last seen</dt>
+                        <dd className="font-mono text-[10px] text-right">{formatDateTime(device.last_seen)}</dd>
+                      </div>
+                      <div className="flex items-center justify-between gap-3">
+                        <dt className="text-muted-foreground text-xs">Registered</dt>
+                        <dd className="font-mono text-[10px] text-right">{formatDateTime(device.registered_at)}</dd>
+                      </div>
+                    </dl>
+                  </CardContent>
+                </Card>
               </div>
-
             </div>
-
         </div>
 
         <div className="mt-4 grid gap-4 items-start lg:grid-cols-4">
@@ -236,34 +241,28 @@ export default async function DeviceDetailsPage({
             />
           </div>
 
-          <Card className="lg:col-span-1 self-start">
-            <CardHeader>
-              <CardTitle>Digital twin state</CardTitle>
+          <Card className="lg:col-span-1 self-start rounded-sm shadow-sm border-wazuh-border bg-wazuh-card">
+            <CardHeader className="py-3 px-4 border-b border-wazuh-border/50">
+              <CardTitle className="text-sm font-semibold">Digital twin state</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4">
               <div className="space-y-3">
-                <div className="text-sm text-muted-foreground">
+                <div className="text-xs text-muted-foreground">
                   A curated view of the device’s live operational state.
                 </div>
                 {Object.keys(device.digital_twin_state ?? {}).length === 0 ? (
-                  <Empty className="bg-card">
-                    <EmptyHeader>
-                      <EmptyTitle>No digital twin data yet</EmptyTitle>
-                      <EmptyDescription>
-                        This view fills in once the device reports telemetry.
-                      </EmptyDescription>
-                    </EmptyHeader>
-                    <EmptyContent />
-                  </Empty>
+                  <div className="text-sm text-muted-foreground text-center py-4">
+                    No digital twin data yet.
+                  </div>
                 ) : (
-                  <ScrollArea className="rounded-xl border bg-card">
-                    <div className="p-4">
-                      <dl className="space-y-3 text-sm">
+                  <ScrollArea className="rounded-sm border border-wazuh-border bg-background">
+                    <div className="p-3">
+                      <dl className="space-y-2 text-sm">
                         {Object.entries(device.digital_twin_state ?? {})
                           .slice(0, 12)
                           .map(([k, v]) => (
-                            <div key={k} className="flex items-center justify-between gap-3">
-                              <dt className="text-muted-foreground">
+                            <div key={k} className="flex items-center justify-between gap-3 border-b border-wazuh-border pb-1 last:border-0 last:pb-0">
+                              <dt className="text-muted-foreground text-xs">
                                 {k.replace(/_/g, " ")}
                               </dt>
                               <dd className="font-mono text-xs text-foreground">
@@ -281,7 +280,7 @@ export default async function DeviceDetailsPage({
                           ))}
                       </dl>
                       {Object.keys(device.digital_twin_state ?? {}).length > 12 ? (
-                        <div className="mt-4 text-xs text-muted-foreground">
+                        <div className="mt-3 text-[10px] text-muted-foreground text-center">
                           Showing the most relevant 12 fields.
                         </div>
                       ) : null}
@@ -294,45 +293,40 @@ export default async function DeviceDetailsPage({
         </div>
 
         <div className="mt-6 grid gap-4 lg:grid-cols-3">
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Security findings</CardTitle>
+          <Card className="lg:col-span-2 rounded-sm shadow-sm border-wazuh-border bg-wazuh-card">
+            <CardHeader className="py-3 px-4 border-b border-wazuh-border/50">
+              <CardTitle className="text-sm font-semibold">Security findings</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="text-sm text-muted-foreground">
-                Vulnerabilities matched to this device (from backend CPE matching).
-              </div>
+            <CardContent className="p-0">
               <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>CVE</TableHead>
-                    <TableHead>Severity</TableHead>
-                    <TableHead>CVSS</TableHead>
-                    <TableHead>Description</TableHead>
+                <TableHeader className="bg-muted/30">
+                  <TableRow className="hover:bg-transparent border-wazuh-border">
+                    <TableHead className="h-9 text-xs font-semibold text-muted-foreground">CVE</TableHead>
+                    <TableHead className="h-9 text-xs font-semibold text-muted-foreground">Severity</TableHead>
+                    <TableHead className="h-9 text-xs font-semibold text-muted-foreground">CVSS</TableHead>
+                    <TableHead className="h-9 text-xs font-semibold text-muted-foreground">Description</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {((device as unknown as DeviceSections).sections?.vulnerabilities ?? []).length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={4} className="py-8">
-                        <div className="text-sm text-muted-foreground">
-                          No security findings for this device yet.
-                        </div>
+                      <TableCell colSpan={4} className="py-8 text-center text-sm text-muted-foreground">
+                        No security findings for this device yet.
                       </TableCell>
                     </TableRow>
                   ) : (
                     (device as unknown as DeviceSections).sections?.vulnerabilities?.slice(0, 8)?.map((v) => (
-                      <TableRow key={v.cve_id}>
-                        <TableCell className="font-mono text-xs">{v.cve_id}</TableCell>
-                        <TableCell>
-                          <Badge variant={sevBadge(String(v.severity ?? "unknown").toLowerCase())}>
+                      <TableRow key={v.cve_id} className="border-wazuh-border hover:bg-muted/10">
+                        <TableCell className="font-mono text-xs text-primary">{v.cve_id}</TableCell>
+                        <TableCell className="py-2">
+                          <Badge variant={sevBadge(String(v.severity ?? "unknown").toLowerCase())} className="rounded-sm text-[10px] uppercase">
                             {String(v.severity ?? "unknown")}
                           </Badge>
                         </TableCell>
                         <TableCell className="font-mono text-xs">
                           {v.cvss_score != null ? Number(v.cvss_score).toFixed(1) : "—"}
                         </TableCell>
-                        <TableCell className="whitespace-normal">
+                        <TableCell className="whitespace-normal text-xs text-muted-foreground">
                           {String(v.description ?? "")}
                         </TableCell>
                       </TableRow>
@@ -343,29 +337,26 @@ export default async function DeviceDetailsPage({
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent alerts</CardTitle>
+          <Card className="rounded-sm shadow-sm border-wazuh-border bg-wazuh-card">
+            <CardHeader className="py-3 px-4 border-b border-wazuh-border/50">
+              <CardTitle className="text-sm font-semibold">Recent alerts</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="text-sm text-muted-foreground">
-                Alerts derived by backend pipeline/DPI sources.
-              </div>
+            <CardContent className="p-4 space-y-3">
               <div className="space-y-2">
                 {((device as unknown as DeviceSections).sections?.alerts ?? []).length === 0 ? (
-                  <div className="rounded-xl border bg-card p-4 text-sm text-muted-foreground">
+                  <div className="text-sm text-muted-foreground text-center py-4">
                     No alerts for this device yet.
                   </div>
                 ) : (
                   ((device as unknown as DeviceSections).sections?.alerts ?? []).slice(0, 6).map((a) => (
-                    <div key={a.id} className="rounded-xl border bg-card p-3">
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="font-medium">{a.title}</div>
-                        <Badge variant={sevBadge(String(a.severity ?? "low"))}>
+                    <div key={a.id} className="border-b border-wazuh-border pb-3 last:border-0 last:pb-0">
+                      <div className="flex items-center justify-between gap-3 mb-1">
+                        <div className="text-sm font-medium">{a.title}</div>
+                        <Badge variant={sevBadge(String(a.severity ?? "low"))} className="rounded-sm text-[10px] uppercase">
                           {String(a.severity ?? "low")}
                         </Badge>
                       </div>
-                      <div className="mt-1 text-sm text-muted-foreground">
+                      <div className="text-xs text-muted-foreground line-clamp-2">
                         {String(a.description ?? "")}
                       </div>
                     </div>
