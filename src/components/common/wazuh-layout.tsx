@@ -42,16 +42,7 @@ export function WazuhLayout({ children }: { children: React.ReactNode }) {
           </Link>
         </div>
 
-        <div className="flex-1 max-w-xl mx-4 hidden md:flex items-center">
-          <div className="relative w-full">
-            <Search className="absolute left-2.5 top-1.5 h-4 w-4 text-white/60" />
-            <input
-              type="text"
-              placeholder="Search..."
-              className="h-8 w-full rounded-md bg-white/10 pl-9 pr-4 text-sm text-white placeholder:text-white/60 focus:bg-white/20 focus:outline-none focus:ring-1 focus:ring-white/30"
-            />
-          </div>
-        </div>
+        <div className="flex-1 max-w-xl mx-4 hidden md:flex items-center"></div>
 
         <div className="flex items-center gap-2 [&_button]:text-white [&_button:hover]:bg-white/20 [&_button:hover]:text-white">
           <ThemeToggle />

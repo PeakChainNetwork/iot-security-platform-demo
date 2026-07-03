@@ -116,13 +116,13 @@
   --shadow-2xl: -50px 2px 0px -50px hsl(222.7751 100% 59.0196% / 0.00);
 
   /* Wazuh specific variables (dark mode) */
-  --wazuh-header: #1a1b20;
+  --wazuh-header: #21252b;
   --wazuh-header-foreground: #e3e4e8;
-  --wazuh-main-bg: #1d1e24;
-  --wazuh-sidebar: #1a1b20;
+  --wazuh-main-bg: #282c34;
+  --wazuh-sidebar: #21252b;
   --wazuh-sidebar-foreground: #dfdfdf;
-  --wazuh-card-bg: #232429;
-  --wazuh-card-border: #343741;
+  --wazuh-card-bg: #32363e;
+  --wazuh-card-border: #4b5263;
 }
 
 @theme inline {

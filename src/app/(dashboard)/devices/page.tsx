@@ -78,18 +78,6 @@ export default async function DevicesPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      {/* Wazuh sub-header / Query Bar */}
-      <div className="bg-wazuh-card border-b border-wazuh-border p-3 flex flex-col sm:flex-row gap-3 items-center justify-between sticky top-0 z-30">
-        <div className="flex w-full sm:w-2/3 items-center">
-          <div className="flex-1 flex items-center border border-wazuh-border rounded-sm bg-background px-3 h-9">
-            <span className="text-muted-foreground text-sm flex-1">Search... (e.g. status: "online")</span>
-            <span className="text-xs font-mono bg-muted px-1.5 py-0.5 rounded text-muted-foreground">KQL</span>
-          </div>
-          <Button variant="outline" size="sm" className="ml-2 h-9 rounded-sm border-wazuh-border">
-            Update
-          </Button>
-        </div>
-      </div>
 
       <div className="mx-auto w-full flex-1 p-4 sm:p-6 space-y-4">
         <div className="flex items-center justify-between mb-4">
