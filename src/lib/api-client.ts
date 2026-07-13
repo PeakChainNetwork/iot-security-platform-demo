@@ -15,12 +15,21 @@ export function urlFor(pathname: string) {
 
 export async function fetchJson<T>(pathname: string): Promise<T> {
   let res: Response
+  let token: string | undefined = process.env.NEXT_PUBLIC_API_TOKEN || process.env.API_TOKEN
+  if (!token && typeof window !== "undefined") {
+    try {
+      token = localStorage.getItem("access_token") ?? undefined
+    } catch {
+      // ignore localStorage access errors
+    }
+  }
 
   try {
     res = await fetch(urlFor(pathname), {
       cache: "no-store",
       headers: {
         "ngrok-skip-browser-warning": "true",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
     })
   } catch {
