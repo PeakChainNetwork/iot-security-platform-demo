@@ -157,7 +157,7 @@ export default async function DevicesPage() {
                   {devices.map((device) => {
                     const tm = telemetryMode(device)
                     return (
-                      <TableRow key={device.id} className="border-wazuh-border hover:bg-muted/10 cursor-pointer" onClick={() => window.location.href=`/devices/${encodeURIComponent(device.id)}`}>
+                      <TableRow key={device.id} className="border-wazuh-border hover:bg-muted/10">
                         <TableCell className="py-2.5 text-sm font-medium text-primary">
                           <Link href={`/devices/${encodeURIComponent(device.id)}`} className="hover:underline">
                             {device.name}
